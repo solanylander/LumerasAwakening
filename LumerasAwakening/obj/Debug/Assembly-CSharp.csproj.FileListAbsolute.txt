@@ -27,3 +27,7 @@ C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\Temp\bin\Deb
 C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\obj\Debug\Assembly-CSharp.dll
 C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\obj\Debug\Assembly-CSharp.pdb
+C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\Temp\bin\Debug\UnityEngine.Advertisements.dll
+C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\Temp\bin\Debug\UnityEngine.Purchasing.dll
+C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\Temp\bin\Debug\UnityEngine.Advertisements.xml
+C:\Users\solan\OneDrive\Documents\LumerasAwakening\LumerasAwakening\Temp\bin\Debug\UnityEngine.Purchasing.xml
