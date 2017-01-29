@@ -17,11 +17,10 @@ public class CameraController : MonoBehaviour
         //Determines the distance between the player and the camera
         offset = transform.position - player.transform.position;
         //Angle of the camera with respect to vertices x,z to the player
-        angle = (float) Math.Atan(offset.z/offset.x);
+        angle = (float) (Math.PI + Math.Atan(offset.z/offset.x));
         //Distance between the player and the camera with respect to vertices x,z
         distance = (float) Math.Sqrt(offset.z*offset.z +offset.x*offset.x);
         //This is needed to initially face the correct direction
-        transform.Rotate(0.0f, 180.0f, 0.0f, Space.World);
     }
 
     // FixedUpdate is called once per fixed increment

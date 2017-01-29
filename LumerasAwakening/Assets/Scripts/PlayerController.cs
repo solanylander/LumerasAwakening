@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
         //Determines the distance between the player and the camera
         offset = camera.transform.position - transform.position;
         //Angle of the camera with respect to vertices x,z to the player
-        angle = (float)Math.Atan(offset.z / offset.x);
+        angle = (float)(Math.PI + Math.Atan(offset.z / offset.x));
         rb = GetComponent<Rigidbody>();
         //Possible to jump
         canJump = true;
@@ -48,16 +48,16 @@ public class PlayerController : MonoBehaviour
         angle += pan * 0.01f;
         if (angle > Math.PI)
         {
-            angle -= 2.0f * (float)Math.PI;
+            angle -= 2.0f * (float) Math.PI;
         }
         else if (angle < -Math.PI)
         {
-            angle += 2.0f * (float)Math.PI;
+            angle += 2.0f * (float) Math.PI;
         }
-        
-        //Convert x,z axes in axes based on the direction of the camera
-        float horizontal = (float) Math.Cos(angle) * moveVertical + (float)Math.Sin(angle) * moveHorizontal;
+
+        float horizontal = (float)Math.Cos(angle) * moveVertical + (float)Math.Sin(angle) * moveHorizontal;
         float vertical = (float)Math.Sin(angle) * moveVertical - (float)Math.Cos(angle) * moveHorizontal;
+
         //translate the player
         Vector3 movement = new Vector3(horizontal * speed, 0.0f, vertical * speed);
         transform.position += movement;
