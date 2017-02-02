@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour {
     List<GameObject> inRange;
     GameObject currObject = null;
     int i;
+    Renderer rend;
 
 	// Use this for initialization
 	void Start () {
@@ -24,11 +25,11 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetButton("Fire1")) {
             Time.timeScale = 0.2F;
             findObjectsInRadius();
-            if(inRange != null) {
+            if(inRange.Count != 0) {
                 if (i >= inRange.Count)
                         i = 0;
                 currObject = inRange[i];
-                Renderer rend = currObject.GetComponent<Renderer>();
+                rend = currObject.GetComponent<Renderer>();
                 rend.material.shader = Shader.Find("Self-Illumin/Outlined Diffuse");
                 if(Input.GetButtonDown("Fire3")) {
                     i++;
@@ -42,7 +43,6 @@ public class PlayerMovement : MonoBehaviour {
                 }
                 if (Input.GetButtonDown("Fire2")) {
                     Debug.Log(currObject);
-                    rend.material.shader = Shader.Find("Diffuse");
                     currObject.SetActive(false);
                 }
             }
@@ -74,6 +74,8 @@ public class PlayerMovement : MonoBehaviour {
             else {
                 inRange.Remove(ob);
                 ob.SetActive(true);
+                rend = ob.GetComponent<Renderer>();
+                rend.material.shader = Shader.Find("Diffuse");
             }
         }
     }
