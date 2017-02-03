@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
     // FixedUpdate is called once per fixed increment
     void FixedUpdate()
     {
+        rb.velocity = new Vector3(0.0f, rb.velocity.y, 0.0f);
+        rb.angularVelocity = new Vector3(0.0f, rb.angularVelocity.y, 0.0f);
         //Get inputs
         float moveHorizontal = -Input.GetAxis("Horizontal");
         float moveVertical = -Input.GetAxis("Vertical");
