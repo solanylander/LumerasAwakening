@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class LineOfSight : MonoBehaviour {
 
-    //Objects Variables
+    //Objects variables
     int check;
     int retainSight;
     bool sight;
     public GameObject player;
     Vector2 moveTowards;
     Vector3 lastKnownPosition;
+    Vector3 direction;
+    Vector3 position;
 
     // Use this for initialization
     void Start () {
@@ -20,12 +22,14 @@ public class LineOfSight : MonoBehaviour {
         sight = false;
         lastKnownPosition = transform.position;
         moveTowards = new Vector2(0.0f, 0.0f);
-	}
+        direction = new Vector3(0.0f, 0.0f, 0.0f);
+        position = new Vector3(0.0f, 0.0f, 0.0f);
+    }
     //FixedUpdate
     void FixedUpdate()
     {
         //Get the normalized direction of the player from the enemy
-        Vector3 direction = player.transform.position - transform.position;
+        direction = player.transform.position - transform.position;
         direction.Normalize();
 
         //If the enemy can currently see the player
@@ -45,53 +49,53 @@ public class LineOfSight : MonoBehaviour {
             //move towards the last know position
             transform.position = new Vector3(transform.position.x + (moveTowards.x * 0.1f), transform.position.y, transform.position.z + (moveTowards.y * 0.1f));
         }
-        //Every fourth time round pass
-        if (check == 4)
-        {
-            //reset counter to zero
-            check = 0;
-            //This whole chunk of code says fire an invisible projectile at the player from the enemy.
-            //If the projectile hits the player then this means there is line of sight
-            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Vector3 scale = new Vector3(0.1f, 0.1f, 0.1f);
-            Vector3 position = player.transform.position;
-            go.transform.localScale = scale;
-            go.AddComponent<LOSprojectile>();
-            go.transform.GetComponent<LOSprojectile>().setDirection(direction);
-            go.transform.GetComponent<LOSprojectile>().setPlayerPosition(position);
-            go.tag = "Projectile";
-            go.GetComponent<MeshRenderer>().enabled = false;
-            go.transform.position = new Vector3(transform.position.x + direction.x, transform.position.y + direction.y, transform.position.z + direction.z);
-            go.AddComponent<Rigidbody>(); // Add the rigidbody.
-            go.GetComponent<LOSprojectile>().line = this;
-        }
-        //Every fourth time round on the second count if retainSight is greater than 0 pass
-        else if(check == 2 && retainSight > 0)
+        checkSight();
+
+        //Every fourth time round if retainSight is greater than 0 fire a bullet
+        if (check == 4 && retainSight > 0)
         {
             //decrement retainSight
             retainSight--;
-            //Fire a bullet in the diretion of the players last known position
-            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Vector3 scale = new Vector3(0.1f, 0.1f, 0.1f);
-            go.transform.localScale = scale;
-            go.AddComponent<LOSprojectile>();
-            go.transform.GetComponent<LOSprojectile>().setDirection(direction);
-            go.transform.GetComponent<LOSprojectile>().setPlayerPosition(lastKnownPosition);
-            go.tag = "Projectile";
-            go.GetComponent<MeshRenderer>().enabled = true;
-            go.transform.position = new Vector3(transform.position.x + direction.x, transform.position.y + direction.y, transform.position.z + direction.z);
-            go.AddComponent<Rigidbody>(); // Add the rigidbody.
-            go.GetComponent<LOSprojectile>().line = this;
-            check++;
+            fireBullet();
         }
-        else
+        check++;
+        if(check == 5)
         {
-            check++;
+            check = 0;
         }
     }
 
-    public void setSight(bool new_sight)
+    void fireBullet()
     {
-        sight = new_sight;
+        //Fire a bullet in the diretion of the players last known position
+        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Vector3 scale = new Vector3(0.1f, 0.1f, 0.1f);
+        go.transform.localScale = scale;
+        go.AddComponent<Projectile>();
+        go.transform.GetComponent<Projectile>().setDirection(direction);
+        go.transform.GetComponent<Projectile>().setPlayerPosition(position);
+        go.tag = "Projectile";
+        go.GetComponent<MeshRenderer>().enabled = true;
+        go.transform.position = new Vector3(transform.position.x + direction.x, transform.position.y + direction.y, transform.position.z + direction.z);
+        go.AddComponent<Rigidbody>(); // Add the rigidbody
+    }
+
+    void checkSight()
+    {
+        position = transform.position + direction;
+        RaycastHit hit;
+        Ray lineofsight = new Ray(position, direction);
+        if (Physics.Raycast(lineofsight, out hit))
+        {
+            if (hit.collider.tag == "Play")
+            {
+                sight = true;
+            }
+            else
+            {
+                sight = false;
+            }
+        }
+
     }
 }

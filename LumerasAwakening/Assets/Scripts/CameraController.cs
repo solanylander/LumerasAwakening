@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
         //Angle of the camera with respect to vertices x,z to the player
         angle = (float) (Math.PI + Math.Atan(offset.z/offset.x));
         //Distance between the player and the camera with respect to vertices x,z
-        distance = (float) Math.Sqrt(offset.z*offset.z +offset.x*offset.x);
+        distance = (float) Math.Sqrt(offset.z*offset.z + offset.x*offset.x);
         //This is needed to initially face the correct direction
     }
 

@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-
     public Vector3 direction;
     public Vector3 playerLocation;
-    public LineOfSight line;
     public Rigidbody rb;
 
     // Use this for initialization
@@ -21,7 +19,6 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-
         rb.AddForce(direction / 8.0f);
     }
 
@@ -38,11 +35,7 @@ public class Projectile : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if ("Play" == collision.gameObject.tag)
-        {
-            Destroy(gameObject);
-        }
-        else if ("LOSprojectile" != collision.gameObject.tag)
+        if ("Projectile" != collision.gameObject.tag)
         {
             Destroy(gameObject);
         }
