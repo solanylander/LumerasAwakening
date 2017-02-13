@@ -1,7 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: Refactor to separate targeting / scaling 
+//Requires: Scaling to access currentTarget gameObject -- Shouldn't be any other interaction
+[RequireComponent(typeof (LineRenderer))]
 public class PowerController : MonoBehaviour
 {
     //Raycast Variables
@@ -20,6 +24,11 @@ public class PowerController : MonoBehaviour
 
     //Targetting Variables
     public Material outlineMaterial; //TODO: Write up a nicer outline shader
+    #if UNITY_STANDALONE_WIN
+        //current shader width values need to change depending on object scale/screen resolution?
+        //platform specific compilation directive
+        outlineMaterial.SetFloat("_Outline", 0.3;);
+    #endif
     private Material defaultMaterial;
     private Renderer currentRenderer;
     private GameObject currentTarget;
@@ -29,10 +38,13 @@ public class PowerController : MonoBehaviour
     [Range(0.01f, 0.1f)]
     public float powerScalar = 0.025f; //Scaling Rate
     [Range(10.0f, 100.0f)]
-    public float maxScale = 50.0f; //Growth Limiter
-    [Range(0.05f, 1f)]
-    public float minScale = 0.1f; //Shrinkage Limiter
+    public float maxScale = 50.0f; //Growth Limiter TODO: Set on an PER OBJECT basis - finer control
+    [Range(0.05f, 1.0f)]
+    public float minScale = 0.1f; //Shrinkage Limiter TODO: Set on an PER OBJECT basis - finer control
+    //[Range(0.0f, 1.0f)]
+    public float massScalar = 0.025f; //Mass Scaling Rate
 
+    //Prototyping Stuff
     private Vector3 spawnPosition;
 
     void Start()
@@ -41,7 +53,7 @@ public class PowerController : MonoBehaviour
         playerCam = GetComponentInParent<Camera>();
         tracerLine = GetComponentInChildren<LineRenderer>();
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
-
+        //For prototyping
         spawnPosition = transform.parent.gameObject.transform.parent.transform.position;
     }
 
@@ -59,7 +71,7 @@ public class PowerController : MonoBehaviour
         }
 
         //Targetting & Scaling
-        if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2"))) 
+        if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2"))) //TODO: Gamepad mappings 
         {
             //nextFire = Time.time + fireRate; 
 
@@ -129,10 +141,10 @@ public class PowerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Clear the current target from lock on, remove visual indication & unset currentTarget
+    /// Clear the current target from lock on, remove visual indication and unset currentTarget
     /// </summary>
     /// <param name="targetInteractable"></param>
-    void ClearTarget(GameObject targetInteractable)
+    private void ClearTarget(GameObject targetInteractable)
     {
         currentRenderer = targetInteractable.GetComponent<Renderer>();
         currentRenderer.material = defaultMaterial;
@@ -145,10 +157,12 @@ public class PowerController : MonoBehaviour
     /// Anchored Interactables are children of invisible 'anchor' objects which redefine the pivot point for scaling.
     /// </summary>
     /// <param name="targetInteractable"></param>
-    void ScaleObject(GameObject targetInteractable, float scaleRate)
+    /// <param name="scaleRate"></param>
+    private void ScaleObject(GameObject targetInteractable, float scaleRate)
     {
         float limitedScale;
         Vector3 curScale;
+        //Anchored objects are the children of anchor objects which are used to 'change' the pivot point of the object
         if (targetInteractable.tag.Contains("Anchored"))
         {
             curScale = targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale;
@@ -156,11 +170,11 @@ public class PowerController : MonoBehaviour
         {
             curScale = targetInteractable.transform.localScale;
         }
-            
+        //TODO: update mass based on limitedScale - update only if scale is changed & not @ limit, max/min Mass interaction? tuning this is weird/tricky   
         //TODO: there's probably bugs/some logic error in the uniform scale limiter -- look at it later
         if (targetInteractable.tag.Contains("XScalable"))
         {
-            limitedScale = System.Math.Max(System.Math.Min(curScale.x * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(curScale.x * scaleRate, maxScale), minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
                 targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(limitedScale, curScale.y, curScale.z);
@@ -171,7 +185,7 @@ public class PowerController : MonoBehaviour
         }
         else if (targetInteractable.tag.Contains("YScalable"))
         {
-            limitedScale = System.Math.Max(System.Math.Min(curScale.y * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(curScale.y * scaleRate, maxScale), minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
                 targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(curScale.x, limitedScale, curScale.z);
@@ -182,7 +196,7 @@ public class PowerController : MonoBehaviour
         }
         else if (targetInteractable.tag.Contains("ZScalable"))
         {
-            limitedScale = System.Math.Max(System.Math.Min(curScale.z * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(curScale.z * scaleRate, maxScale), minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
                 targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(curScale.x, curScale.y, limitedScale);
@@ -192,7 +206,7 @@ public class PowerController : MonoBehaviour
             }
         } else
         {
-            limitedScale = System.Math.Max(System.Math.Min(System.Math.Max(System.Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, maxScale), minScale);
             targetInteractable.transform.localScale = new Vector3(curScale.x * scaleRate, curScale.y * scaleRate, curScale.z * scaleRate);
         }
     }
@@ -201,10 +215,20 @@ public class PowerController : MonoBehaviour
     /// Update object mass proportionally to it's scale (?and potentially material type?)
     /// </summary>
     /// <param name="targetInteractable"></param>
+    /// <param name="massRate"></param>
     /// <param name="objectMaterial"></param>
-    void updateMass(GameObject targetInteractable, string objectMaterial)
+    private void UpdateMass(GameObject targetInteractable, float massRate, string objectMaterial)
     {
-        //TODO: updating mass on scaling
+        //TODO: Tuning mass on scaling, min/max Mass on a PER OBJECT basis
+        float minMass = 0f; //Note: Unity mass units are kg
+        float maxMass = 100f; 
+        float currentTargetMass = targetInteractable.GetComponent<Rigidbody>().mass;
+        if (targetInteractable.tag.Contains("XScalable") || targetInteractable.tag.Contains("YScalable") || targetInteractable.tag.Contains("ZScalable")) {
+             //If scaling in only one dimension, scale by cubic root of the given massRate 
+             massRate = (float)Math.Pow(massRate, (1.0f/3.0f)); //Pls no floating point errors
+        }
+        //Update mass given limiters [min|max]Mass
+        targetInteractable.GetComponent<Rigidbody>().mass = Math.Max(minMass, Math.Min(currentTargetMass * massRate, maxMass));
     }
 
     /// <summary>
