@@ -29,9 +29,10 @@ public class PowerController : MonoBehaviour
         //platform specific compilation directive
         outlineMaterial.SetFloat("_Outline", 0.3;);
     #endif
+    public GameObject currentTarget;
+    
     private Material defaultMaterial;
     private Renderer currentRenderer;
-    private GameObject currentTarget;
     private int layerMask = 0;
 
     //Power-Related Variables
