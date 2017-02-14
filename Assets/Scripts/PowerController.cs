@@ -38,7 +38,7 @@ public class PowerController : MonoBehaviour
 
     //Power-Related Variables
     [Range(0.01f, 0.1f)]
-    public float powerScalar = 0.025f; //Scaling Rate
+    public float powerScalar = 0.015f; //Scaling Rate
     [Range(10.0f, 100.0f)]
     public float maxScale = 50.0f; //Growth Limiter TODO: Set on an PER OBJECT basis - finer control
     [Range(0.05f, 1.0f)]
@@ -187,6 +187,9 @@ public class PowerController : MonoBehaviour
     /// <param name="scaleRate"></param>
     private void ScaleObject(GameObject targetInteractable, float scaleRate)
     {
+        //TODO: Update scale limiter to be based on targetInteractable parameters
+        //targetInteractable.getComponent<Interactable>.[min|max][Scale|Mass]
+        
         float limitedScale;
         Vector3 curScale;
         //Anchored objects are the children of anchor objects which are used to 'change' the pivot point of the object
