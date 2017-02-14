@@ -26,10 +26,6 @@ public class PowerController : MonoBehaviour
     //Scaling Variables
     [Range(0.01f, 0.1f)]
     public float powerScalar = 0.015f; //Scaling Rate
-    [Range(10.0f, 100.0f)]
-    public float maxScale = 50.0f; //Growth Limiter TODO: Set on an PER OBJECT basis - finer control
-    [Range(0.05f, 1.0f)]
-    public float minScale = 0.1f; //Shrinkage Limiter TODO: Set on an PER OBJECT basis - finer control
     [Range(0.0f, 1.0f)]
     public float massScalar = 0.025f; //Mass Scaling Rate
 
@@ -120,9 +116,7 @@ public class PowerController : MonoBehaviour
     /// <param name="scaleRate"></param>
     private void ScaleObject(GameObject targetInteractable, float scaleRate)
     {
-        //TODO: Update scale limiter to be based on targetInteractable parameters
-        //targetInteractable.getComponent<Interactable>.[min|max][Scale|Mass]
-        
+        Interactable interactionController = targetInteractable.GetComponent<Interactable>();     
         float limitedScale;
         Vector3 curScale;
         //Anchored objects are the children of anchor objects which are used to 'change' the pivot point of the object
@@ -133,11 +127,10 @@ public class PowerController : MonoBehaviour
         {
             curScale = targetInteractable.transform.localScale;
         }
-        //TODO: update mass based on limitedScale - update only if scale is changed & not @ limit, max/min Mass interaction? tuning this is weird/tricky   
-        //TODO: there's probably bugs/some logic error in the uniform scale limiter -- look at it later
+        //TODO: update MASS --UpdateMass()-- based on limitedScale - update only if scale is changed & not @ limit, max/min Mass interaction? tuning this is weird/tricky   
         if (targetInteractable.tag.Contains("XScalable"))
         {
-            limitedScale = Math.Max(Math.Min(curScale.x * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(curScale.x * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
                 targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(limitedScale, curScale.y, curScale.z);
@@ -148,7 +141,7 @@ public class PowerController : MonoBehaviour
         }
         else if (targetInteractable.tag.Contains("YScalable"))
         {
-            limitedScale = Math.Max(Math.Min(curScale.y * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(curScale.y * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
                 targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(curScale.x, limitedScale, curScale.z);
@@ -159,7 +152,7 @@ public class PowerController : MonoBehaviour
         }
         else if (targetInteractable.tag.Contains("ZScalable"))
         {
-            limitedScale = Math.Max(Math.Min(curScale.z * scaleRate, maxScale), minScale);
+            limitedScale = Math.Max(Math.Min(curScale.z * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
                 targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(curScale.x, curScale.y, limitedScale);
@@ -169,7 +162,8 @@ public class PowerController : MonoBehaviour
             }
         } else
         {
-            limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, maxScale), minScale);
+            //TODO: fix this, it's terribly terribly broken
+            limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, interactionController.maxScale), interactionController.minScale);
             targetInteractable.transform.localScale = new Vector3(curScale.x * scaleRate, curScale.y * scaleRate, curScale.z * scaleRate);
         }
     }
@@ -182,16 +176,16 @@ public class PowerController : MonoBehaviour
     /// <param name="objectMaterial"></param>
     private void UpdateMass(GameObject targetInteractable, float massRate, string objectMaterial)
     {
-        //TODO: Tuning mass on scaling, min/max Mass on a PER OBJECT basis
-        float minMass = 0f; //Note: Unity mass units are kg
-        float maxMass = 100f; 
+        //TODO: figure out if there are going to be different material types whose mass will scale differently depending on type
+        Interactable interactionController = targetInteractable.GetComponent<Interactable>();    
+        //Note: Unity mass units are kg
         float currentTargetMass = targetInteractable.GetComponent<Rigidbody>().mass;
         if (targetInteractable.tag.Contains("XScalable") || targetInteractable.tag.Contains("YScalable") || targetInteractable.tag.Contains("ZScalable")) {
              //If scaling in only one dimension, scale by cubic root of the given massRate 
              massRate = (float)Math.Pow(massRate, (1.0f/3.0f)); //Pls no floating point errors
         }
         //Update mass given limiters [min|max]Mass
-        targetInteractable.GetComponent<Rigidbody>().mass = Math.Max(minMass, Math.Min(currentTargetMass * massRate, maxMass));
+        targetInteractable.GetComponent<Rigidbody>().mass = Math.Max(interactionController.minMass, Math.Min(currentTargetMass * massRate, interactionController.maxMass));
     }
 
     /// <summary>

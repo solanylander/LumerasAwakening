@@ -14,7 +14,7 @@ public class HoldController : MonoBehaviour {
 	public float throwForce = 2.5f;
 	
 	[Range(5.0f, 50.0f)]
-	private float maxPullRange = 10.0f;
+	private float maxPowerRange = 10.0f;
 	private int layerMask = 0;
 	private bool currentlyHoldingObject;
 	private RaycastHit hit;
@@ -45,7 +45,7 @@ public class HoldController : MonoBehaviour {
 				//Set and unset rigidbody.contraints with appropriate bitmasks while holding & when dropped?
 				
 				Vector3 rayOrigin = playerCharacter.transform.position;
-				if (Physics.Raycast(rayOrigin, playerCharacter.transform.forward, out hit, maxPullRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+				if (Physics.Raycast(rayOrigin, playerCharacter.transform.forward, out hit, maxPowerRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
 				{
 					//On hit to object - select it, and then hold it
 					//Interaction with PowerController -- target selection happens in both 

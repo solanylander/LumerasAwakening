@@ -18,6 +18,8 @@ public class Interactable: MonoBehaviour
     
     [Range(0.05f, 1.0f)]
     public float minMass; 
+
+    private enum objectMaterial {Wood, Metal, Stone, Glass, Crystal, MoonStone};
 	
 	/// <summary>
     /// Scale this object given updated scale vector. Note: currently this is updated in PowerController TODO: Refactor/Update from PP1
