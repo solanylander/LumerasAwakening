@@ -10,31 +10,31 @@ public class HoldController : MonoBehaviour {
 	public GameObject playerCharacter; 
 	[Range(1.0f, 10.0f)]
 	public float objectHoldOffset =  5.0f;
+	[Range(1.0f, 100.0f)]
 	public float throwForce = 2.5f;
 	
-	private GameObject localCurrentTarget;
-	private float maxRange;
+	[Range(5.0f, 50.0f)]
+	private float maxPullRange = 10.0f;
 	private int layerMask = 0;
 	private bool currentlyHoldingObject;
 	private RaycastHit hit;
 
-	private PowerController powerController;
+	private TargetingController targetingController;
 
 	void Start () {
 		layerMask = (1 << LayerMask.NameToLayer("Interactable"));
-		powerController = transform.gameObject.GetComponent<PowerController>();
-		maxRange = powerController.maxRange; //Have maxRange of obj levitation power same as scaling for now
+		targetingController = transform.gameObject.GetComponent<TargetingController>();
 	}
 
 	void FixedUpdate () {
-		localCurrentTarget = powerController.currentTarget; 
+		//TODO: Update code based on lock on switch -- currently assumes lock on enabled
 		//Temp assign to F - need to remap the joystick controls
 		//Simulate releasing the trigger by releasing on key up -- placeholder code for kb controls
 		if (Input.GetKeyUp(KeyCode.F))
 		{
-			if (localCurrentTarget != null) 
+			if (targetingController.currentTarget != null) 
 			{
-				DropObject(localCurrentTarget);
+				DropObject(targetingController.currentTarget);
 			}
 		} else if (Input.GetKey(KeyCode.F)) //(Input.GetAxisRaw("Fire1") != 0) ==Triger Input==
 		{
@@ -45,24 +45,24 @@ public class HoldController : MonoBehaviour {
 				//Set and unset rigidbody.contraints with appropriate bitmasks while holding & when dropped?
 				
 				Vector3 rayOrigin = playerCharacter.transform.position;
-				if (Physics.Raycast(rayOrigin, playerCharacter.transform.forward, out hit, maxRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+				if (Physics.Raycast(rayOrigin, playerCharacter.transform.forward, out hit, maxPullRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
 				{
 					//On hit to object - select it, and then hold it
 					//Interaction with PowerController -- target selection happens in both 
-					powerController.SelectTarget(hit.rigidbody.gameObject);
+					targetingController.SelectTarget(hit.rigidbody.gameObject);
 					//TODO: Fix clipping bugs when looking down w/ obj
 					HoldObject(hit.rigidbody.gameObject);
 					currentlyHoldingObject = true;
 				}
 			} else {
-				HoldObject(localCurrentTarget);
+				HoldObject(targetingController.currentTarget);
 			}
 		}
 		else if (Input.GetKeyDown(KeyCode.G))//(Input.GetAxisRaw("Fire1") == 0) ==Trigger Input== //Specifically == 0 since values range between [-1,1]
 		{
-			if (localCurrentTarget != null)
+			if (targetingController.currentTarget != null)
 			{
-				DropObject(localCurrentTarget);
+				DropObject(targetingController.currentTarget);
 			}
 		}    
 	}
@@ -89,7 +89,7 @@ public class HoldController : MonoBehaviour {
 	{
 		//TODO: drop object at current location
 		//This doesn't actually do much, probably just kill it
-		powerController.ClearTarget(localCurrentTarget);
+		targetingController.ClearTarget(targetInteractable);
 		currentlyHoldingObject = false;
 	}
 

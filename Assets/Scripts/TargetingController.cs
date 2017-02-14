@@ -16,7 +16,6 @@ public class TargetingController : MonoBehaviour
     public GameObject currentTarget; //no static
 	private Material defaultMaterial;
     private Renderer currentRenderer;
-    private int layerMask = 0;
 
     //Prototyping Stuff
     private Vector3 spawnPosition;

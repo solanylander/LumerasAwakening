@@ -2,10 +2,11 @@
 using System.Collections;
 using UnityEngine;
 
-//[RequireComponent(typeof (LineRenderer))]
+[RequireComponent(typeof (LineRenderer))]
 public class PowerController : MonoBehaviour
 {
-    //Raycast Variables
+    [RangeAttribute(0,1)]
+    public int targetLockOn = 1;
     [Range(5.0f, 40f)]
     public float maxPowerRange = 25f;
     //public Transform lineOrigin;
@@ -19,8 +20,6 @@ public class PowerController : MonoBehaviour
     private RaycastHit hit; //holds info about anything hit by ray casted
     //private float hitForce = 250f; //for debugging
 
-    [RangeAttribute(0,1)]
-    public int targetLockOn = 1;
     private TargetingController targetingController;
     private int layerMask = 0;
 
@@ -31,7 +30,7 @@ public class PowerController : MonoBehaviour
     public float maxScale = 50.0f; //Growth Limiter TODO: Set on an PER OBJECT basis - finer control
     [Range(0.05f, 1.0f)]
     public float minScale = 0.1f; //Shrinkage Limiter TODO: Set on an PER OBJECT basis - finer control
-    //[Range(0.0f, 1.0f)]
+    [Range(0.0f, 1.0f)]
     public float massScalar = 0.025f; //Mass Scaling Rate
 
     void Start()
@@ -40,11 +39,24 @@ public class PowerController : MonoBehaviour
         playerCam = GetComponentInParent<Camera>();
         tracerLine = GetComponentInChildren<LineRenderer>();
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
-        //For prototyping
+        targetingController = transform.gameObject.GetComponent<TargetingController>();
     }
 
     void FixedUpdate()
     {
+        switch (targetLockOn)
+        {
+            case 0:
+                if (Input.GetButtonUp("Fire1") | Input.GetButtonUp("Fire2")) 
+                {
+                    if (targetingController.currentTarget != null)
+                    {
+                        targetingController.ClearTarget(targetingController.currentTarget);
+                    }
+                }
+                break;
+        }
+        
         //Scaling object when 'shot'
         if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2"))) //TODO: Gamepad mappings 
         {
@@ -77,22 +89,9 @@ public class PowerController : MonoBehaviour
                     } else if (Input.GetButton("Fire1"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 + powerScalar);
-                        //NOTE: Constantly selecting/deselecting targets causes flickers with current selected target indication method
-                        switch (targetLockOn)
-                        {
-                            case 0:
-                                targetingController.ClearTarget(hit.rigidbody.gameObject);
-                                break;
-                        }
                     } else if (Input.GetButton("Fire2"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 - powerScalar);
-                        switch (targetLockOn)
-                        {
-                            case 0:
-                                targetingController.ClearTarget(hit.rigidbody.gameObject);
-                                break;
-                        }
                     }     
                 }
             }
@@ -103,22 +102,10 @@ public class PowerController : MonoBehaviour
                 if (Input.GetButton("Fire1"))
                 {
                     ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                    switch (targetLockOn)
-                    {
-                        case 0:
-                            targetingController.ClearTarget(targetingController.currentTarget.gameObject);
-                            break;
-                    }
                 }
                 else if (Input.GetButton("Fire2"))
                 {
                     ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                    switch (targetLockOn)
-                    {
-                        case 0:
-                            targetingController.ClearTarget(targetingController.currentTarget.gameObject);
-                            break;
-                    }
                 }
             }
         }
