@@ -52,6 +52,11 @@ public class TargetingController : MonoBehaviour
             currentRenderer.material = defaultMaterial;
         }
         currentRenderer = targetInteractable.GetComponent<Renderer>();
+        // Material[] materialArray = currentRenderer.materials;
+        // defaultMaterial = materialArray[0];
+        // materialArray[1] = outlineMaterial;
+        // currentRenderer.materials = materialArray;
+        // currentTarget = targetInteractable;
         defaultMaterial = currentRenderer.material;
         currentRenderer.material = outlineMaterial;
         currentTarget = targetInteractable;
