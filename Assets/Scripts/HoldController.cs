@@ -39,13 +39,24 @@ public class HoldController : MonoBehaviour {
 
 	void FixedUpdate () {
 		localCurrentTarget = powerScript.currentTarget; 
-		//Temp assign to R - need to remap the joystick controls
-		if (Input.GetKey(KeyCode.F)) //(Input.GetAxisRaw("Fire1") != 0) ==Triger Input==
+		//Temp assign to F - need to remap the joystick controls
+		//Simulate releasing the trigger by releasing on key up -- placeholder code for kb controls
+		if (Input.GetKeyUp(KeyCode.F))
+		{
+			if (localCurrentTarget != null) 
+			{
+				DropObject(localCurrentTarget);
+			}
+		} else if (Input.GetKey(KeyCode.F)) //(Input.GetAxisRaw("Fire1") != 0) ==Triger Input==
 		{
 			if (!currentlyHoldingObject)
 			{
 				//origin of raycast in world coordinates
 				Vector3 rayOrigin = playerCharacter.transform.position;
+
+				//TODO: figure out how to handle objects we want to be fixed in location
+				//Allow picking up any object?
+				//Set and unset rigidbody.contraints with appropriate bitmasks while holding & when dropped?
 
 				//TODO: target selection should occur in this controller independently
 				//TODO: implement this, check raycast out before trying to do anything to the object
@@ -53,23 +64,22 @@ public class HoldController : MonoBehaviour {
 				{
 					//On hit to object - select it, and then hold it
 					//Interaction with PowerController -- target selection happens in both 
-					powerScript.SelectTarget(localCurrentTarget);
+					powerScript.SelectTarget(hit.rigidbody.gameObject);
+					//TODO: Fix clipping bugs
+					HoldObject(hit.rigidbody.gameObject);
 					// Call your event function here.
 					currentlyHoldingObject = true;
-					//TODO: Raycast to object, confirm range and LoS
-					HoldObject(localCurrentTarget);
 				}
 			} else {
 				HoldObject(localCurrentTarget);
 			}
 		}
-		else if (Input.GetKey(KeyCode.G))//(Input.GetAxisRaw("Fire1") == 0) ==Trigger Input== //Specifically == 0 since values range between [-1,1]
+		else if (Input.GetKeyDown(KeyCode.G))//(Input.GetAxisRaw("Fire1") == 0) ==Trigger Input== //Specifically == 0 since values range between [-1,1]
 		{
-			//powerScript.ClearTarget(localCurrentTarget);
-			DropObject(localCurrentTarget);
-			powerScript.ClearTarget(localCurrentTarget);
-			currentlyHoldingObject = false;
-			//Trigger not in use - don't do anything but leave this code here so I know what the function return means
+			if (localCurrentTarget != null)
+			{
+				DropObject(localCurrentTarget);
+			}
 		}    
 	}
 
@@ -79,11 +89,12 @@ public class HoldController : MonoBehaviour {
     /// <param name="targetInteractable"></param>
 	void HoldObject(GameObject targetInteractable)
 	{
+		//TODO: Fix rotation of object as player moves camera
 		Vector3 playerCenterOfMass = playerCharacter.transform.position;
 		Vector3 lookDirectionUnitVector = playerCharacter.transform.forward;
 		Vector3 newObjectPosition = playerCenterOfMass + (lookDirectionUnitVector * objectHoldOffset);
-		//TODO: instead of setting position, have it move to character
-		targetInteractable.transform.position = newObjectPosition;
+		//TODO: instead of setting position, have it move to character smoothyl
+		targetInteractable.GetComponent<Rigidbody>().MovePosition(newObjectPosition);
 		//targetInteractable.GetComponent<Rigidbody>().useGravity = false;
 	}
 
@@ -95,6 +106,8 @@ public class HoldController : MonoBehaviour {
 	{
 		//targetInteractable.GetComponent<Rigidbody>().useGravity = true;
 		//TODO: drop object at current location
+		powerScript.ClearTarget(localCurrentTarget);
+		currentlyHoldingObject = false;
 	}
 
 	/// <summary>
