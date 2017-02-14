@@ -28,6 +28,8 @@ public class PowerController : MonoBehaviour
         //platform specific compilation directive
         outlineMaterial.SetFloat("_Outline", 0.3;);
     #endif
+    [RangeAttribute(0,1)]
+    public int targetLockOn = 1;
     public GameObject currentTarget; //no static
 
     private Material defaultMaterial;
@@ -102,9 +104,22 @@ public class PowerController : MonoBehaviour
                     } else if (Input.GetButton("Fire1"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 + powerScalar);
+                        //NOTE: Constantly selecting/deselecting targets causes flickers with current selected target indication method
+                        switch (targetLockOn)
+                        {
+                            case 0:
+                                ClearTarget(hit.rigidbody.gameObject);
+                                break;
+                        }
                     } else if (Input.GetButton("Fire2"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 - powerScalar);
+                        switch (targetLockOn)
+                        {
+                            case 0:
+                                ClearTarget(hit.rigidbody.gameObject);
+                                break;
+                        }
                     }     
                 }
             }
@@ -115,10 +130,22 @@ public class PowerController : MonoBehaviour
                 if (Input.GetButton("Fire1"))
                 {
                     ScaleObject(currentTarget, 1 + powerScalar);
+                    switch (targetLockOn)
+                    {
+                        case 0:
+                            ClearTarget(currentTarget.gameObject);
+                            break;
+                    }
                 }
                 else if (Input.GetButton("Fire2"))
                 {
                     ScaleObject(currentTarget, 1 - powerScalar);
+                    switch (targetLockOn)
+                    {
+                        case 0:
+                            ClearTarget(currentTarget.gameObject);
+                            break;
+                    }
                 }
             }
         }
