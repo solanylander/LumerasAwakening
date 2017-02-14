@@ -11,7 +11,7 @@ using UnityEngine;
 ~-=.=-~-=.=-~-=.=-~-=.=-~-=.=-~-=.=-~-=.=-~-=.=-~-=.=-~-=.=-~
 */
 
-public class GrabController : MonoBehaviour {
+public class HoldController : MonoBehaviour {
 	//Trying to avoid rewriting this when everything gets moved to 3rd person, making this public
 	//For 1st - Object w/ camera
 	//For 3rd - Actual player avatar
@@ -20,7 +20,7 @@ public class GrabController : MonoBehaviour {
 	public float objectHoldOffset =  2.5f;
 	public float throwForce = 2.5f;
 	
-	private GameObject currentTarget;
+	private GameObject localCurrentTarget;
 	private float maxRange;
 	private int layerMask = 0;
 
@@ -31,17 +31,16 @@ public class GrabController : MonoBehaviour {
 	private Material defaultMaterial;
 	public Material outlineMaterial;
 	private PowerController powerScript;
-
 	void Start () {
-		currentTarget = transform.gameObject.GetComponent<PowerController>().currentTarget; 
 		layerMask = (1 << LayerMask.NameToLayer("Interactable"));
-		maxRange = transform.gameObject.GetComponent<PowerController>().maxRange;
 		powerScript = transform.gameObject.GetComponent<PowerController>();
+		maxRange = powerScript.maxRange;
 	}
 
 	void FixedUpdate () {
+		localCurrentTarget = powerScript.currentTarget; 
 		//Temp assign to R - need to remap the joystick controls
-		if( Input.GetAxisRaw("Fire1") != 0)
+		if (Input.GetKey(KeyCode.F)) //(Input.GetAxisRaw("Fire1") != 0) ==Triger Input==
 		{
 			if (!currentlyHoldingObject)
 			{
@@ -54,17 +53,22 @@ public class GrabController : MonoBehaviour {
 				{
 					//On hit to object - select it, and then hold it
 					//Interaction with PowerController -- target selection happens in both 
-					powerScript.SelectTarget(currentTarget);
+					powerScript.SelectTarget(localCurrentTarget);
 					// Call your event function here.
 					currentlyHoldingObject = true;
 					//TODO: Raycast to object, confirm range and LoS
-					HoldObject(currentTarget);
+					HoldObject(localCurrentTarget);
 				}
+			} else {
+				HoldObject(localCurrentTarget);
 			}
 		}
-		if (Input.GetAxisRaw("Fire1") == 0) //Specifically == 0 since values range between [-1,1]
+		else if (Input.GetKey(KeyCode.G))//(Input.GetAxisRaw("Fire1") == 0) ==Trigger Input== //Specifically == 0 since values range between [-1,1]
 		{
-			powerScript.ClearTarget(currentTarget);
+			//powerScript.ClearTarget(localCurrentTarget);
+			DropObject(localCurrentTarget);
+			powerScript.ClearTarget(localCurrentTarget);
+			currentlyHoldingObject = false;
 			//Trigger not in use - don't do anything but leave this code here so I know what the function return means
 		}    
 	}
@@ -78,7 +82,9 @@ public class GrabController : MonoBehaviour {
 		Vector3 playerCenterOfMass = playerCharacter.transform.position;
 		Vector3 lookDirectionUnitVector = playerCharacter.transform.forward;
 		Vector3 newObjectPosition = playerCenterOfMass + (lookDirectionUnitVector * objectHoldOffset);
+		//TODO: instead of setting position, have it move to character
 		targetInteractable.transform.position = newObjectPosition;
+		//targetInteractable.GetComponent<Rigidbody>().useGravity = false;
 	}
 
 	/// <summary>
@@ -87,6 +93,7 @@ public class GrabController : MonoBehaviour {
     /// <param name="targetInteractable"></param>
 	void DropObject(GameObject targetInteractable) 
 	{
+		//targetInteractable.GetComponent<Rigidbody>().useGravity = true;
 		//TODO: drop object at current location
 	}
 

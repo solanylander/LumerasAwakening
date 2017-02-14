@@ -4,7 +4,7 @@ using UnityEngine;
 
 //TODO: Refactor to separate targeting / scaling 
 //Requires: Scaling to access currentTarget gameObject -- Shouldn't be any other interaction
-[RequireComponent(typeof (LineRenderer))]
+//[RequireComponent(typeof (LineRenderer))]
 public class PowerController : MonoBehaviour
 {
     //Raycast Variables
@@ -28,7 +28,7 @@ public class PowerController : MonoBehaviour
         //platform specific compilation directive
         outlineMaterial.SetFloat("_Outline", 0.3;);
     #endif
-    public GameObject currentTarget;
+    public GameObject currentTarget; //no static
 
     private Material defaultMaterial;
     private Renderer currentRenderer;
@@ -244,3 +244,4 @@ public class PowerController : MonoBehaviour
         tracerLine.enabled = false;
     }
 }
+
