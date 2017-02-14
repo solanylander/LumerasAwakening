@@ -2,14 +2,12 @@
 using System.Collections;
 using UnityEngine;
 
-//TODO: Refactor to separate targeting / scaling 
-//Requires: Scaling to access currentTarget gameObject -- Shouldn't be any other interaction
 //[RequireComponent(typeof (LineRenderer))]
 public class PowerController : MonoBehaviour
 {
     //Raycast Variables
     [Range(5.0f, 40f)]
-    public float maxRange = 25f;
+    public float maxPowerRange = 25f;
     //public Transform lineOrigin;
     //public GameObject tracerEffect; - Particles
 
@@ -21,22 +19,12 @@ public class PowerController : MonoBehaviour
     private RaycastHit hit; //holds info about anything hit by ray casted
     //private float hitForce = 250f; //for debugging
 
-    //Targetting Variables
-    public Material outlineMaterial; //TODO: Write up a nicer outline shader
-    #if UNITY_STANDALONE_WIN
-        //current shader width values need to change depending on object scale/screen resolution?
-        //platform specific compilation directive
-        outlineMaterial.SetFloat("_Outline", 0.3;);
-    #endif
     [RangeAttribute(0,1)]
     public int targetLockOn = 1;
-    public GameObject currentTarget; //no static
-
-    private Material defaultMaterial;
-    private Renderer currentRenderer;
+    private TargetingController targetingController;
     private int layerMask = 0;
 
-    //Power-Related Variables
+    //Scaling Variables
     [Range(0.01f, 0.1f)]
     public float powerScalar = 0.015f; //Scaling Rate
     [Range(10.0f, 100.0f)]
@@ -46,9 +34,6 @@ public class PowerController : MonoBehaviour
     //[Range(0.0f, 1.0f)]
     public float massScalar = 0.025f; //Mass Scaling Rate
 
-    //Prototyping Stuff
-    private Vector3 spawnPosition;
-
     void Start()
     {
         //Note: script should be in a child to the player character's camera object
@@ -56,23 +41,11 @@ public class PowerController : MonoBehaviour
         tracerLine = GetComponentInChildren<LineRenderer>();
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
         //For prototyping
-        spawnPosition = transform.parent.gameObject.transform.parent.transform.position;
     }
 
     void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.Escape) | transform.position.y < -100)
-        {
-            transform.parent.gameObject.transform.parent.transform.position = spawnPosition;
-        }
-
-        //Clear Target if out of range -- Removing when it leaves FoV doesn't feel fun/gud
-        if (currentTarget != null && (currentTarget.transform.position - transform.position).magnitude > maxRange)
-        {
-            ClearTarget(currentTarget);
-        }
-
-        //Targetting & Scaling
+        //Scaling object when 'shot'
         if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2"))) //TODO: Gamepad mappings 
         {
             //nextFire = Time.time + fireRate; 
@@ -89,7 +62,7 @@ public class PowerController : MonoBehaviour
             //tracerLine.SetPosition(0, this.lineOrigin.position); b/c Ugly
 
             //Ray registers a hit with an Interactable object
-            if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+            if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
             {
                 //tracerLine.SetPosition(1, hit.point); b/c Ugly
                 if (hit.rigidbody != null)
@@ -98,9 +71,9 @@ public class PowerController : MonoBehaviour
                     //hit.rigidbody.AddForce(-hit.normal * hitForce);
                     
                     //Selecting/Lock on to new target
-                    if (currentTarget != hit.rigidbody.gameObject)
+                    if (targetingController.currentTarget != hit.rigidbody.gameObject)
                     {
-                        SelectTarget(hit.rigidbody.gameObject);
+                        targetingController.SelectTarget(hit.rigidbody.gameObject);
                     } else if (Input.GetButton("Fire1"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 + powerScalar);
@@ -108,7 +81,7 @@ public class PowerController : MonoBehaviour
                         switch (targetLockOn)
                         {
                             case 0:
-                                ClearTarget(hit.rigidbody.gameObject);
+                                targetingController.ClearTarget(hit.rigidbody.gameObject);
                                 break;
                         }
                     } else if (Input.GetButton("Fire2"))
@@ -117,65 +90,38 @@ public class PowerController : MonoBehaviour
                         switch (targetLockOn)
                         {
                             case 0:
-                                ClearTarget(hit.rigidbody.gameObject);
+                                targetingController.ClearTarget(hit.rigidbody.gameObject);
                                 break;
                         }
                     }     
                 }
             }
-            else if (currentTarget != null)
+            else if (targetingController.currentTarget != null)
             {
-                //Just render the line of length maxRange
-                //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxRange)); b/c Ugly
+                //Just render the line of length maxPowerRange
+                //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxPowerRange)); b/c Ugly
                 if (Input.GetButton("Fire1"))
                 {
-                    ScaleObject(currentTarget, 1 + powerScalar);
+                    ScaleObject(targetingController.currentTarget, 1 + powerScalar);
                     switch (targetLockOn)
                     {
                         case 0:
-                            ClearTarget(currentTarget.gameObject);
+                            targetingController.ClearTarget(targetingController.currentTarget.gameObject);
                             break;
                     }
                 }
                 else if (Input.GetButton("Fire2"))
                 {
-                    ScaleObject(currentTarget, 1 - powerScalar);
+                    ScaleObject(targetingController.currentTarget, 1 - powerScalar);
                     switch (targetLockOn)
                     {
                         case 0:
-                            ClearTarget(currentTarget.gameObject);
+                            targetingController.ClearTarget(targetingController.currentTarget.gameObject);
                             break;
                     }
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Highlights targetInteractable by changing Renderer material to outlineMaterial and sets curerntTarget object
-    /// </summary>
-    /// <param name="targetInteractable"></param>
-    public void SelectTarget(GameObject targetInteractable)
-    {
-        if (currentRenderer != null)
-        {
-            currentRenderer.material = defaultMaterial;
-        }
-        currentRenderer = targetInteractable.GetComponent<Renderer>();
-        defaultMaterial = currentRenderer.material;
-        currentRenderer.material = outlineMaterial;
-        currentTarget = targetInteractable;
-    }
-
-    /// <summary>
-    /// Clear the current target from lock on, remove visual indication and unset currentTarget
-    /// </summary>
-    /// <param name="targetInteractable"></param>
-    public void ClearTarget(GameObject targetInteractable)
-    {
-        currentRenderer = targetInteractable.GetComponent<Renderer>();
-        currentRenderer.material = defaultMaterial;
-        currentTarget = null;
     }
 
     /// <summary>
