@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Refactor to separate targeting / scaling 
@@ -30,7 +29,7 @@ public class PowerController : MonoBehaviour
         outlineMaterial.SetFloat("_Outline", 0.3;);
     #endif
     public GameObject currentTarget;
-    
+
     private Material defaultMaterial;
     private Renderer currentRenderer;
     private int layerMask = 0;
@@ -129,7 +128,7 @@ public class PowerController : MonoBehaviour
     /// Highlights targetInteractable by changing Renderer material to outlineMaterial and sets curerntTarget object
     /// </summary>
     /// <param name="targetInteractable"></param>
-    void SelectTarget(GameObject targetInteractable)
+    public void SelectTarget(GameObject targetInteractable)
     {
         if (currentRenderer != null)
         {
@@ -145,7 +144,7 @@ public class PowerController : MonoBehaviour
     /// Clear the current target from lock on, remove visual indication and unset currentTarget
     /// </summary>
     /// <param name="targetInteractable"></param>
-    private void ClearTarget(GameObject targetInteractable)
+    public void ClearTarget(GameObject targetInteractable)
     {
         currentRenderer = targetInteractable.GetComponent<Renderer>();
         currentRenderer.material = defaultMaterial;
