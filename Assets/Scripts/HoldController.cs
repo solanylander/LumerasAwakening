@@ -22,6 +22,8 @@ public class HoldController : MonoBehaviour {
 	private TargetingController targetingController;
 
 	void Start () {
+        //TODO: Tag objects on MassUpdate based on a holdMassLimitWeight and check here, squelch if object is too heavy 
+        //TODO: Should not be able to pick up objects large enough relative to offset distance such that the camera view will clip inside the mesh
 		layerMask = (1 << LayerMask.NameToLayer("Interactable"));
 		targetingController = transform.gameObject.GetComponent<TargetingController>();
 	}
@@ -78,6 +80,7 @@ public class HoldController : MonoBehaviour {
 		Vector3 lookDirectionUnitVector = playerCharacter.transform.forward;
 		Vector3 newObjectPosition = playerCenterOfMass + (lookDirectionUnitVector * objectHoldOffset);
 		//TODO: instead of setting position, have it move to character smoothly
+        //Bug b/c using MovePosition - can translate object into/past other objects
 		targetInteractable.GetComponent<Rigidbody>().MovePosition(newObjectPosition);
 	}
 
@@ -87,7 +90,6 @@ public class HoldController : MonoBehaviour {
     /// <param name="targetInteractable"></param>
 	void DropObject(GameObject targetInteractable) 
 	{
-		//TODO: drop object at current location
 		//This doesn't actually do much, probably just kill it
 		targetingController.ClearTarget(targetInteractable);
 		currentlyHoldingObject = false;

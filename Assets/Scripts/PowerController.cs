@@ -28,6 +28,10 @@ public class PowerController : MonoBehaviour
     public float massScalar = 0.025f; //Mass Scaling Rate
     [Range(0.0f, 1f)]
     public float scaleDelay = 0.35f;
+    [Range(0, 1)]
+    public int enableScaleDecayDelay = 0;
+    [Range(0.0f,10.0f)]
+    public float scaleDecayRate = 0f;
     private float scaleStart;
 
     void Start()
@@ -117,6 +121,7 @@ public class PowerController : MonoBehaviour
     /// <param name="scaleRate"></param>
     private void ScaleObject(GameObject targetInteractable, float scaleRate)
     {
+        //TODO: Smooth out the scaling, fixed scalar update?
         //Freeze object while scaling
         RigidbodyConstraints originalConstraints = targetInteractable.GetComponent<Rigidbody>().constraints;
         targetInteractable.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;

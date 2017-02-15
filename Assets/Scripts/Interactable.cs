@@ -20,7 +20,12 @@ public class Interactable: MonoBehaviour
     public float minMass; 
 
     private enum objectMaterial {Wood, Metal, Stone, Glass, Crystal, MoonStone};
-	
+
+    private Vector3 defaultScale;
+    private float timeLastInteractedWith;
+
+    //TODO: Object scale elasticity
+
 	/// <summary>
     /// Scale this object given updated scale vector. Note: currently this is updated in PowerController TODO: Refactor/Update from PP1
     /// </summary>
