@@ -5,13 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof (LineRenderer))]
 public class TargetingController : MonoBehaviour
 {
-	[Range(5.0f, 40f)]
+	[Range(5.0f, 100f)]
     public float maxTargetRange = 25f;
     public Material outlineMaterial; //TODO: Write up a nicer outline shader
     #if UNITY_STANDALONE_WIN
         //current shader width values need to change depending on object scale/screen resolution?
         //platform specific compilation directive
-        outlineMaterial.SetFloat("_Outline", 0.3;);
+        //outlineMaterial.SetFloat("_Outline", 0.3;);
     #endif
     public GameObject currentTarget; //no static
 	private Material defaultMaterial;
@@ -30,7 +30,7 @@ public class TargetingController : MonoBehaviour
     void FixedUpdate()
     {
 		//Repsawn for prototyping
-        if (Input.GetKey(KeyCode.Escape) | transform.position.y < -100)
+        if (Input.GetKey(KeyCode.K) | transform.position.y < -100)
         {
             transform.parent.gameObject.transform.parent.transform.position = spawnPosition;
         }

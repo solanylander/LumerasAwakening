@@ -7,7 +7,7 @@ public class PowerController : MonoBehaviour
 {
     [RangeAttribute(0,1)]
     public int targetLockOn = 1;
-    [Range(5.0f, 40f)]
+    [Range(5.0f, 100f)]
     public float maxPowerRange = 25f;
     //public Transform lineOrigin;
     //public GameObject tracerEffect; - Particles
@@ -15,11 +15,9 @@ public class PowerController : MonoBehaviour
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
     private Camera playerCam;
-    private float nextFire;
     private WaitForSeconds shotDuration = new WaitForSeconds(0.05f);
     private RaycastHit hit; //holds info about anything hit by ray casted
     //private float hitForce = 250f; //for debugging
-
     private TargetingController targetingController;
     private int layerMask = 0;
 
@@ -28,6 +26,9 @@ public class PowerController : MonoBehaviour
     public float powerScalar = 0.015f; //Scaling Rate
     [Range(0.0f, 1.0f)]
     public float massScalar = 0.025f; //Mass Scaling Rate
+    [Range(0.0f, 1f)]
+    public float scaleDelay = 0.35f;
+    private float scaleStart;
 
     void Start()
     {
@@ -48,16 +49,15 @@ public class PowerController : MonoBehaviour
                     if (targetingController.currentTarget != null)
                     {
                         targetingController.ClearTarget(targetingController.currentTarget);
+                        //Bug when power held down, button up on mouse isn't registering
                     }
                 }
                 break;
         }
         
         //Scaling object when 'shot'
-        if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2"))) //TODO: Gamepad mappings 
+        if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2")) && Time.time > scaleStart )  //TODO: Gamepad mappings 
         {
-            //nextFire = Time.time + fireRate; 
-
             //Renders a line, add in spell effect when/if ready, remove for now b/c Ugly
             //StartCoroutine(ShotEffect());
 
@@ -82,6 +82,7 @@ public class PowerController : MonoBehaviour
                     if (targetingController.currentTarget != hit.rigidbody.gameObject)
                     {
                         targetingController.SelectTarget(hit.rigidbody.gameObject);
+                        scaleStart = Time.time + scaleDelay;
                     } else if (Input.GetButton("Fire1"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 + powerScalar);
@@ -116,6 +117,10 @@ public class PowerController : MonoBehaviour
     /// <param name="scaleRate"></param>
     private void ScaleObject(GameObject targetInteractable, float scaleRate)
     {
+        //Freeze object while scaling
+        RigidbodyConstraints originalConstraints = targetInteractable.GetComponent<Rigidbody>().constraints;
+        targetInteractable.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
+
         Interactable interactionController = targetInteractable.GetComponent<Interactable>();     
         float limitedScale;
         Vector3 curScale;
@@ -166,6 +171,8 @@ public class PowerController : MonoBehaviour
             limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, interactionController.maxScale), interactionController.minScale);
             targetInteractable.transform.localScale = new Vector3(curScale.x * scaleRate, curScale.y * scaleRate, curScale.z * scaleRate);
         }
+        //Set constraints back to originals
+        targetInteractable.GetComponent<Rigidbody>().constraints = originalConstraints;
     }
 
     /// <summary>

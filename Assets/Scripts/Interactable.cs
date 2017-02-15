@@ -7,16 +7,16 @@ using UnityEngine;
 public class Interactable: MonoBehaviour
 {	
     //Param Script gameObject.getComponent<Interactable>.maxScale, etc.
-    [Range(1.0f, 50.0f)]
+    [Range(0.01f, 150.0f)]
     public float maxScale;
 
-	[Range(0.05f, 50.0f)]
+	[Range(0.01f, 50.0f)]
     public float minScale;
 
-    [Range(1.0f, 100.0f)]
+    [Range(0.01f, 100.0f)]
     public float maxMass;
     
-    [Range(0.05f, 1.0f)]
+    [Range(0.01f, 1.0f)]
     public float minMass; 
 
     private enum objectMaterial {Wood, Metal, Stone, Glass, Crystal, MoonStone};
