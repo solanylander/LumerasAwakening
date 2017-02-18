@@ -19,18 +19,27 @@ public class TargetingController : MonoBehaviour
 
     //Prototyping Stuff
     private Vector3 spawnPosition;
+    private float deathDepth;
+    private bool spawnSet;
 
     void Start()
     {
         //Note: script should be in a child to the player character's camera object
         //Repsawn for prototyping
         spawnPosition = transform.parent.gameObject.transform.parent.transform.position;
+        deathDepth = -100;
+        spawnSet = false;
     }
 
     void FixedUpdate()
     {
 		//Repsawn for prototyping
-        if (Input.GetKey(KeyCode.K) | transform.position.y < -100)
+        if (transform.position.y > 160 && !spawnSet)
+        {
+            spawnPosition = new Vector3(25, 165, -94);
+            spawnSet = true;
+        }
+        if (Input.GetKey(KeyCode.K) | transform.position.y < deathDepth)
         {
             transform.parent.gameObject.transform.parent.transform.position = spawnPosition;
         }

@@ -11,6 +11,7 @@ public class PowerController : MonoBehaviour
     public float maxPowerRange = 25f;
     //public Transform lineOrigin;
     //public GameObject tracerEffect; - Particles
+    //private bool stoppedScaling;
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
@@ -49,6 +50,7 @@ public class PowerController : MonoBehaviour
                     if (targetingController.currentTarget != null)
                     {
                         targetingController.ClearTarget(targetingController.currentTarget);
+                        //stoppedScaling = true;
                         //Bug when power held down, button up on mouse isn't registering
                     }
                 }
@@ -79,10 +81,11 @@ public class PowerController : MonoBehaviour
                     //hit.rigidbody.AddForce(-hit.normal * hitForce);
                     
                     //Selecting/Lock on to new target
-                    if (targetingController.currentTarget != hit.rigidbody.gameObject)
+                    if (targetingController.currentTarget != hit.rigidbody.gameObject) //&& stoppedScaling)
                     {
                         targetingController.SelectTarget(hit.rigidbody.gameObject);
                         scaleStart = Time.time + scaleDelay;
+                        //stoppedScaling = false;
                     } else if (Input.GetButton("Fire1"))
                     {
                         ScaleObject(hit.rigidbody.gameObject, 1 + powerScalar);
@@ -110,9 +113,11 @@ public class PowerController : MonoBehaviour
 
     /// <summary>
     /// Scale the target gameObject based on given scalar rate in the dimension specified by the object tag.
+    /// </summary>
+    /// <remarks>
     /// Scaling is a muliplication operation to create some input acceleration (smaller: more granular, larger: quicker scaling)
     /// Anchored Interactables are children of invisible 'anchor' objects which redefine the pivot point for scaling.
-    /// </summary>
+    /// </remarks>
     /// <param name="targetInteractable"></param>
     /// <param name="scaleRate"></param>
     private void ScaleObject(GameObject targetInteractable, float scaleRate)
@@ -144,7 +149,7 @@ public class PowerController : MonoBehaviour
                 targetInteractable.transform.localScale = new Vector3(limitedScale, curScale.y, curScale.z);
             }      
         }
-        else if (targetInteractable.tag.Contains("YScalable"))
+        if (targetInteractable.tag.Contains("YScalable"))
         {
             limitedScale = Math.Max(Math.Min(curScale.y * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
@@ -155,7 +160,7 @@ public class PowerController : MonoBehaviour
                 targetInteractable.transform.localScale = new Vector3(curScale.x, limitedScale, curScale.z);
             }
         }
-        else if (targetInteractable.tag.Contains("ZScalable"))
+        if (targetInteractable.tag.Contains("ZScalable"))
         {
             limitedScale = Math.Max(Math.Min(curScale.z * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
@@ -165,7 +170,8 @@ public class PowerController : MonoBehaviour
             {
                 targetInteractable.transform.localScale = new Vector3(curScale.x, curScale.y, limitedScale);
             }
-        } else
+        } 
+        if (targetInteractable.tag.ToString().Equals("Interactable"))
         {
             //TODO: fix this, it's terribly terribly broken
             limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, interactionController.maxScale), interactionController.minScale);
@@ -178,14 +184,16 @@ public class PowerController : MonoBehaviour
     /// <summary>
     /// Update object mass proportionally to it's scale (?and potentially material type?)
     /// </summary>
+    /// <remarks>
+    /// TODO: figure out if there are going to be different material types whose mass will scale differently depending on type
+    /// Note: Unity mass units are kg
+    /// </remarks>
     /// <param name="targetInteractable"></param>
     /// <param name="massRate"></param>
     /// <param name="objectMaterial"></param>
     private void UpdateMass(GameObject targetInteractable, float massRate, string objectMaterial)
     {
-        //TODO: figure out if there are going to be different material types whose mass will scale differently depending on type
         Interactable interactionController = targetInteractable.GetComponent<Interactable>();    
-        //Note: Unity mass units are kg
         float currentTargetMass = targetInteractable.GetComponent<Rigidbody>().mass;
         if (targetInteractable.tag.Contains("XScalable") || targetInteractable.tag.Contains("YScalable") || targetInteractable.tag.Contains("ZScalable")) {
              //If scaling in only one dimension, scale by cubic root of the given massRate 
