@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof (LineRenderer))]
 public class TargetingController : MonoBehaviour
 {
-	[Range(5.0f, 100f)]
-    public float maxTargetRange = 25f;
+	[Range(10.0f, 100f)]
+    public float maxTargetRange = 40f;
     public Material outlineMaterial; //TODO: Write up a nicer outline shader
     #if UNITY_STANDALONE_WIN
         //current shader width values need to change depending on object scale/screen resolution?
@@ -34,12 +34,13 @@ public class TargetingController : MonoBehaviour
     void FixedUpdate()
     {
 		//Repsawn for prototyping
-        if (transform.position.y > 160 && !spawnSet)
+        if (transform.position.y > 180 && !spawnSet)
         {
-            spawnPosition = new Vector3(25, 165, -94);
+            spawnPosition = new Vector3(71, 188, -65);
             spawnSet = true;
+            deathDepth = 100;
         }
-        if (Input.GetKey(KeyCode.K) | transform.position.y < deathDepth)
+        if (Input.GetKeyDown(KeyCode.R) | transform.position.y < deathDepth)
         {
             transform.parent.gameObject.transform.parent.transform.position = spawnPosition;
         }
@@ -61,11 +62,7 @@ public class TargetingController : MonoBehaviour
             currentRenderer.material = defaultMaterial;
         }
         currentRenderer = targetInteractable.GetComponent<Renderer>();
-        // Material[] materialArray = currentRenderer.materials;
-        // defaultMaterial = materialArray[0];
-        // materialArray[1] = outlineMaterial;
-        // currentRenderer.materials = materialArray;
-        // currentTarget = targetInteractable;
+
         defaultMaterial = currentRenderer.material;
         currentRenderer.material = outlineMaterial;
         currentTarget = targetInteractable;
@@ -78,6 +75,10 @@ public class TargetingController : MonoBehaviour
     public void ClearTarget(GameObject targetInteractable)
     {
         currentRenderer = targetInteractable.GetComponent<Renderer>();
+        if (targetInteractable.tag.Equals("LevelFloor"))
+        {
+            defaultMaterial = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));
+        }
         currentRenderer.material = defaultMaterial;
         currentTarget = null;
     }

@@ -5,6 +5,14 @@ using UnityEngine;
 public class ColorGenerator : MonoBehaviour {
 
     void Start () {
+        RecolorWorld();
+    }
+
+    /// <summary>
+    /// Naive procedural coloring of stuff (intial random color, offset, and complement)
+    /// </summary>
+    public void RecolorWorld()
+    {
         //Wall = Random Base
         Color randomWallColorHSV = Random.ColorHSV(0f, 1f, 0.45f, 0.45f, 1.0f, 1.0f, 0.30f, 0.35f);
         Color randomWallColorRGB = new Color(randomWallColorHSV.r, randomWallColorHSV.g, randomWallColorHSV.b, randomWallColorHSV.a);
@@ -24,8 +32,7 @@ public class ColorGenerator : MonoBehaviour {
         interactableMaterial.SetColor("_Color", new Color(randomInteractableColorHSV.r, randomInteractableColorHSV.g, randomInteractableColorHSV.b, randomInteractableColorHSV.a));
 
         //Selection = Complement of Interactable
-       
-        float complementInteractable = (interactableHue * 360) >= 180 ? (interactableHue * 360 - 180)/360 : (interactableHue * 360 + 180)/360;
+        float complementInteractable = (interactableHue * 360) >= 180 ? (interactableHue * 360 - 180) / 360 : (interactableHue * 360 + 180) / 360;
         Color randomSelectedColorHSV = Random.ColorHSV(complementInteractable, complementInteractable, 0.70f, 0.70f, 1.0f, 1.0f, 0.70f, 0.70f);
         Color randomSelectedColorRGB = new Color(randomSelectedColorHSV.r, randomSelectedColorHSV.g, randomSelectedColorHSV.b, randomSelectedColorHSV.a);
         float selectedHue, selectedSat, selectedVal;

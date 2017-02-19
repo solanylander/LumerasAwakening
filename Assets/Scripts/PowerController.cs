@@ -7,11 +7,17 @@ public class PowerController : MonoBehaviour
 {
     [RangeAttribute(0,1)]
     public int targetLockOn = 1;
+    [RangeAttribute(0, 1)]
+    public int softLockOn = 0;
+    [RangeAttribute(0, 1)]
+    public int lazerBeams = 0;
+    [RangeAttribute(0, 1)]
+    public int freezeWhileScaling = 1;
     [Range(5.0f, 100f)]
-    public float maxPowerRange = 25f;
+    public float maxPowerRange = 40f;
     //public Transform lineOrigin;
     //public GameObject tracerEffect; - Particles
-    //private bool stoppedScaling;
+    private bool getNewTarget;
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
@@ -38,6 +44,7 @@ public class PowerController : MonoBehaviour
         tracerLine = GetComponentInChildren<LineRenderer>();
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
         targetingController = transform.gameObject.GetComponent<TargetingController>();
+        getNewTarget = true;
     }
 
     void FixedUpdate()
@@ -45,14 +52,14 @@ public class PowerController : MonoBehaviour
         switch (targetLockOn)
         {
             case 0:
-                if (Input.GetButtonUp("Fire1") | Input.GetButtonUp("Fire2")) 
+                if(!(Input.GetButton("Fire1") | Input.GetButton("Fire2"))) 
                 {
                     if (targetingController.currentTarget != null)
                     {
                         targetingController.ClearTarget(targetingController.currentTarget);
-                        //stoppedScaling = true;
                         //Bug when power held down, button up on mouse isn't registering
                     }
+                    getNewTarget = true;
                 }
                 break;
         }
@@ -79,23 +86,27 @@ public class PowerController : MonoBehaviour
                 {
                     //For debugging purposes: hit obj @ normal to surface hit
                     //hit.rigidbody.AddForce(-hit.normal * hitForce);
-                    
+
                     //Selecting/Lock on to new target
-                    if (targetingController.currentTarget != hit.rigidbody.gameObject) //&& stoppedScaling)
+                    if (targetingController.currentTarget != hit.rigidbody.gameObject && getNewTarget)
                     {
                         targetingController.SelectTarget(hit.rigidbody.gameObject);
                         scaleStart = Time.time + scaleDelay;
-                        //stoppedScaling = false;
-                    } else if (Input.GetButton("Fire1"))
+                        if (lazerBeams == 0)
+                        {
+                            //require a separate button press for interaction with a different object
+                            getNewTarget = false;
+                        }
+                    } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
-                        ScaleObject(hit.rigidbody.gameObject, 1 + powerScalar);
-                    } else if (Input.GetButton("Fire2"))
+                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                    } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
-                        ScaleObject(hit.rigidbody.gameObject, 1 - powerScalar);
+                        ScaleObject(targetingController.currentTarget, 1 - powerScalar);
                     }     
                 }
             }
-            else if (targetingController.currentTarget != null)
+            else if (targetingController.currentTarget != null && softLockOn == 1)
             {
                 //Just render the line of length maxPowerRange
                 //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxPowerRange)); b/c Ugly
@@ -107,6 +118,12 @@ public class PowerController : MonoBehaviour
                 {
                     ScaleObject(targetingController.currentTarget, 1 - powerScalar);
                 }
+            } else
+            {
+                if (targetingController.currentTarget != null)
+                {
+                    targetingController.ClearTarget(targetingController.currentTarget);
+                }
             }
         }
     }
@@ -117,14 +134,21 @@ public class PowerController : MonoBehaviour
     /// <remarks>
     /// Scaling is a muliplication operation to create some input acceleration (smaller: more granular, larger: quicker scaling)
     /// Anchored Interactables are children of invisible 'anchor' objects which redefine the pivot point for scaling.
+    /// Objects can be tagged with any combination/order of Interactable, Anchored, [X|Y|Z]Scalable concatenated 
+    /// TODO: Move decay & scaling into Interactable & specify individual XYZ scale limits & decayRates
     /// </remarks>
     /// <param name="targetInteractable"></param>
     /// <param name="scaleRate"></param>
     private void ScaleObject(GameObject targetInteractable, float scaleRate)
     {
+        Rigidbody targetRB = targetInteractable.GetComponent<Rigidbody>();
+        targetRB.detectCollisions = false;
+        RigidbodyConstraints originalConstraints = targetRB.constraints;
         //Freeze object while scaling
-        RigidbodyConstraints originalConstraints = targetInteractable.GetComponent<Rigidbody>().constraints;
-        targetInteractable.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
+        if (freezeWhileScaling == 1)
+        {
+            targetRB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
+        }
 
         Interactable interactionController = targetInteractable.GetComponent<Interactable>();     
         float limitedScale;
@@ -147,7 +171,8 @@ public class PowerController : MonoBehaviour
             } else
             {
                 targetInteractable.transform.localScale = new Vector3(limitedScale, curScale.y, curScale.z);
-            }      
+            }
+            curScale = targetInteractable.transform.localScale;
         }
         if (targetInteractable.tag.Contains("YScalable"))
         {
@@ -159,6 +184,7 @@ public class PowerController : MonoBehaviour
             {
                 targetInteractable.transform.localScale = new Vector3(curScale.x, limitedScale, curScale.z);
             }
+            curScale = targetInteractable.transform.localScale;
         }
         if (targetInteractable.tag.Contains("ZScalable"))
         {
@@ -170,15 +196,21 @@ public class PowerController : MonoBehaviour
             {
                 targetInteractable.transform.localScale = new Vector3(curScale.x, curScale.y, limitedScale);
             }
+            curScale = targetInteractable.transform.localScale;
         } 
         if (targetInteractable.tag.ToString().Equals("Interactable"))
         {
-            //TODO: fix this, it's terribly terribly broken
+            //TODO: fix this, it's terribly terribly broken do not use this, instead use Interactable[X|Y|Z]Scalable - any combination of the 3
             limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, interactionController.maxScale), interactionController.minScale);
             targetInteractable.transform.localScale = new Vector3(curScale.x * scaleRate, curScale.y * scaleRate, curScale.z * scaleRate);
         }
-        //Set constraints back to originals
-        targetInteractable.GetComponent<Rigidbody>().constraints = originalConstraints;
+
+        //Set constraints back to originals if RB Interactable, re-enable collisions
+        targetRB.detectCollisions = true;
+        targetRB.constraints = originalConstraints;
+        float massRate = 1.0f;
+        massRate = (scaleRate > 1.0f) ? (massRate + massScalar) : ((scaleRate < 1.0f) ? (massRate - massScalar): massRate);
+        UpdateMass(targetInteractable, massRate, "placeHolder");
     }
 
     /// <summary>
@@ -195,11 +227,14 @@ public class PowerController : MonoBehaviour
     {
         Interactable interactionController = targetInteractable.GetComponent<Interactable>();    
         float currentTargetMass = targetInteractable.GetComponent<Rigidbody>().mass;
-        if (targetInteractable.tag.Contains("XScalable") || targetInteractable.tag.Contains("YScalable") || targetInteractable.tag.Contains("ZScalable")) {
-             //If scaling in only one dimension, scale by cubic root of the given massRate 
-             massRate = (float)Math.Pow(massRate, (1.0f/3.0f)); //Pls no floating point errors
-        }
-        //Update mass given limiters [min|max]Mass
+        float scalingDimensions = targetInteractable.tag.Equals("Interactable") ? 1.0f : float.Epsilon;
+        scalingDimensions = targetInteractable.tag.Contains("XScalable") ? scalingDimensions + 1 : scalingDimensions;
+        scalingDimensions = targetInteractable.tag.Contains("YScalable") ? scalingDimensions + 1 : scalingDimensions;
+        scalingDimensions = targetInteractable.tag.Contains("ZScalable") ? scalingDimensions + 1 : scalingDimensions;
+        //If scaling in only one dimension, scale by cubic root of the given massRate 
+        massRate = (float)Math.Pow(massRate, (1.0f/scalingDimensions)); //Pls no floating point errors
+        
+        //Update mass given limiters [min|max]Masss
         targetInteractable.GetComponent<Rigidbody>().mass = Math.Max(interactionController.minMass, Math.Min(currentTargetMass * massRate, interactionController.maxMass));
     }
 

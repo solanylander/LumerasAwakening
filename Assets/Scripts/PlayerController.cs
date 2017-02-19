@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    public new GameObject camera;
+    public GameObject camera;
     private Vector3 offset;
     public float speed;
     public float jumpHeight;
