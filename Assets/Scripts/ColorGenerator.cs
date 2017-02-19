@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColorGenerator : MonoBehaviour {
-
-    void Start () {
+public class ColorGenerator : MonoBehaviour
+{
+    void Start()
+    {
         RecolorWorld();
     }
 
@@ -34,7 +35,7 @@ public class ColorGenerator : MonoBehaviour {
         //Selection = Complement of Interactable
         float complementInteractable = (interactableHue * 360) >= 180 ? (interactableHue * 360 - 180) / 360 : (interactableHue * 360 + 180) / 360;
         Color randomSelectedColorHSV = Random.ColorHSV(complementInteractable, complementInteractable, 0.70f, 0.70f, 1.0f, 1.0f, 0.70f, 0.70f);
-        Color randomSelectedColorRGB = new Color(randomSelectedColorHSV.r, randomSelectedColorHSV.g, randomSelectedColorHSV.b, randomSelectedColorHSV.a);
+        //Color randomSelectedColorRGB = new Color(randomSelectedColorHSV.r, randomSelectedColorHSV.g, randomSelectedColorHSV.b, randomSelectedColorHSV.a);
         float selectedHue, selectedSat, selectedVal;
         Color.RGBToHSV(randomInteractableColorRGB, out selectedHue, out selectedSat, out selectedVal);
         Material selectedMaterial = (Material)Resources.Load("Materials/Prototyping/Selected", typeof(Material));

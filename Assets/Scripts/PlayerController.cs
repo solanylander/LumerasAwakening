@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    public GameObject camera;
+    public GameObject playerCamera;
     private Vector3 offset;
     public float speed;
     public float jumpHeight;
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         //Determines the distance between the player and the camera
-        offset = camera.transform.position - transform.position;
+        offset = playerCamera.transform.position - transform.position;
         //Angle of the camera with respect to vertices x,z to the player
         angle = (float)(Math.PI + Math.Atan(offset.z / offset.x));
         rb = GetComponent<Rigidbody>();
