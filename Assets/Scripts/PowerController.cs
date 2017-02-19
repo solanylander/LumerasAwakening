@@ -3,8 +3,10 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof (LineRenderer))]
+[RequireComponent(typeof(TargetingController))]
 public class PowerController : MonoBehaviour
 {
+    //Switches
     [RangeAttribute(0,1)]
     public int targetLockOn = 1;
     [RangeAttribute(0, 1)]
@@ -13,22 +15,25 @@ public class PowerController : MonoBehaviour
     public int lazerBeams = 0;
     [RangeAttribute(0, 1)]
     public int freezeWhileScaling = 1;
-    [Range(5.0f, 100f)]
-    public float maxPowerRange = 40f;
-    //public Transform lineOrigin;
-    //public GameObject tracerEffect; - Particles
-    private bool getNewTarget;
+    [RangeAttribute(0, 1)]
+    public int globalScaleDecay = 1;
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
     private Camera playerCam;
+    private RaycastHit hit;
     private WaitForSeconds shotDuration = new WaitForSeconds(0.05f);
-    private RaycastHit hit; //holds info about anything hit by ray casted
     //private float hitForce = 250f; //for debugging
+    //public Transform lineOrigin;
+    //public GameObject tracerEffect; - Particles
     private TargetingController targetingController;
     private int layerMask = 0;
+    private bool getNewTarget;
+    private bool enableScaleDecay;
 
     //Scaling Variables
+    [Range(5.0f, 100f)]
+    public float maxPowerRange = 40f;
     [Range(0.01f, 0.1f)]
     public float powerScalar = 0.015f; //Scaling Rate
     [Range(0.0f, 1.0f)]
@@ -45,6 +50,8 @@ public class PowerController : MonoBehaviour
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
         targetingController = transform.gameObject.GetComponent<TargetingController>();
         getNewTarget = true;
+        //uhhh probably a better way to do this ... :o
+        enableScaleDecay = globalScaleDecay == 1 ? true : false;
     }
 
     void FixedUpdate()
@@ -150,7 +157,8 @@ public class PowerController : MonoBehaviour
             targetRB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionX;
         }
 
-        Interactable interactionController = targetInteractable.GetComponent<Interactable>();     
+        Interactable interactionController = targetInteractable.GetComponent<Interactable>();
+        Interactable anchorInteractionController = targetInteractable.GetComponentInParent<Transform>().parent.gameObject.GetComponent<Interactable>();   
         float limitedScale;
         Vector3 curScale;
         //Anchored objects are the children of anchor objects which are used to 'change' the pivot point of the object
@@ -161,51 +169,47 @@ public class PowerController : MonoBehaviour
         {
             curScale = targetInteractable.transform.localScale;
         }
-        //TODO: update MASS --UpdateMass()-- based on limitedScale - update only if scale is changed & not @ limit, max/min Mass interaction? tuning this is weird/tricky   
+         
         if (targetInteractable.tag.Contains("XScalable"))
         {
             limitedScale = Math.Max(Math.Min(curScale.x * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
-                targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(limitedScale, curScale.y, curScale.z);
+                anchorInteractionController.updateScale(new Vector3(limitedScale, curScale.y, curScale.z), enableScaleDecay);
             } else
             {
-                targetInteractable.transform.localScale = new Vector3(limitedScale, curScale.y, curScale.z);
+                interactionController.updateScale(new Vector3(limitedScale, curScale.y, curScale.z), enableScaleDecay);
             }
             curScale = targetInteractable.transform.localScale;
         }
+
         if (targetInteractable.tag.Contains("YScalable"))
         {
             limitedScale = Math.Max(Math.Min(curScale.y * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
-                targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(curScale.x, limitedScale, curScale.z);
+               anchorInteractionController.updateScale(new Vector3(curScale.x, limitedScale, curScale.z),enableScaleDecay);
             } else
             {
-                targetInteractable.transform.localScale = new Vector3(curScale.x, limitedScale, curScale.z);
+                interactionController.updateScale(new Vector3(curScale.x, limitedScale, curScale.z), enableScaleDecay);
             }
             curScale = targetInteractable.transform.localScale;
         }
+
         if (targetInteractable.tag.Contains("ZScalable"))
         {
             limitedScale = Math.Max(Math.Min(curScale.z * scaleRate, interactionController.maxScale), interactionController.minScale);
             if (targetInteractable.tag.Contains("Anchored"))
             {
-                targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale = new Vector3(curScale.x, curScale.y, limitedScale);
+                anchorInteractionController.updateScale(new Vector3(curScale.x, curScale.y, limitedScale), enableScaleDecay);
             } else
             {
-                targetInteractable.transform.localScale = new Vector3(curScale.x, curScale.y, limitedScale);
+                interactionController.updateScale(new Vector3(curScale.x, curScale.y, limitedScale), enableScaleDecay);
             }
             curScale = targetInteractable.transform.localScale;
         } 
-        if (targetInteractable.tag.ToString().Equals("Interactable"))
-        {
-            //TODO: fix this, it's terribly terribly broken do not use this, instead use Interactable[X|Y|Z]Scalable - any combination of the 3
-            limitedScale = Math.Max(Math.Min(Math.Max(Math.Max(curScale.x,curScale.y),curScale.z) * scaleRate, interactionController.maxScale), interactionController.minScale);
-            targetInteractable.transform.localScale = new Vector3(curScale.x * scaleRate, curScale.y * scaleRate, curScale.z * scaleRate);
-        }
 
-        //Set constraints back to originals if RB Interactable, re-enable collisions
+        //Set constraints back to originals if RB Interactable, re-enable collisions, update object mass
         targetRB.detectCollisions = true;
         targetRB.constraints = originalConstraints;
         float massRate = 1.0f;
@@ -214,7 +218,7 @@ public class PowerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Update object mass proportionally to it's scale (?and potentially material type?)
+    /// Update object mass proportionally to it's scale and specified mass scaling rate
     /// </summary>
     /// <remarks>
     /// TODO: figure out if there are going to be different material types whose mass will scale differently depending on type

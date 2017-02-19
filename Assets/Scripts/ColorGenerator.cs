@@ -23,7 +23,7 @@ public class ColorGenerator : MonoBehaviour
         wallMaterial.SetColor("_Color", randomWallColorRGB);
 
         //Interactable = Offset Hue of Wall
-        float colorOffset = 25;
+        float colorOffset = 25f;
         float matchWall = (wallHue * 360) >= 360 - colorOffset ? (wallHue * 360 - colorOffset) / 360 : (wallHue * 360 + colorOffset) / 360;
         Color randomInteractableColorHSV = Random.ColorHSV(matchWall, matchWall, 0.83f, 0.83f, 1.0f, 1.0f, 0.85f, 0.87f);
         Color randomInteractableColorRGB = new Color(randomInteractableColorHSV.r, randomInteractableColorHSV.g, randomInteractableColorHSV.b, randomInteractableColorHSV.a);
@@ -31,6 +31,13 @@ public class ColorGenerator : MonoBehaviour
         Color.RGBToHSV(randomInteractableColorRGB, out interactableHue, out interactableSat, out interactableVal);
         Material interactableMaterial = (Material)Resources.Load("Materials/Prototyping/Interactable", typeof(Material));
         interactableMaterial.SetColor("_Color", new Color(randomInteractableColorHSV.r, randomInteractableColorHSV.g, randomInteractableColorHSV.b, randomInteractableColorHSV.a));
+
+        //Interactable-No-Decay = Offset Interactable
+        float noDecayColorOffset = 35f;
+        float matchInteractable = (interactableHue * 360) >= 360 - noDecayColorOffset ? (interactableHue * 360 - noDecayColorOffset) / 360 : (interactableHue * 360 + noDecayColorOffset) / 360;
+        Color randomInteractableNoDecayColorHSV = Random.ColorHSV(matchInteractable, matchInteractable, 0.83f, 0.83f, 1.0f, 1.0f, 0.85f, 0.87f);
+        Material interactableNoDecayMaterial = (Material)Resources.Load("Materials/Prototyping/Interactable-No-Decay", typeof(Material));
+        interactableNoDecayMaterial.SetColor("_Color", new Color(randomInteractableNoDecayColorHSV.r, randomInteractableNoDecayColorHSV.g, randomInteractableNoDecayColorHSV.b, randomInteractableNoDecayColorHSV.a));
 
         //Selection = Complement of Interactable
         float complementInteractable = (interactableHue * 360) >= 180 ? (interactableHue * 360 - 180) / 360 : (interactableHue * 360 + 180) / 360;
