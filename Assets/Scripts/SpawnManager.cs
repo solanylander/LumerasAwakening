@@ -6,10 +6,10 @@ public class SpawnManager : MonoBehaviour {
     //Prototyping Stuff
     private Vector3 spawnPosition;
     private float deathDepth;
-    private bool spawnSet;
+    private int spawnSet;
 
-    private float duration = 4500.0f;
-    //private Color midGray = new Color(0.5f, 0.5f, 0.5f, 1f);
+    private float duration = 9000.0f;
+    //private Color midGray = new Color(0.5f, 0.5f, 0.5f, 1f); //orig HSV 0,0 175, 5
     private Color darkGray = new Color(0.2f, 0.2f, 0.2f, 1f);
 
     void Start () {
@@ -17,7 +17,7 @@ public class SpawnManager : MonoBehaviour {
         //Repsawn for prototyping
         spawnPosition = transform.parent.gameObject.transform.parent.transform.position;
         deathDepth = -100;
-        spawnSet = false;
+        spawnSet = 0;
     }
 	
 	/// <summary>
@@ -28,13 +28,14 @@ public class SpawnManager : MonoBehaviour {
     /// </remarks>
 	void Update () {
         //Repsawn for prototyping
-        if (transform.position.y > 185 && !spawnSet)
+        if (transform.position.y > 185 && spawnSet == 0)
         {
             spawnPosition = new Vector3(71, 188, -65);
-            spawnSet = true;
+            spawnSet = 1;
             deathDepth = 100;
         }
-        if (spawnSet)
+
+        if (spawnSet == 1)
         {
             //tmp testing level triggers
             Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
@@ -42,6 +43,16 @@ public class SpawnManager : MonoBehaviour {
             float t = Mathf.PingPong(Time.time, duration) / duration;
             pCam.backgroundColor = Color.Lerp(bgColor, darkGray, t);
         }
+
+        if (transform.position.y > 315)
+        {
+            //set spawn position, etc.
+            Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
+            Color bgColor = pCam.backgroundColor;
+            float t = Mathf.PingPong(Time.time, duration) / duration;
+            pCam.backgroundColor = Color.Lerp(bgColor, Color.black, t);
+        }
+
         if (Input.GetKeyDown(KeyCode.R) | transform.position.y < deathDepth)
         {
             transform.parent.gameObject.transform.parent.transform.position = spawnPosition;

@@ -38,6 +38,7 @@ public class TargetingController : MonoBehaviour
         }
         currentRenderer = targetInteractable.GetComponent<Renderer>();
 
+        //Better/Smoother to Lerp between selected / unselected colors with same material maybe
         defaultMaterial = currentRenderer.material;
         currentRenderer.material = outlineMaterial;
         currentTarget = targetInteractable;
