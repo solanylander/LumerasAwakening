@@ -2,8 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof (LineRenderer))]
 [RequireComponent(typeof(TargetingController))]
+[RequireComponent(typeof(AudioSource))]
 public class PowerController : MonoBehaviour
 {
     //Switches
@@ -42,6 +42,11 @@ public class PowerController : MonoBehaviour
     public float scaleDelay = 0.35f;
     private float scaleStart;
 
+    public AudioClip scaleUpAudio;
+    public AudioClip scaleDownAudio;
+    private AudioSource scaleAudio;
+    private bool audioPlaying;
+
     void Start()
     {
         //Note: script should be in a child to the player character's camera object
@@ -52,6 +57,8 @@ public class PowerController : MonoBehaviour
         getNewTarget = true;
         //uhhh probably a better way to do this ... :o
         enableScaleDecay = globalScaleDecay == 1 ? true : false;
+        scaleAudio = GetComponent<AudioSource>();
+        audioPlaying = false;
     }
 
     void FixedUpdate()
@@ -67,6 +74,11 @@ public class PowerController : MonoBehaviour
                         //Bug when power held down, button up on mouse isn't registering
                     }
                     getNewTarget = true;
+                    if (audioPlaying)
+                    {
+                        scaleAudio.Stop();
+                        audioPlaying = false;
+                    }
                 }
                 break;
         }
@@ -107,9 +119,21 @@ public class PowerController : MonoBehaviour
                     } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
                         ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                        if (!audioPlaying)
+                        {
+                            scaleAudio.clip = scaleUpAudio;
+                            scaleAudio.Play();
+                            audioPlaying = true;
+                        }
                     } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
                         ScaleObject(targetingController.currentTarget, 1 - powerScalar);
+                        if (!audioPlaying)
+                        {
+                            scaleAudio.clip = scaleDownAudio;
+                            scaleAudio.Play();
+                            audioPlaying = true;
+                        }
                     }     
                 }
             }
@@ -120,10 +144,22 @@ public class PowerController : MonoBehaviour
                 if (Input.GetButton("Fire1"))
                 {
                     ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                    if (!audioPlaying)
+                    {
+                        scaleAudio.clip = scaleUpAudio;
+                        scaleAudio.Play();
+                        audioPlaying = true;
+                    }
                 }
                 else if (Input.GetButton("Fire2"))
                 {
                     ScaleObject(targetingController.currentTarget, 1 - powerScalar);
+                    if (!audioPlaying)
+                    {
+                        scaleAudio.clip = scaleDownAudio;
+                        scaleAudio.Play();
+                        audioPlaying = true;
+                    }
                 }
             } else
             {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof (LineRenderer))]
 public class TargetingController : MonoBehaviour
 {
 	[Range(10.0f, 100f)]
