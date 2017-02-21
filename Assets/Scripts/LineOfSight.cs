@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -6,7 +7,7 @@ using UnityEngine.AI;
 public class LineOfSight : MonoBehaviour {
 
     //Objects variables
-    int check;
+    int check, checkpointCounter, checkX, checkZ;
     int retainSight;
     bool sight;
     public GameObject player;
@@ -14,9 +15,12 @@ public class LineOfSight : MonoBehaviour {
     Vector3 position;
     Ray sightRay;
     RaycastHit hit;
-    public Transform goal;
     Vector3 lastKnownPosition;
     NavMeshAgent agent;
+    float angle, comparisonAngle;
+
+    public float fov;
+    public GameObject checkpoint1, checkpoint2, checkpoint3, checkpoint4, checkpoint5;
 
     // Use this for initialization
     void Start ()
@@ -25,6 +29,8 @@ public class LineOfSight : MonoBehaviour {
         agent.destination = transform.position;
         //Initially set everything to its 0 equivilent
         check = 0;
+        angle = 0;
+        checkpointCounter = 0;
         retainSight = 0;
         sight = false;
         lastKnownPosition = transform.position;
@@ -37,18 +43,73 @@ public class LineOfSight : MonoBehaviour {
         //Get the normalized direction of the player from the enemy
         direction = player.transform.position - transform.position;
         direction.Normalize();
+        if(direction.x >= 0)
+        {
+                angle = (90.0f - (float)(Math.Atan(direction.z / direction.x) / Math.PI) * 180.0f);
+        }else
+        {
+                angle = (270.0f - (float)(Math.Atan(direction.z / direction.x) / Math.PI) * 180.0f);
+        }
+        comparisonAngle = (transform.rotation.y) * 180.0f;
+        if(comparisonAngle < 0.0f)
+        {
+            comparisonAngle += 360.0f;
+        }
+        checkSight();
 
         //If the enemy can currently see the player
         if (sight == true)
         {
             //Amount of frames the enemy still remembers that they saw the player after line of sight is broken
-            retainSight = 1;
+            retainSight = 3;
             //Set the last known position of the player to the players current position
-            lastKnownPosition = new Vector3(goal.position.x, goal.position.y, goal.position.z);
+            lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+            agent.destination = lastKnownPosition;
         }
-        agent.destination = lastKnownPosition;
-        checkSight();
-
+        //Debug.Log(retainSight);
+        if (((int)agent.transform.position.x) == ((int)lastKnownPosition.x) && ((int)agent.transform.position.z) == ((int)lastKnownPosition.z)){
+            retainSight = -1;
+        }
+        if (retainSight == -1)
+        { 
+            switch (checkpointCounter)
+            {
+                case 0:
+                    agent.destination = checkpoint1.transform.position;
+                    checkX = (int) checkpoint1.transform.position.x;
+                    checkZ = (int)checkpoint1.transform.position.z;
+                    break;
+                case 1:
+                    agent.destination = checkpoint2.transform.position;
+                    checkX = (int)checkpoint2.transform.position.x;
+                    checkZ = (int)checkpoint2.transform.position.z;
+                    break;
+                case 2:
+                    agent.destination = checkpoint3.transform.position;
+                    checkX = (int)checkpoint3.transform.position.x;
+                    checkZ = (int)checkpoint3.transform.position.z;
+                    break;
+                case 3:
+                    agent.destination = checkpoint4.transform.position;
+                    checkX = (int)checkpoint4.transform.position.x;
+                    checkZ = (int)checkpoint4.transform.position.z;
+                    break;
+                case 4:
+                    agent.destination = checkpoint5.transform.position;
+                    checkX = (int)checkpoint5.transform.position.x;
+                    checkZ = (int)checkpoint5.transform.position.z;
+                    break;
+            }
+            //Debug.Log(((int)transform.position.x) + " " + checkX + " " + ((int)transform.position.z) + " " + checkZ);
+            if (((int)agent.transform.position.x) == checkX && ((int)agent.transform.position.z) == checkZ)
+            {
+                checkpointCounter++;
+                if (checkpointCounter == 5)
+                {
+                    checkpointCounter = 0;
+                }
+            }
+        }
         //Every fourth time round if retainSight is greater than 0 fire a bullet
         if (check == 4 && retainSight > 0)
         {
@@ -84,9 +145,17 @@ public class LineOfSight : MonoBehaviour {
         sightRay = new Ray(position, direction);
         if (Physics.Raycast(sightRay, out hit))
         {
-            if (hit.collider.tag == "Play")
+            //Debug.Log(hit.collider.tag);
+            //Debug.DrawRay(position, direction, Color.green);
+            if (hit.collider.tag == "Player")
             {
-                sight = true;
+                if((comparisonAngle + fov >= angle && comparisonAngle - fov <= angle) || (comparisonAngle + fov + 360.0f >= angle && comparisonAngle - fov +360.0f <= angle) || (comparisonAngle + fov - 360.0f >= angle && comparisonAngle - fov - 360.0f <= angle))
+                {
+                    sight = true;
+                }else
+                {
+                    sight = false;
+                }
             }
             else
             {
