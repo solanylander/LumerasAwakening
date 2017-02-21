@@ -48,7 +48,10 @@ public class SpawnManager : MonoBehaviour {
             Color bgColor = pCam.backgroundColor;
             float t = Mathf.PingPong(Time.time, duration) / duration;
             pCam.backgroundColor = Color.Lerp(bgColor, darkGray, t);
-            spawnSet = 2;
+            if (pCam.backgroundColor.Equals(darkGray))
+            {
+                spawnSet = 2;
+            }
         }
 
         if (transform.position.y > 315 && spawnSet == 2)
@@ -60,7 +63,10 @@ public class SpawnManager : MonoBehaviour {
             Color bgColor = pCam.backgroundColor;
             float t = Mathf.PingPong(Time.time, duration) / duration;
             pCam.backgroundColor = Color.Lerp(bgColor, Color.black, t);
-            spawnSet = 3;
+            if (pCam.backgroundColor.Equals(Color.black))
+            {
+                spawnSet = 3;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R) | transform.position.y < deathDepth)

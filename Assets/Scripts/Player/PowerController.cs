@@ -20,7 +20,7 @@ public class PowerController : MonoBehaviour
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
-    private Camera playerCam;
+    public Camera playerCam;
     private RaycastHit hit;
     private WaitForSeconds shotDuration = new WaitForSeconds(0.05f);
     //private float hitForce = 250f; //for debugging
@@ -50,6 +50,7 @@ public class PowerController : MonoBehaviour
     void Start()
     {
         //Note: script should be in a child to the player character's camera object
+        //playerCam = GetComponentInParent<Camera>();
         playerCam = GetComponentInParent<Camera>();
         tracerLine = GetComponentInChildren<LineRenderer>();
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
@@ -194,12 +195,13 @@ public class PowerController : MonoBehaviour
         }
 
         Interactable interactionController = targetInteractable.GetComponent<Interactable>();
-        Interactable anchorInteractionController = targetInteractable.GetComponentInParent<Transform>().parent.gameObject.GetComponent<Interactable>();   
+        Interactable anchorInteractionController = targetInteractable.GetComponent<Interactable>(); //Complains if unassigned even if use is unreachable code if unassigned
         float limitedScale;
         Vector3 curScale;
         //Anchored objects are the children of anchor objects which are used to 'change' the pivot point of the object
         if (targetInteractable.tag.Contains("Anchored"))
         {
+            anchorInteractionController = targetInteractable.GetComponentInParent<Transform>().parent.gameObject.GetComponent<Interactable>();
             curScale = targetInteractable.GetComponentInParent<Transform>().parent.gameObject.transform.localScale;
         } else
         {
