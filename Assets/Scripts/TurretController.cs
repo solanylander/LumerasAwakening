@@ -6,22 +6,28 @@ public class TurretController : MonoBehaviour
 {
     public GameObject target;
     public float attackRange = 10.0f;
-    private float lookSpeed = 55.0f;
+    public float attackTickSpeed = 0.5f;
+    public int attackDamage = 25;
+    public float lookSpeed = 55.0f;
+
+    private float attackTimer;
+    private ResourceManager targetResources;
 
     private Vector3 lastKnownPosition;
     private Quaternion lookAtRotation;
 
     private LineRenderer beamLine;
-
     private int interactableMask;
     private int interactableWallMask;
 
     void Start()
     {
+        targetResources = target.GetComponentInChildren<ResourceManager>();
         beamLine = GetComponent<LineRenderer>();
         beamLine.enabled = false;
         interactableMask = 1 << LayerMask.NameToLayer("Interactable");
         interactableWallMask = (1 << LayerMask.NameToLayer("Wall")) & interactableMask;
+        attackTimer = 0;
     }
 
     void FixedUpdate()
@@ -40,6 +46,11 @@ public class TurretController : MonoBehaviour
                 beamLine.enabled = true;
                 beamLine.SetPosition(0, transform.position);
                 beamLine.SetPosition(1, target.transform.position);
+                if (Time.time > attackTimer)
+                {
+                    targetResources.decrementResource(attackDamage);
+                    attackTimer = Time.time + attackTickSpeed;
+                }
                 //TODO: update to interact with resource once implemented
             } else
             {
