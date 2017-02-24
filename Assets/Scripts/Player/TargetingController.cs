@@ -15,6 +15,13 @@ public class TargetingController : MonoBehaviour
     public GameObject currentTarget; //no static
 	private Material defaultMaterial;
     private Renderer currentRenderer;
+    private ColorGenerator colorGenerator;
+    
+    void Start()
+    {
+        colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
+    }
+
 
     void FixedUpdate()
     {
@@ -31,15 +38,22 @@ public class TargetingController : MonoBehaviour
     /// <param name="targetInteractable"></param>
     public void SelectTarget(GameObject targetInteractable)
     {
+        //if (currentRenderer != null)
+        //{
+        //    currentRenderer.material = defaultMaterial;
+        //}
+        //currentRenderer = targetInteractable.GetComponent<Renderer>();
+
+        ////Better/Smoother to Lerp between selected / unselected colors with same material maybe
+        //defaultMaterial = currentRenderer.material;
+        //currentRenderer.material = outlineMaterial;
+        //currentTarget = targetInteractable;
         if (currentRenderer != null)
         {
-            currentRenderer.material = defaultMaterial;
+            //currentRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
         }
         currentRenderer = targetInteractable.GetComponent<Renderer>();
-
-        //Better/Smoother to Lerp between selected / unselected colors with same material maybe
-        defaultMaterial = currentRenderer.material;
-        currentRenderer.material = outlineMaterial;
+        currentRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
         currentTarget = targetInteractable;
     }
 
@@ -49,12 +63,19 @@ public class TargetingController : MonoBehaviour
     /// <param name="targetInteractable"></param>
     public void ClearTarget(GameObject targetInteractable)
     {
+        //currentRenderer = targetInteractable.GetComponent<Renderer>();
+        //if (targetInteractable.tag.Equals("LevelFloor"))
+        //{
+        //    defaultMaterial = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));
+        //}
+        //currentRenderer.material = defaultMaterial;
+        //currentTarget = null;
         currentRenderer = targetInteractable.GetComponent<Renderer>();
         if (targetInteractable.tag.Equals("LevelFloor"))
         {
-            defaultMaterial = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));
+            currentRenderer.material = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));
         }
-        currentRenderer.material = defaultMaterial;
+        //currentRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
         currentTarget = null;
     }
 }

@@ -20,7 +20,7 @@ public class PowerController : MonoBehaviour
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
-    public Camera playerCam;
+    private Camera playerCam;
     private RaycastHit hit;
     private WaitForSeconds shotDuration = new WaitForSeconds(0.05f);
     //private float hitForce = 250f; //for debugging
@@ -28,6 +28,7 @@ public class PowerController : MonoBehaviour
     //public GameObject tracerEffect; - Particles
     private TargetingController targetingController;
     private int layerMask = 0;
+    [SerializeField]
     private bool getNewTarget;
     private bool enableScaleDecay;
 
@@ -40,12 +41,14 @@ public class PowerController : MonoBehaviour
     public float massScalar = 0.025f; //Mass Scaling Rate
     [Range(0.0f, 1f)]
     public float scaleDelay = 0.35f;
+    [Range(0.0f,1.0f)]
+    public float energyDrainPerTick = 1.0f;
     private float scaleStart;
+    private ResourceManager resourceManager;
 
     public AudioClip scaleUpAudio;
     public AudioClip scaleDownAudio;
-    private AudioSource scaleAudio;
-    private bool audioPlaying;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -58,8 +61,8 @@ public class PowerController : MonoBehaviour
         getNewTarget = true;
         //uhhh probably a better way to do this ... :o
         enableScaleDecay = globalScaleDecay == 1 ? true : false;
-        scaleAudio = GetComponent<AudioSource>();
-        audioPlaying = false;
+        audioSource = GetComponent<AudioSource>();
+        resourceManager = GetComponent<ResourceManager>();
     }
 
     void FixedUpdate()
@@ -75,10 +78,9 @@ public class PowerController : MonoBehaviour
                         //Bug when power held down, button up on mouse isn't registering
                     }
                     getNewTarget = true;
-                    if (audioPlaying)
+                    if (audioSource.isPlaying)
                     {
-                        scaleAudio.Stop();
-                        audioPlaying = false;
+                        audioSource.Stop();
                     }
                 }
                 break;
@@ -119,22 +121,28 @@ public class PowerController : MonoBehaviour
                         }
                     } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
-                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                        if (!audioPlaying)
+                        if (resourceManager.currentResource >= energyDrainPerTick)
                         {
-                            scaleAudio.clip = scaleUpAudio;
-                            scaleAudio.Play();
-                            audioPlaying = true;
-                        }
+                            resourceManager.decrementResource(energyDrainPerTick);
+                            ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                            if (!audioSource.isPlaying)
+                            {
+                                audioSource.clip = scaleUpAudio;
+                                audioSource.Play();
+                            }
+                        } 
                     } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
-                        ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                        if (!audioPlaying)
+                        if (resourceManager.currentResource >= energyDrainPerTick)
                         {
-                            scaleAudio.clip = scaleDownAudio;
-                            scaleAudio.Play();
-                            audioPlaying = true;
-                        }
+                            resourceManager.decrementResource(energyDrainPerTick);
+                            ScaleObject(targetingController.currentTarget, 1 - powerScalar);
+                            if (!audioSource.isPlaying)
+                            {
+                                audioSource.clip = scaleDownAudio;
+                                audioSource.Play();
+                            }
+                        } 
                     }     
                 }
             }
@@ -144,22 +152,28 @@ public class PowerController : MonoBehaviour
                 //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxPowerRange)); b/c Ugly
                 if (Input.GetButton("Fire1"))
                 {
-                    ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                    if (!audioPlaying)
+                    if (resourceManager.currentResource >= energyDrainPerTick)
                     {
-                        scaleAudio.clip = scaleUpAudio;
-                        scaleAudio.Play();
-                        audioPlaying = true;
-                    }
+                        resourceManager.decrementResource(energyDrainPerTick);
+                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.clip = scaleUpAudio;
+                            audioSource.Play();
+                        }
+                    } 
                 }
                 else if (Input.GetButton("Fire2"))
                 {
-                    ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                    if (!audioPlaying)
+                    if (resourceManager.currentResource >= energyDrainPerTick)
                     {
-                        scaleAudio.clip = scaleDownAudio;
-                        scaleAudio.Play();
-                        audioPlaying = true;
+                        resourceManager.decrementResource(energyDrainPerTick);
+                        ScaleObject(targetingController.currentTarget, 1 - powerScalar);
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.clip = scaleDownAudio;
+                            audioSource.Play();
+                        }
                     }
                 }
             } else

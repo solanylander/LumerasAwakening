@@ -28,12 +28,22 @@ public class Interactable: MonoBehaviour
     private float beginDecay;
     private bool decayable;
 
+    private ColorGenerator colorGenerator;
+    [SerializeField]
+    private Renderer happyRenderer;
+
     //TODO: may be some bugs with update scale with anchored objects -- need to check
     void Start()
     {
+        happyRenderer = gameObject.tag.Contains("Anchored") ? GetComponentInParent<Renderer>() : GetComponent<Renderer>();
+        if (gameObject.transform.childCount >= 1)
+        {
+            happyRenderer = gameObject.transform.GetChild(0).gameObject.tag.Contains("Anchored") ?  gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>() : GetComponent<Renderer>();
+        }
         originalScale = transform.localScale;
         beginDecay = float.PositiveInfinity;
         decayable = enableDecay == 0 ? false : true;
+        colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
     }
 
     void Update()
@@ -48,8 +58,12 @@ public class Interactable: MonoBehaviour
                 disableScale = false;
             }
         }
-
-        if (Time.time > beginDecay && !transform.localScale.Equals(originalScale) && decayable)
+        if (Time.time < beginDecay && !transform.localScale.Equals(originalScale) && decayable)
+        {
+            float duration = (beginDecay - Time.time) * 5000;
+            float t = Mathf.PingPong(Time.time, duration) / duration;
+            happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
+        } else if (Time.time > beginDecay && !transform.localScale.Equals(originalScale) && decayable)
         {
             lerpScaleDecay();
         }
@@ -61,10 +75,11 @@ public class Interactable: MonoBehaviour
     /// <param name="newScale"></param>
     /// <param name="triggerDecay"></param>
     public void updateScale(Vector3 newScale, bool triggerDecay){
+        happyRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
         transform.localScale = newScale;
         if (triggerDecay)
-        {
-            beginDecay = Time.time + decayDelay;
+        {   
+            beginDecay = Time.time + decayDelay; //TODO: This should not add full decay delay length when object is scaled at max scale?
         } else
         {
             beginDecay = float.PositiveInfinity;
@@ -74,9 +89,24 @@ public class Interactable: MonoBehaviour
     /// <summary>
     /// Lerp between the altered scale and original scale of the object based on decayRate
     /// </summary>
+    /// <remarks>
+    /// TODO: Update the color to represent the remaining time until decay
+    /// </remarks>
     private void lerpScaleDecay()
     {
+        happyRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
         float t = Mathf.PingPong(Time.time, decayRate) / decayRate;
         transform.localScale = Vector3.Lerp(transform.localScale, originalScale, t);
+    }
+
+    private void lerpDecayColor()
+    {
+        //Renderer currentRenderer = GetComponent<Renderer>();
+        //currentRenderer.material.SetColor("_Color", Color.Lerp(colorGenerator.selectedColor, colorGenerator.interactableColor, decayDelay));
+        //float duration = 3000f;
+        //float t = Mathf.PingPong(Time.time, duration) / duration;
+        ////currentRenderer.material.color = Color.Lerp(colorGenerator.selectedColor, colorGenerator.interactableColor, t);
+        //Material selectedMaterial = (Material)Resources.Load("Materials/Prototyping/Selected", typeof(Material));
+        //selectedMaterial.color = Color.Lerp(colorGenerator.selectedColor, colorGenerator.interactableColor, t);
     }
 }

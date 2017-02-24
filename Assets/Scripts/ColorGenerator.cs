@@ -4,9 +4,17 @@ using UnityEngine;
 
 public class ColorGenerator : MonoBehaviour
 {
+
+    public Color selectedColor;
+    public Color interactableColor;
+     
     void Start()
     {
         RecolorWorld();
+        Material interactableMaterial = (Material)Resources.Load("Materials/Prototyping/Interactable", typeof(Material));
+        interactableColor = interactableMaterial.GetColor("_Color");
+        Material selectedMaterial = (Material)Resources.Load("Materials/Prototyping/Selected", typeof(Material));
+        selectedColor = selectedMaterial.GetColor("_Color");
     }
 
     /// <summary>
