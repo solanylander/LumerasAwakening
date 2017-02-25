@@ -27,7 +27,7 @@ public class ResourceManager : MonoBehaviour {
     void Start () {
         currentResource = maxResource;
         nextRegenTick = 1.0f;
-        audioSource = GetComponent<AudioSource>();
+        audioSource = GetComponents<AudioSource>()[1];
         nextNope = 0.0f;
         colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
         ColorBlock colorBlock = resourceSlider.colors;
@@ -73,7 +73,7 @@ public class ResourceManager : MonoBehaviour {
                 audioSource.Stop();
                 audioSource.clip = nopeAudio;
                 audioSource.Play();
-                nextNope = Time.time + 2.5f;
+                nextNope = Time.time + 10f;
             }
         }
     }
