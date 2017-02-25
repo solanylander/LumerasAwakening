@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour {
     //Prototyping Stuff
@@ -28,6 +29,8 @@ public class SpawnManager : MonoBehaviour {
         spawnSet = 0;
         audioSource = GetComponent<AudioSource>();
         resourceManager = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<ResourceManager>();
+        audioSource.clip = deathSound;
+        audioSource.Play();
     }
 	
 	/// <summary>
@@ -86,9 +89,15 @@ public class SpawnManager : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R) | playerCharacter.transform.position.y < deathDepth)
         {
+            if (spawnSet == 0)
+            {
+                SceneManager.LoadScene("la-3");
+            } else
+            {
+                playerCharacter.transform.position = spawnPosition;
+            }
             audioSource.clip = deathSound;
             audioSource.Play();
-            playerCharacter.transform.position = spawnPosition;
             resourceManager.currentResource = resourceManager.maxResource;
         }
     }
