@@ -12,9 +12,9 @@ public class ColorGenerator : MonoBehaviour
     {
         RecolorWorld();
         Material interactableMaterial = (Material)Resources.Load("Materials/Prototyping/Interactable", typeof(Material));
-        interactableColor = interactableMaterial.GetColor("_Color");
+        interactableColor = interactableMaterial.color;
         Material selectedMaterial = (Material)Resources.Load("Materials/Prototyping/Selected", typeof(Material));
-        selectedColor = selectedMaterial.GetColor("_Color");
+        selectedColor = selectedMaterial.color;
     }
 
     /// <summary>

@@ -20,6 +20,8 @@ public class TurretController : MonoBehaviour
     private int interactableMask;
     private int wallMask;
 
+    private AudioSource audioSource;
+
     void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player");
@@ -29,6 +31,7 @@ public class TurretController : MonoBehaviour
         interactableMask = 1 << LayerMask.NameToLayer("Interactable");
         wallMask = 1 << LayerMask.NameToLayer("Wall");
         attackTimer = 0;
+        audioSource = GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -37,12 +40,12 @@ public class TurretController : MonoBehaviour
         RaycastHit hit;
         Debug.DrawRay(transform.position, target.transform.position - transform.position, Color.red, 1.0f);
         //Debug.DrawRay(transform.position, transform.forward, Color.blue, 1.0f);
-        if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, attackRange))
+        lastKnownPosition = target.transform.position;
+        lookAtRotation = Quaternion.LookRotation(lastKnownPosition - transform.position, Vector3.up);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookAtRotation, lookSpeed * Time.deltaTime); // Mathf.Pow(Mathf.Sin(Time.time * lookSpeed), 2)); //lookSpeed * Time.delta
+        if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, attackRange))
         {
-            lastKnownPosition = target.transform.position;
-            lookAtRotation = Quaternion.LookRotation(lastKnownPosition - transform.position, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookAtRotation, lookSpeed * Time.deltaTime); // Mathf.Pow(Mathf.Sin(Time.time * lookSpeed), 2)); //lookSpeed * Time.delta
-            if (Quaternion.Angle(transform.rotation, lookAtRotation) < 5.0f && !Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, attackRange, interactableMask))
+            if (Quaternion.Angle(transform.rotation, lookAtRotation) < 5.0f && hit.collider.gameObject.tag.Equals("Player"))
             {
                 //TODO: fix this, it's broken - range + walls
                 beamLine.enabled = true;
@@ -50,10 +53,12 @@ public class TurretController : MonoBehaviour
                 beamLine.SetPosition(1, target.transform.position);
                 if (Time.time > attackTimer)
                 {
+                    targetResources.damaged = true;
                     targetResources.decrementResource(attackDamage);
                     attackTimer = Time.time + attackTickSpeed;
+                    audioSource.Play();
                 }
-            } 
+            }
         }
     }
 }

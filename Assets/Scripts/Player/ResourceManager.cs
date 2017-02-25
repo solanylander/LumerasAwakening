@@ -16,7 +16,7 @@ public class ResourceManager : MonoBehaviour {
     public float regenTickRate = 1;
 
     private float nextRegenTick;
-    private bool damaged; // True when the player gets damaged.
+    public bool damaged; // True when the player gets damaged.
 
     public AudioClip nopeAudio;
     private AudioSource audioSource;
@@ -62,12 +62,11 @@ public class ResourceManager : MonoBehaviour {
     /// <param name="amount"></param>
     public void decrementResource(float amount)
     {
-        damaged = true;
         currentResource -= amount;
-        if (currentResource <= 0.0f)
+        if (currentResource <= 0.0f + float.Epsilon)
         {
             //Something, die
-            currentResource = 0.0f + float.Epsilon; 
+            currentResource = 0.0f; 
             nextRegenTick = Time.time + regenTickRate * 5; //Punish 
             if (Time.time > nextNope)
             {
