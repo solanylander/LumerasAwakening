@@ -57,6 +57,7 @@ public class TurretController : MonoBehaviour
                     targetResources.decrementResource(attackDamage);
                     attackTimer = Time.time + attackTickSpeed;
                     audioSource.Play();
+                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
                 }
             }
         }

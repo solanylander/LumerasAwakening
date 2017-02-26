@@ -15,9 +15,9 @@ public class Interactable: MonoBehaviour
     public float maxMass;
     [Range(0.01f, 1.0f)]
     public float minMass;
-    [Range(0.25f, 10.0f)]
+    [Range(0.25f, 20.0f)]
     public float decayDelay;
-    [Range(1.0f, 1000.0f)]
+    [Range(100.0f, 3000.0f)]
     public float decayRate;
     [RangeAttribute(0, 1)]
     public int enableDecay;

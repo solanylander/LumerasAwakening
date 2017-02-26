@@ -21,6 +21,7 @@ public class ResourceManager : MonoBehaviour {
     public AudioClip nopeAudio;
     private AudioSource audioSource;
     private float nextNope;
+    private bool lockedOut;
 
     private ColorGenerator colorGenerator;
 
@@ -49,6 +50,7 @@ public class ResourceManager : MonoBehaviour {
         {
             decrementResource(-regenTickAmount);
             nextRegenTick = Time.time + regenTickRate;
+            lockedOut = false;
         }
         resourceSlider.value = currentResource;
     }
@@ -63,18 +65,25 @@ public class ResourceManager : MonoBehaviour {
     public void decrementResource(float amount)
     {
         currentResource -= amount;
-        if (currentResource <= 0.0f + float.Epsilon)
+        if (currentResource < 5.0f && !lockedOut)
         {
             //Something, die
-            currentResource = 0.0f; 
-            nextRegenTick = Time.time + regenTickRate * 5; //Punish 
+            currentResource = 4.0f;
+            nextRegenTick = Time.time + regenTickRate * 15; //Punish 
+            lockedOut = true;
             if (Time.time > nextNope)
             {
                 audioSource.Stop();
                 audioSource.clip = nopeAudio;
                 audioSource.Play();
-                nextNope = Time.time + 10f;
+                nextNope = Time.time + 10f; //TODO: balance this stuff
+                GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
             }
         }
+    }
+
+    public void setResource(float amount)
+    {
+        currentResource = amount;
     }
 }

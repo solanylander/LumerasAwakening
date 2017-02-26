@@ -54,6 +54,7 @@ public class SpawnManager : MonoBehaviour {
             spawnPosition = new Vector3(71, 188, -65); 
             spawnSet = 1;
             deathDepth = 100;
+            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(-200);
         }
 
         if (spawnSet == 1)
@@ -92,9 +93,19 @@ public class SpawnManager : MonoBehaviour {
         {
             if (spawnSet == 0)
             {
-                SceneManager.LoadScene("la-3");
+                //SceneManager.LoadScene("la-3");
+                //if no reloading scene
+                foreach (GameObject pickUp in GameObject.FindGameObjectsWithTag("EnergyPickUp"))
+                {
+                    pickUp.SetActive(true);
+                }
+                playerCharacter.transform.position = spawnPosition;
             } else
             {
+                foreach (GameObject pickUp in GameObject.FindGameObjectsWithTag("EnergyPickUp"))
+                {
+                    pickUp.SetActive(true);
+                }
                 playerCharacter.transform.position = spawnPosition;
             }
             audioSource.clip = deathSound;
