@@ -16,14 +16,16 @@ public class FallDamage : MonoBehaviour
     public float fallDamage = 10f;
     public float fallDamageThreshold = 5f;
 
-    // Use this for initialization
+    private AudioSource audioSource;
+    public AudioClip ouchAudio;
+
     void Start()
     {
+        audioSource = GetComponents<AudioSource>()[1];
         resourceManager = GetComponentInChildren<ResourceManager>();
         characterController = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (lastYPos > characterController.gameObject.transform.position.y)
@@ -33,6 +35,8 @@ public class FallDamage : MonoBehaviour
         lastYPos = characterController.gameObject.transform.position.y;
         if (fallDistance >= fallDamageThreshold && characterController.isGrounded)
         {
+            audioSource.clip = ouchAudio;
+            audioSource.Play();
             resourceManager.decrementResource(fallDamage);
             fallDistance = 0;
             lastYPos = 0;
