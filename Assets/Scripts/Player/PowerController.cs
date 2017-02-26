@@ -121,7 +121,7 @@ public class PowerController : MonoBehaviour
                         }
                     } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
-                        if (resourceManager.currentResource >= energyDrainPerTick + 4.0f)
+                        if (resourceManager.currentResource >= energyDrainPerTick + 5.0f)
                         {
                             resourceManager.decrementResource(energyDrainPerTick);
                             ScaleObject(targetingController.currentTarget, 1 + powerScalar);
@@ -133,7 +133,7 @@ public class PowerController : MonoBehaviour
                         } 
                     } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
-                        if (resourceManager.currentResource >= energyDrainPerTick + 4.0f )
+                        if (resourceManager.currentResource >= energyDrainPerTick + 5.0f )
                         {
                             resourceManager.decrementResource(energyDrainPerTick);
                             ScaleObject(targetingController.currentTarget, 1 - powerScalar);
@@ -152,7 +152,7 @@ public class PowerController : MonoBehaviour
                 //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxPowerRange)); b/c Ugly
                 if (Input.GetButton("Fire1"))
                 {
-                    if (resourceManager.currentResource >= energyDrainPerTick + 4.0f)
+                    if (resourceManager.currentResource >= energyDrainPerTick + 5.0f)
                     {
                         resourceManager.decrementResource(energyDrainPerTick);
                         ScaleObject(targetingController.currentTarget, 1 + powerScalar);
@@ -165,7 +165,7 @@ public class PowerController : MonoBehaviour
                 }
                 else if (Input.GetButton("Fire2"))
                 {
-                    if (resourceManager.currentResource >= energyDrainPerTick + 4.0f)
+                    if (resourceManager.currentResource >= energyDrainPerTick + 5.0f)
                     {
                         resourceManager.decrementResource(energyDrainPerTick);
                         ScaleObject(targetingController.currentTarget, 1 - powerScalar);

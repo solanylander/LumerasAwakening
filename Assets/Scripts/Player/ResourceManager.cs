@@ -15,6 +15,7 @@ public class ResourceManager : MonoBehaviour {
     public float regenTickAmount = 5; //Regeneration resource / second
     public float regenTickRate = 1;
 
+    private float debugCurTime;
     private float nextRegenTick;
     public bool damaged; // True when the player gets damaged.
 
@@ -37,6 +38,7 @@ public class ResourceManager : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        debugCurTime = Time.time;
         if (damaged)
         {
             damageImage.color = flashColour;
@@ -48,9 +50,23 @@ public class ResourceManager : MonoBehaviour {
         damaged = false;
         if (Time.time > nextRegenTick && currentResource < maxResource)
         {
-            decrementResource(-regenTickAmount);
             nextRegenTick = Time.time + regenTickRate;
-            lockedOut = false;
+            decrementResource(-regenTickAmount);
+
+            if (currentResource < 5.5f)
+            {
+                currentResource = 5.5f;
+                nextRegenTick = Time.time + regenTickRate * 2; //Punish 
+                if (Time.time > nextNope)
+                {
+                    audioSource.Stop();
+                    audioSource.clip = nopeAudio;
+                    audioSource.Play();
+                    nextNope = Time.time + 10f; //TODO: balance this stuff
+                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
+                }
+            }
+
         }
         resourceSlider.value = currentResource;
     }
@@ -65,21 +81,6 @@ public class ResourceManager : MonoBehaviour {
     public void decrementResource(float amount)
     {
         currentResource -= amount;
-        if (currentResource < 5.0f && !lockedOut)
-        {
-            //Something, die
-            currentResource = 4.0f;
-            nextRegenTick = Time.time + regenTickRate * 15; //Punish 
-            lockedOut = true;
-            if (Time.time > nextNope)
-            {
-                audioSource.Stop();
-                audioSource.clip = nopeAudio;
-                audioSource.Play();
-                nextNope = Time.time + 10f; //TODO: balance this stuff
-                GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
-            }
-        }
     }
 
     public void setResource(float amount)
