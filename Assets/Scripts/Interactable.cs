@@ -60,12 +60,22 @@ public class Interactable: MonoBehaviour
         }
         if (Time.time < beginDecay && !transform.localScale.Equals(originalScale) && decayable)
         {
-            float duration = (beginDecay - Time.time) * 5000;
-            float t = Mathf.PingPong(Time.time, duration) / duration;
-            happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
+            if (Vector3.Distance(GameObject.FindGameObjectWithTag("Player").transform.position, transform.position) > 0)
+            {
+                float duration = (beginDecay - Time.time) * 5000;
+                //float duration = (float)Math.Pow((beginDecay - Time.time), (beginDecay - Time.time)) * 100;
+                float t = Mathf.PingPong(Time.time, duration) / duration;
+                happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
+            } 
         } else if (Time.time > beginDecay && !transform.localScale.Equals(originalScale) && decayable)
         {
-            lerpScaleDecay();
+            if (Vector3.Distance(GameObject.FindGameObjectWithTag("Player").transform.position,transform.position) > 0) // Only trigger decay once player has moved away from object a given distance
+            {
+                lerpScaleDecay();
+            } else
+            {
+                beginDecay = Time.time + decayDelay;
+            }
         }
     }
 

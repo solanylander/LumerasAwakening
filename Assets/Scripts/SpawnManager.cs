@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour {
     //Prototyping Stuff
-    private Vector3 spawnPosition;
+    [HideInInspector]
+    public Vector3 spawnPosition;
     private float deathDepth;
     private int spawnSet;
 
