@@ -37,7 +37,9 @@ public class FallDamage : MonoBehaviour
         {
             audioSource.clip = ouchAudio;
             audioSource.Play();
+            resourceManager.damaged = true;
             resourceManager.decrementResource(fallDamage);
+            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore((int)fallDamage);
             fallDistance = 0;
             lastYPos = 0;
         }

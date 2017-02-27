@@ -111,6 +111,8 @@ public class SpawnManager : MonoBehaviour {
             audioSource.clip = deathSound;
             audioSource.Play();
             resourceManager.currentResource = resourceManager.maxResource;
+            resourceManager.damaged = true;
+            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
         }
     }
 }

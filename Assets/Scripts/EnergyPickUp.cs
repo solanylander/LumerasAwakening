@@ -12,6 +12,10 @@ public class EnergyPickUp : MonoBehaviour {
         resourceManager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<ResourceManager>();
         audioSource = GameObject.FindGameObjectWithTag("MainCamera").GetComponents<AudioSource>()[1];
     }
+    void Update ()
+    {
+        transform.Rotate(Vector3.up, 90.0f * Time.deltaTime);
+    }
 
     void OnTriggerEnter(Collider col)
     {
