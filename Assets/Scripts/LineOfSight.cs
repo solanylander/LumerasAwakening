@@ -16,10 +16,11 @@ public class LineOfSight : MonoBehaviour {
     RaycastHit hit;
     Vector3 lastKnownPosition;
     NavMeshAgent agent;
-    float angle, comparisonAngle;
+    float angle, comparisonAngle, dist;
 
     //minDist is logarithmic (for now use 400)
-    public float fov, minDist;
+    public Material bullet;
+    public float fov, minDist, maxDist;
     public GameObject player, checkpoint1, checkpoint2, checkpoint3, checkpoint4, checkpoint5;
 
     // Use this for initialization
@@ -31,6 +32,7 @@ public class LineOfSight : MonoBehaviour {
         check = 0;
         angle = 0;
         checkpointCounter = 0;
+        dist = maxDist + 1.0f;
         retainSight = 0;
         sight = false;
         endSight = false;
@@ -58,33 +60,41 @@ public class LineOfSight : MonoBehaviour {
         }
         checkSight();
 
+        //Debug.Log(retainSight);
+        if (((int)agent.transform.position.x) == ((int)lastKnownPosition.x) && ((int)agent.transform.position.z) == ((int)lastKnownPosition.z))
+        {
+            retainSight = -1;
+        }
         //If the enemy can currently see the player
         if (sight)
         {
             //Amount of frames the enemy still remembers that they saw the player after line of sight is broken
             retainSight = 3;
             Vector3 distance = player.transform.position - agent.transform.position;
-            float dist = Math.Abs(player.transform.position.x) * Math.Abs(player.transform.position.x) + Math.Abs(player.transform.position.y) * Math.Abs(player.transform.position.y) + Math.Abs(player.transform.position.z) * Math.Abs(player.transform.position.z);
-            dist = minDist;
+            dist = Math.Abs(distance.x) * Math.Abs(distance.x) + Math.Abs(distance.y) * Math.Abs(distance.y) + Math.Abs(distance.z) * Math.Abs(distance.z);
+            if(minDist > dist)
+            {
+                agent.destination = agent.transform.position;
+                Debug.Log("PASS4");
+            }
+            else if(maxDist > dist)
             {
                 //Set the last known position of the player to the players current position
                 lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
                 agent.destination = lastKnownPosition;
+                Debug.Log("PASS1");
             }
             endSight = true;
         }
-        if(!sight && endSight)
+        else if(!sight && endSight && minDist < dist)
         {
-            endSight = false;
             lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
             agent.destination = lastKnownPosition;
+            Debug.Log("PASS2");
         }
-        //Debug.Log(retainSight);
-        if (((int)agent.transform.position.x) == ((int)lastKnownPosition.x) && ((int)agent.transform.position.z) == ((int)lastKnownPosition.z)){
-            retainSight = -1;
-        }
-        if (retainSight == -1)
-        { 
+        else if (retainSight == -1)
+        {
+            Debug.Log("PASS3");
             switch (checkpointCounter)
             {
                 case 0:
@@ -139,18 +149,21 @@ public class LineOfSight : MonoBehaviour {
 
     void fireBullet()
     {
-        //Fire a bullet in the diretion of the players last known position
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Vector3 scale = new Vector3(0.1f, 0.1f, 0.1f);
-        go.transform.localScale = scale;
-        go.AddComponent<Projectile>();
-        go.transform.GetComponent<Projectile>().setDirection(direction);
-        go.transform.GetComponent<Projectile>().setPlayerPosition(position);
-        go.tag = "Projectile";
-        go.GetComponent<MeshRenderer>().enabled = true;
-        go.transform.position = new Vector3(transform.position.x + direction.x, transform.position.y + direction.y, transform.position.z + direction.z);
-        go.AddComponent<Rigidbody>(); // Add the rigidbody
-        go.AddComponent<BulletCollide>();
+        if (maxDist > dist)
+        {
+            //Fire a bullet in the diretion of the players last known position
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            go.AddComponent<Projectile>();
+            go.transform.GetComponent<Projectile>().setDirection(direction);
+            go.transform.GetComponent<Projectile>().setPlayerPosition(position);
+            go.tag = "Projectile";
+            go.GetComponent<MeshRenderer>().enabled = true;
+            go.transform.position = new Vector3(transform.position.x + direction.x, transform.position.y + direction.y, transform.position.z + direction.z);
+            go.AddComponent<Rigidbody>(); // Add the rigidbody
+            go.AddComponent<BulletCollide>();
+            go.GetComponent<Renderer>().material = bullet;
+        }
     }
 
     void checkSight()

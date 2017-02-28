@@ -19,15 +19,15 @@ public class prettySpinningStuff : MonoBehaviour {
 
         if (RotateX)
         {
-            transform.rotation *= Quaternion.AngleAxis(10 * Time.deltaTime, Vector3.right);
+            transform.rotation *= Quaternion.AngleAxis(4 * Time.deltaTime, Vector3.right);
         }
         if (RotateY)
         {
-            transform.rotation *= Quaternion.AngleAxis(10 * Time.deltaTime, Vector3.up);
+            transform.rotation *= Quaternion.AngleAxis(4 * Time.deltaTime, Vector3.up);
         }
         if (RotateZ)
         {
-            transform.rotation *= Quaternion.AngleAxis(10 * Time.deltaTime, Vector3.forward);
+            transform.rotation *= Quaternion.AngleAxis(4 * Time.deltaTime, Vector3.forward);
         }
 
         transform.position -= (transform.rotation * pivot);
