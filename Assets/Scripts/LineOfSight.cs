@@ -9,8 +9,7 @@ public class LineOfSight : MonoBehaviour {
     //Objects variables
     int check, checkpointCounter, checkX, checkZ;
     int retainSight;
-    bool sight;
-    public GameObject player;
+    bool sight, endSight;
     Vector3 direction;
     Vector3 position;
     Ray sightRay;
@@ -19,8 +18,9 @@ public class LineOfSight : MonoBehaviour {
     NavMeshAgent agent;
     float angle, comparisonAngle;
 
-    public float fov;
-    public GameObject checkpoint1, checkpoint2, checkpoint3, checkpoint4, checkpoint5;
+    //minDist is logarithmic (for now use 400)
+    public float fov, minDist;
+    public GameObject player, checkpoint1, checkpoint2, checkpoint3, checkpoint4, checkpoint5;
 
     // Use this for initialization
     void Start ()
@@ -33,6 +33,7 @@ public class LineOfSight : MonoBehaviour {
         checkpointCounter = 0;
         retainSight = 0;
         sight = false;
+        endSight = false;
         lastKnownPosition = transform.position;
         direction = new Vector3(0.0f, 0.0f, 0.0f);
         position = new Vector3(0.0f, 0.0f, 0.0f);
@@ -58,11 +59,23 @@ public class LineOfSight : MonoBehaviour {
         checkSight();
 
         //If the enemy can currently see the player
-        if (sight == true)
+        if (sight)
         {
             //Amount of frames the enemy still remembers that they saw the player after line of sight is broken
             retainSight = 3;
-            //Set the last known position of the player to the players current position
+            Vector3 distance = player.transform.position - agent.transform.position;
+            float dist = Math.Abs(player.transform.position.x) * Math.Abs(player.transform.position.x) + Math.Abs(player.transform.position.y) * Math.Abs(player.transform.position.y) + Math.Abs(player.transform.position.z) * Math.Abs(player.transform.position.z);
+            dist = minDist;
+            {
+                //Set the last known position of the player to the players current position
+                lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+                agent.destination = lastKnownPosition;
+            }
+            endSight = true;
+        }
+        if(!sight && endSight)
+        {
+            endSight = false;
             lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
             agent.destination = lastKnownPosition;
         }
@@ -111,14 +124,14 @@ public class LineOfSight : MonoBehaviour {
             }
         }
         //Every fourth time round if retainSight is greater than 0 fire a bullet
-        if (check == 4 && retainSight > 0)
+        if (check == 8 && retainSight >= 0)
         {
             //decrement retainSight
             retainSight--;
             fireBullet();
         }
         check++;
-        if(check == 5)
+        if(check == 9)
         {
             check = 0;
         }
@@ -137,6 +150,7 @@ public class LineOfSight : MonoBehaviour {
         go.GetComponent<MeshRenderer>().enabled = true;
         go.transform.position = new Vector3(transform.position.x + direction.x, transform.position.y + direction.y, transform.position.z + direction.z);
         go.AddComponent<Rigidbody>(); // Add the rigidbody
+        go.AddComponent<BulletCollide>();
     }
 
     void checkSight()
