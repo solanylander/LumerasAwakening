@@ -22,6 +22,7 @@ public class ScoreManager : MonoBehaviour
         currentScore = 1000;
         nextDecrement = Time.time;
         scoreText = GetComponent<Text>();
+        highScoreText = GetComponent<Text>();
         highScore = PlayerPrefs.GetInt("highScore", highScore);
     }
 
