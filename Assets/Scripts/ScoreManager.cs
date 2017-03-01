@@ -13,6 +13,8 @@ public class ScoreManager : MonoBehaviour
     [SerializeField]
     private Text scoreText;
     public GameObject scoreFlash;
+    public static int highScore;
+    public Text highScoreText;
 
     void Start()
     {
@@ -20,6 +22,7 @@ public class ScoreManager : MonoBehaviour
         currentScore = 1000;
         nextDecrement = Time.time;
         scoreText = GetComponent<Text>();
+        highScore = PlayerPrefs.GetInt("highScore", highScore);
     }
 
     void Update()
@@ -28,6 +31,14 @@ public class ScoreManager : MonoBehaviour
         {
             decrementScore(1);
             nextDecrement = Time.time + 1.0f;
+        }
+
+        if (currentScore > highScore)
+        {
+            highScore = currentScore;
+            highScoreText.GetComponent<Text>().text = "Best: " + currentScore;
+
+            PlayerPrefs.SetInt("highScore", highScore);
         }
         //float t = Mathf.PingPong(Time.time, 0.25f) / 0.25f;
         //scoreFlash.transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, t);
