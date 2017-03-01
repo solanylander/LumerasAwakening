@@ -130,6 +130,9 @@ public class PowerController : MonoBehaviour
                                 audioSource.clip = scaleUpAudio;
                                 audioSource.Play();
                             }
+                        } else
+                        {
+                            resourceManager.playNope();
                         } 
                     } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
@@ -142,6 +145,9 @@ public class PowerController : MonoBehaviour
                                 audioSource.clip = scaleDownAudio;
                                 audioSource.Play();
                             }
+                        } else
+                        {
+                            resourceManager.playNope();
                         } 
                     }     
                 }
@@ -161,7 +167,10 @@ public class PowerController : MonoBehaviour
                             audioSource.clip = scaleUpAudio;
                             audioSource.Play();
                         }
-                    } 
+                    } else
+                    {
+                        resourceManager.playNope();
+                    }
                 }
                 else if (Input.GetButton("Fire2"))
                 {
@@ -174,6 +183,9 @@ public class PowerController : MonoBehaviour
                             audioSource.clip = scaleDownAudio;
                             audioSource.Play();
                         }
+                    } else
+                    {
+                        resourceManager.playNope();
                     }
                 }
             } else
