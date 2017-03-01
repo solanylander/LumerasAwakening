@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GearController : MonoBehaviour {
+public class GearController : MonoBehaviour
+{
 
     //Variables
     public float rotate;
@@ -12,10 +13,11 @@ public class GearController : MonoBehaviour {
     bool colliding, free, stay, wasSpinning, achieved;
     Vector3 scale, connection, blankConnection;
     int counter, doorCounter, blockCounter, triggers;
-    
 
-	// Use this for initialization
-	void Start () {
+
+    // Use this for initialization
+    void Start()
+    {
         doorPosition = door.transform.position.y;
         scale = transform.localScale;
         colliding = false;
@@ -29,10 +31,11 @@ public class GearController : MonoBehaviour {
         connection = blankConnection;
         triggers = 0;
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-        if(blockCounter > 0)
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        if (blockCounter > 0)
         {
             free = false;
             blockCounter--;
@@ -69,25 +72,25 @@ public class GearController : MonoBehaviour {
         }
         if (final && transform.tag == "InteractableXScalableYScalableStGear")
         {
-            if(doorCounter == -1)
+            if (doorCounter == -1)
             {
                 doorCounter = 10;
             }
-            else if(doorCounter > 0)
+            else if (doorCounter > 0)
             {
                 doorCounter--;
             }
-            if(doorCounter == 0 && door.transform.position.y > doorPosition)
+            if (doorCounter == 0 && door.transform.position.y > doorPosition)
             {
                 door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y - 0.1f, door.transform.position.z);
             }
         }
-        if(spinning == false && wasSpinning == true)
+        if (spinning == false && wasSpinning == true)
         {
             transform.GetComponent<Interactable>().shrink();
             wasSpinning = false;
         }
-        if(triggers == 0 && (transform.tag == "InteractableXScalableYScalableStGear" || transform.tag == "InteractableXScalableYScalableSpGear"))
+        if (triggers == 0 && (transform.tag == "InteractableXScalableYScalableStGear" || transform.tag == "InteractableXScalableYScalableSpGear"))
         {
             transform.tag = "InteractableXScalableYScalableStGear";
             spinning = false;
@@ -110,9 +113,9 @@ public class GearController : MonoBehaviour {
         colliding = true;
         SphereCollider myCollider = transform.GetComponent<SphereCollider>();
         myCollider.radius = 1.3f;
-        if(other.tag == "Wall")
+        if (other.tag == "Wall")
         {
-            if (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear"  && transform.tag != "InteractableXScalableYScalableUGear")
+            if (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear" && transform.tag != "InteractableXScalableYScalableUGear")
             {
                 transform.tag = "InteractableXScalableYScalableStGear";
             }
@@ -155,10 +158,11 @@ public class GearController : MonoBehaviour {
         myCollider.radius = 1.3f;
         if (other.tag == "Wall")
         {
-            if(transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear")
+            if (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear")
             {
                 transform.tag = "InteractableXScalableYScalableStGear";
-            }else
+            }
+            else
             {
                 transform.tag = "InteractableXScalableYScalableUGear";
             }
@@ -172,7 +176,7 @@ public class GearController : MonoBehaviour {
         colliding = false;
         SphereCollider myCollider = transform.GetComponent<SphereCollider>();
         myCollider.radius = 1.25f;
-        if(connection == other.transform.position)
+        if (connection == other.transform.position)
         {
             transform.tag = "InteractableXScalableYScalableStGear";
             spinning = false;
