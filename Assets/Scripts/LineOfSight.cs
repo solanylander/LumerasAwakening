@@ -75,14 +75,12 @@ public class LineOfSight : MonoBehaviour {
             if(minDist > dist)
             {
                 agent.destination = agent.transform.position;
-                Debug.Log("PASS4");
             }
             else if(maxDist > dist)
             {
                 //Set the last known position of the player to the players current position
                 lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
                 agent.destination = lastKnownPosition;
-                Debug.Log("PASS1");
             }
             endSight = true;
         }
@@ -90,11 +88,9 @@ public class LineOfSight : MonoBehaviour {
         {
             lastKnownPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
             agent.destination = lastKnownPosition;
-            Debug.Log("PASS2");
         }
         else if (retainSight == -1)
         {
-            Debug.Log("PASS3");
             switch (checkpointCounter)
             {
                 case 0:

@@ -9,9 +9,9 @@ public class GearController : MonoBehaviour {
     float doorPosition;
     public bool spinning, final;
     public GameObject door;
-    bool colliding, free, stay;
+    bool colliding, free, stay, wasSpinning, achieved;
     Vector3 scale, connection, blankConnection;
-    int counter, doorCounter, blockCounter;
+    int counter, doorCounter, blockCounter, triggers;
     
 
 	// Use this for initialization
@@ -21,10 +21,13 @@ public class GearController : MonoBehaviour {
         colliding = false;
         free = true;
         stay = true;
+        wasSpinning = true;
+        achieved = false;
         doorCounter = -1;
         blockCounter = -1;
         blankConnection = new Vector3(0.0f, 0.0f, 0.0f);
         connection = blankConnection;
+        triggers = 0;
     }
 	
 	// Update is called once per frame
@@ -57,6 +60,11 @@ public class GearController : MonoBehaviour {
             if (door.transform.position.y < doorPosition + 4.0f)
             {
                 door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.1f, door.transform.position.z);
+                if (!achieved)
+                {
+                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(-150);
+                    achieved = true;
+                }
             }
         }
         if (final && transform.tag == "InteractableXScalableYScalableStGear")
@@ -74,34 +82,51 @@ public class GearController : MonoBehaviour {
                 door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y - 0.1f, door.transform.position.z);
             }
         }
+        if(spinning == false && wasSpinning == true)
+        {
+            transform.GetComponent<Interactable>().shrink();
+            wasSpinning = false;
+        }
+        if(triggers == 0 && (transform.tag == "InteractableXScalableYScalableStGear" || transform.tag == "InteractableXScalableYScalableSpGear"))
+        {
+            transform.tag = "InteractableXScalableYScalableStGear";
+            spinning = false;
+            stay = true;
+            connection = blankConnection;
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "InteractableXScalableYScalableStGear" && transform.tag != "InteractableXScalableYScalableIGear" && connection == blankConnection)
+        triggers++;
+        if (other.tag != "InteractableXScalableYScalableStGear" && other.tag != "InteractableXScalableYScalableUGear" && transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear" && connection == blankConnection)
         {
-                transform.tag = "InteractableXScalableYScalableSpGear";
-                connection = other.transform.position;
-                spinning = true;
-                stay = true;
+            transform.tag = "InteractableXScalableYScalableSpGear";
+            connection = other.transform.position;
+            spinning = true;
+            wasSpinning = true;
+            stay = true;
         }
         colliding = true;
         SphereCollider myCollider = transform.GetComponent<SphereCollider>();
         myCollider.radius = 1.3f;
         if(other.tag == "Wall")
         {
-            if (transform.tag != "InteractableXScalableYScalableIGear")
+            if (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear"  && transform.tag != "InteractableXScalableYScalableUGear")
             {
                 transform.tag = "InteractableXScalableYScalableStGear";
             }
-            blockCounter = 10;
+            else
+            {
+                transform.tag = "InteractableXScalableYScalableUGear";
+            }
         }
     }
 
     //Debug.Log(connection.x + " " + connection.y + " " + connection.z);
     void OnTriggerStay(Collider other)
     {
-        if (connection == blankConnection && transform.tag != "InteractableXScalableYScalableIGear")
+        if (connection == blankConnection && transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear")
         {
             if (stay)
             {
@@ -114,10 +139,11 @@ public class GearController : MonoBehaviour {
                 transform.tag = "InteractableXScalableYScalableSpGear";
                 connection = other.transform.position;
                 spinning = true;
+                wasSpinning = true;
                 stay = true;
             }
         }
-        if (connection == other.transform.position && other.tag == "InteractableXScalableYScalableStGear")
+        if (connection == other.transform.position && (other.tag == "InteractableXScalableYScalableStGear" || other.tag == "InteractableXScalableYScalableUGear"))
         {
             transform.tag = "InteractableXScalableYScalableStGear";
             spinning = false;
@@ -129,9 +155,12 @@ public class GearController : MonoBehaviour {
         myCollider.radius = 1.3f;
         if (other.tag == "Wall")
         {
-            if(transform.tag != "InteractableXScalableYScalableIGear")
+            if(transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear")
             {
                 transform.tag = "InteractableXScalableYScalableStGear";
+            }else
+            {
+                transform.tag = "InteractableXScalableYScalableUGear";
             }
             blockCounter = 10;
         }
@@ -139,6 +168,7 @@ public class GearController : MonoBehaviour {
 
     void OnTriggerExit(Collider other)
     {
+        triggers--;
         colliding = false;
         SphereCollider myCollider = transform.GetComponent<SphereCollider>();
         myCollider.radius = 1.25f;
@@ -148,6 +178,13 @@ public class GearController : MonoBehaviour {
             spinning = false;
             stay = true;
             connection = blankConnection;
+        }
+        if (other.tag == "Wall")
+        {
+            if (transform.tag == "InteractableXScalableYScalableUGear")
+            {
+                transform.tag = "InteractableXScalableYScalableIGear";
+            }
         }
     }
 }

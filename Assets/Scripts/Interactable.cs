@@ -119,4 +119,9 @@ public class Interactable: MonoBehaviour
         //Material selectedMaterial = (Material)Resources.Load("Materials/Prototyping/Selected", typeof(Material));
         //selectedMaterial.color = Color.Lerp(colorGenerator.selectedColor, colorGenerator.interactableColor, t);
     }
+
+    public void shrink()
+    {
+        beginDecay -= decayDelay;
+    }
 }
