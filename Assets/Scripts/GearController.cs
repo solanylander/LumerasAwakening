@@ -78,7 +78,7 @@ public class GearController : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "InteractableXScalableYScalableStGear" && transform.tag != "InteractableXScalableYScalableIGear" && connection == blankConnection)
+        if (other.tag != "InteractableXScalableYScalableStGear" && other.tag != "InteractableXScalableYScalableUGear" && transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear" && connection == blankConnection)
         {
                 transform.tag = "InteractableXScalableYScalableSpGear";
                 connection = other.transform.position;
@@ -90,18 +90,21 @@ public class GearController : MonoBehaviour {
         myCollider.radius = 1.3f;
         if(other.tag == "Wall")
         {
-            if (transform.tag != "InteractableXScalableYScalableIGear")
+            if (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear"  && transform.tag != "InteractableXScalableYScalableUGear")
             {
                 transform.tag = "InteractableXScalableYScalableStGear";
             }
-            blockCounter = 10;
+            else
+            {
+                transform.tag = "InteractableXScalableYScalableUGear";
+            }
         }
     }
 
     //Debug.Log(connection.x + " " + connection.y + " " + connection.z);
     void OnTriggerStay(Collider other)
     {
-        if (connection == blankConnection && transform.tag != "InteractableXScalableYScalableIGear")
+        if (connection == blankConnection && transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear")
         {
             if (stay)
             {
@@ -117,7 +120,7 @@ public class GearController : MonoBehaviour {
                 stay = true;
             }
         }
-        if (connection == other.transform.position && other.tag == "InteractableXScalableYScalableStGear")
+        if (connection == other.transform.position && (other.tag == "InteractableXScalableYScalableStGear" || other.tag == "InteractableXScalableYScalableUGear"))
         {
             transform.tag = "InteractableXScalableYScalableStGear";
             spinning = false;
@@ -129,9 +132,12 @@ public class GearController : MonoBehaviour {
         myCollider.radius = 1.3f;
         if (other.tag == "Wall")
         {
-            if(transform.tag != "InteractableXScalableYScalableIGear")
+            if(transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear")
             {
                 transform.tag = "InteractableXScalableYScalableStGear";
+            }else
+            {
+                transform.tag = "InteractableXScalableYScalableUGear";
             }
             blockCounter = 10;
         }
@@ -148,6 +154,13 @@ public class GearController : MonoBehaviour {
             spinning = false;
             stay = true;
             connection = blankConnection;
+        }
+        if (other.tag == "Wall")
+        {
+            if (transform.tag == "InteractableXScalableYScalableUGear")
+            {
+                transform.tag = "InteractableXScalableYScalableIGear";
+            }
         }
     }
 }
