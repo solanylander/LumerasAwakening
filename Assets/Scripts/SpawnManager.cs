@@ -30,8 +30,8 @@ public class SpawnManager : MonoBehaviour {
         spawnSet = 0;
         audioSource = GetComponent<AudioSource>();
         resourceManager = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<ResourceManager>();
-        audioSource.clip = deathSound;
-        audioSource.Play();
+        //audioSource.clip = deathSound;
+        //audioSource.Play();
     }
 	
 	/// <summary>
@@ -113,6 +113,10 @@ public class SpawnManager : MonoBehaviour {
             resourceManager.currentResource = resourceManager.maxResource;
             resourceManager.damaged = true;
             GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            SceneManager.LoadScene("la-3");
         }
     }
 }
