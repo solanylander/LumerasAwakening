@@ -6,11 +6,12 @@ public class ClockReset : MonoBehaviour {
 
     Vector3 position, markerPosition;
     Quaternion rotation;
-    public GameObject marker;
+    public GameObject marker, spawn;
     float maxScale, minScale;
     int scaleBlock, rescaleBlock;
     public float markerSpeed;
     public Material growable;
+    public Mesh square;
 
     // Use this for initialization
     void Start () {
@@ -41,11 +42,24 @@ public class ClockReset : MonoBehaviour {
             transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
-        if (rescaleBlock > 0 && transform.localPosition.y < -7.0f)
+    }
+
+    void OnTriggerEnter(Collider other)
+    { 
+        if (other.tag == "Teleporter")
         {
-            transform.GetComponent<Interactable>().ignore(true);
-            rescaleBlock--;
             gameObject.GetComponent<Renderer>().material = growable;
+            transform.GetComponent<MeshFilter>().mesh = square;
+            transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
+            transform.position = spawn.transform.position;
+            transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
+        }
+        if (other.tag == "ColliderSwitch")
+        {
+            Destroy(other);
+            transform.GetComponent<Interactable>().ignore(true);
+            Destroy(transform.GetComponent<SphereCollider>());
+            transform.gameObject.AddComponent<BoxCollider>();
         }
     }
 }
