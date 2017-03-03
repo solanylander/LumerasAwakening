@@ -26,7 +26,7 @@ public class Interactable: MonoBehaviour
     private bool disableScale = true; //For cases where scaling should be disabled completely
     private enum objectMaterial {Wood, Metal, Stone, Glass, Crystal, MoonStone};
     private float beginDecay;
-    private bool decayable;
+    private bool decayable, changeable;
 
     private ColorGenerator colorGenerator;
     [SerializeField]
@@ -44,39 +44,42 @@ public class Interactable: MonoBehaviour
         beginDecay = float.PositiveInfinity;
         decayable = enableDecay == 0 ? false : true;
         colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
+        changeable = true;
     }
 
     void Update()
     {
-        //Temp testing triggers
-        if (this.tag.Contains("LevelFloor"))
-        {
-            if (Math.Max(transform.localScale.x, Math.Max(transform.localScale.y, transform.localScale.z)) >= maxScale && disableScale)
+            //Temp testing triggers
+            if (this.tag.Contains("LevelFloor"))
             {
-                this.tag = "LevelFloor";
-                this.GetComponent<Renderer>().material = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));
-                disableScale = false;
+                if (Math.Max(transform.localScale.x, Math.Max(transform.localScale.y, transform.localScale.z)) >= maxScale && disableScale)
+                {
+                    this.tag = "LevelFloor";
+                    this.GetComponent<Renderer>().material = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));
+                    disableScale = false;
+                }
             }
-        }
-        if (Time.time < beginDecay && !transform.localScale.Equals(originalScale) && decayable)
-        {
-            if (Vector3.Distance(GameObject.FindGameObjectWithTag("Player").transform.position, transform.position) > 0)
+            if (Time.time < beginDecay && !transform.localScale.Equals(originalScale) && decayable)
             {
-                float duration = (beginDecay - Time.time) * 5000;
-                //float duration = (float)Math.Pow((beginDecay - Time.time), (beginDecay - Time.time)) * 100;
-                float t = Mathf.PingPong(Time.time, duration) / duration;
-                happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
-            } 
-        } else if (Time.time > beginDecay && !transform.localScale.Equals(originalScale) && decayable)
-        {
-            if (Vector3.Distance(GameObject.FindGameObjectWithTag("Player").transform.position,transform.position) > 0) // Only trigger decay once player has moved away from object a given distance
-            {
-                lerpScaleDecay();
-            } else
-            {
-                beginDecay = Time.time + decayDelay;
+                if (Vector3.Distance(GameObject.FindGameObjectWithTag("Player").transform.position, transform.position) > 0)
+                {
+                    float duration = (beginDecay - Time.time) * 5000;
+                    //float duration = (float)Math.Pow((beginDecay - Time.time), (beginDecay - Time.time)) * 100;
+                    float t = Mathf.PingPong(Time.time, duration) / duration;
+                    happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
+                }
             }
-        }
+            else if (Time.time > beginDecay && !transform.localScale.Equals(originalScale) && decayable)
+            {
+                if (Vector3.Distance(GameObject.FindGameObjectWithTag("Player").transform.position, transform.position) > 0) // Only trigger decay once player has moved away from object a given distance
+                {
+                    lerpScaleDecay();
+                }
+                else
+                {
+                    beginDecay = Time.time + decayDelay;
+                }
+            }
     }
 
     /// <summary>
@@ -85,14 +88,18 @@ public class Interactable: MonoBehaviour
     /// <param name="newScale"></param>
     /// <param name="triggerDecay"></param>
     public void updateScale(Vector3 newScale, bool triggerDecay){
-        happyRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
-        transform.localScale = newScale;
-        if (triggerDecay)
-        {   
-            beginDecay = Time.time + decayDelay; //TODO: This should not add full decay delay length when object is scaled at max scale?
-        } else
+        if (changeable)
         {
-            beginDecay = float.PositiveInfinity;
+            happyRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
+            transform.localScale = newScale;
+            if (triggerDecay)
+            {
+                beginDecay = Time.time + decayDelay; //TODO: This should not add full decay delay length when object is scaled at max scale?
+            }
+            else
+            {
+                beginDecay = float.PositiveInfinity;
+            }
         }
     }
 
@@ -123,5 +130,10 @@ public class Interactable: MonoBehaviour
     public void shrink()
     {
         beginDecay -= decayDelay;
+    }
+
+    public void ignore(bool ig)
+    {
+        changeable = ig;
     }
 }
