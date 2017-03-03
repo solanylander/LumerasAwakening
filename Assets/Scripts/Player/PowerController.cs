@@ -17,6 +17,8 @@ public class PowerController : MonoBehaviour
     public int freezeWhileScaling = 1;
     [RangeAttribute(0, 1)]
     public int globalScaleDecay = 1;
+    [RangeAttribute(0, 1)]
+    public int resources = 0;
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
@@ -121,34 +123,20 @@ public class PowerController : MonoBehaviour
                         }
                     } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
-                        if (resourceManager.currentResource >= energyDrainPerTick + 5.0f)
+                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                        if (!audioSource.isPlaying)
                         {
-                            resourceManager.decrementResource(energyDrainPerTick);
-                            ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                            if (!audioSource.isPlaying)
-                            {
-                                audioSource.clip = scaleUpAudio;
-                                audioSource.Play();
-                            }
-                        } else
-                        {
-                            resourceManager.playNope();
-                        } 
+                            audioSource.clip = scaleUpAudio;
+                            audioSource.Play();
+                        }
                     } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
-                        if (resourceManager.currentResource >= energyDrainPerTick + 5.0f )
+                        ScaleObject(targetingController.currentTarget, 1 - powerScalar);
+                        if (!audioSource.isPlaying)
                         {
-                            resourceManager.decrementResource(energyDrainPerTick);
-                            ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                            if (!audioSource.isPlaying)
-                            {
-                                audioSource.clip = scaleDownAudio;
-                                audioSource.Play();
-                            }
-                        } else
-                        {
-                            resourceManager.playNope();
-                        } 
+                            audioSource.clip = scaleDownAudio;
+                            audioSource.Play();
+                        }
                     }     
                 }
             }
@@ -158,34 +146,19 @@ public class PowerController : MonoBehaviour
                 //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxPowerRange)); b/c Ugly
                 if (Input.GetButton("Fire1"))
                 {
-                    if (resourceManager.currentResource >= energyDrainPerTick + 5.0f)
+                    ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                    if (!audioSource.isPlaying)
                     {
-                        resourceManager.decrementResource(energyDrainPerTick);
-                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                        if (!audioSource.isPlaying)
-                        {
-                            audioSource.clip = scaleUpAudio;
-                            audioSource.Play();
-                        }
-                    } else
-                    {
-                        resourceManager.playNope();
+                        audioSource.clip = scaleUpAudio;
+                        audioSource.Play();
                     }
-                }
-                else if (Input.GetButton("Fire2"))
-                {
-                    if (resourceManager.currentResource >= energyDrainPerTick + 5.0f)
+                } else if (Input.GetButton("Fire2"))
+                {  
+                    ScaleObject(targetingController.currentTarget, 1 - powerScalar);
+                    if (!audioSource.isPlaying)
                     {
-                        resourceManager.decrementResource(energyDrainPerTick);
-                        ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                        if (!audioSource.isPlaying)
-                        {
-                            audioSource.clip = scaleDownAudio;
-                            audioSource.Play();
-                        }
-                    } else
-                    {
-                        resourceManager.playNope();
+                        audioSource.clip = scaleDownAudio;
+                        audioSource.Play();
                     }
                 }
             } else
@@ -206,6 +179,7 @@ public class PowerController : MonoBehaviour
     /// Anchored Interactables are children of invisible 'anchor' objects which redefine the pivot point for scaling.
     /// Objects can be tagged with any combination/order of Interactable, Anchored, [X|Y|Z]Scalable concatenated 
     /// TODO: Move decay & scaling into Interactable & specify individual XYZ scale limits & decayRates
+    /// TODO: Implement a log f'n for scaling multiplier based on current X|Y|Z scale val.
     /// </remarks>
     /// <param name="targetInteractable"></param>
     /// <param name="scaleRate"></param>

@@ -25,7 +25,7 @@ public class TurretController : MonoBehaviour
     void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player");
-        targetResources = target.GetComponentInChildren<ResourceManager>();
+        //targetResources = target.GetComponentInChildren<ResourceManager>();
         beamLine = GetComponent<LineRenderer>();
         beamLine.enabled = false;
         interactableMask = 1 << LayerMask.NameToLayer("Interactable");
@@ -53,11 +53,11 @@ public class TurretController : MonoBehaviour
                 beamLine.SetPosition(1, target.transform.position);
                 if (Time.time > attackTimer)
                 {
-                    targetResources.damaged = true;
-                    targetResources.decrementResource(attackDamage);
+                    //targetResources.damaged = true;
+                    //targetResources.decrementResource(attackDamage);
                     attackTimer = Time.time + attackTickSpeed;
                     audioSource.Play();
-                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
+                    //GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
                 }
             }
         }
