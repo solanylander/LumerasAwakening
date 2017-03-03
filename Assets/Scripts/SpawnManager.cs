@@ -110,13 +110,13 @@ public class SpawnManager : MonoBehaviour {
             }
             audioSource.clip = deathSound;
             audioSource.Play();
-            resourceManager.currentResource = resourceManager.maxResource;
-            resourceManager.damaged = true;
-            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
+            //resourceManager.currentResource = resourceManager.maxResource;
+            //resourceManager.damaged = true;
+            //GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            SceneManager.LoadScene("la-3");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }
