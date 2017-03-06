@@ -5,7 +5,8 @@ using UnityEngine;
 public class PrismTest : MonoBehaviour {
     private RaycastHit hit;
     private LineRenderer beamLine;
-    public Transform beamTarget;
+    [SerializeField]
+    private Transform beamTarget;
     public bool beamActive = false;
     private bool beamDefaultState;
     private float beamRange;
@@ -13,8 +14,6 @@ public class PrismTest : MonoBehaviour {
     private Vector3 basisY = Vector3.up;
     private Vector3 basisZ = Vector3.right;
     private Vector3 orthoNormalHeading;
-   
-
     [SerializeField]
     private GameObject target;
 
@@ -27,9 +26,9 @@ public class PrismTest : MonoBehaviour {
 	}
 
     /// <summary>
-    /// All garbage  rn
-    /// Solution: use beam limit anchor (defines direction + limits)
-    /// activate node beam if node is in contact with beam
+    /// Solution: use beam 'target' anchor (defines direction heading + range limits)
+    /// Activate node beam if node is in contact with beam, deactivate if not
+    /// This is is completely modular, you can have as many nodes of any object in series as you want in any configuration
     /// </summary>
     void Update()
     {
@@ -49,19 +48,31 @@ public class PrismTest : MonoBehaviour {
             if (hit.collider.gameObject.tag.Contains("BeamNode"))
             {
                 target = hit.collider.gameObject;
+                //Activations chain to next node in series
                 target.GetComponent<PrismTest>().ActivateBeam();
                 if (gameObject.tag.Contains("Interactable"))
                 {
-                    beamLine.SetPosition(1, beamTarget.position);
+                    beamLine.SetPosition(1, target.transform.position);
                 } else
                 {
                     beamLine.SetPosition(1, beamTarget.position);
                 }
                 beamLine.enabled = true;
             }
+        } else
+        {
+            beamLine.enabled = false;
+            if (target.GetComponent<PrismTest>() != null)
+            {
+                //Deactivations chain to next node in series
+                target.GetComponent<PrismTest>().DeactivateBeam();
+            }
         }
     }
 
+    /// <summary>
+    /// Activate beam nodes - triggers in sequence for chained nodes
+    /// </summary>
     void ActivateBeam()
     {
         if (Physics.Raycast(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1), beamHeading, out hit, beamRange))
@@ -71,9 +82,18 @@ public class PrismTest : MonoBehaviour {
                 beamActive = true;
                 target = hit.collider.gameObject;
                 //target.GetComponent<PrismTest>().ActivateBeam();
-                beamLine.SetPosition(1, beamTarget.transform.position);
+                beamLine.SetPosition(1, target.transform.position);
                 beamLine.enabled = true;
             }
         }
+    }
+
+    /// <summary>
+    /// Dectivate beam nodes - triggers in sequence for chained nodes 
+    /// </summary>
+    void DeactivateBeam()
+    {
+        beamActive = false;
+        beamLine.enabled = false;
     }
 }
