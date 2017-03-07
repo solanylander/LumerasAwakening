@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour {
     //Prototyping Stuff
     private Vector3 spawnPosition;
     private float deathDepth;
     private int spawnSet;
+    bool isPause;
+    Rect MainMenu = new Rect((Screen.width-200)/2, (Screen.height-200)/2, 200, 200);
 
     private float duration = 9000.0f;
     //private Color midGray = new Color(0.5f, 0.5f, 0.5f, 1f); //orig HSV 0,0 175, 5
@@ -22,6 +25,7 @@ public class SpawnManager : MonoBehaviour {
         deathDepth = -100;
         spawnSet = 0;
         deathAudio = GetComponent<AudioSource>();
+        isPause = false;
     }
 	
 	/// <summary>
@@ -69,11 +73,35 @@ public class SpawnManager : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R) | transform.position.y < deathDepth)
+        // XBOX Pause/Restart
+        if (Input.GetKeyDown("joystick button 7")){ 
+            /*isPause = !isPause;
+            if(isPause)
+                Time.timeScale = 0;
+            else
+                Time.timeScale = 1;*/
+            SceneManager.LoadScene("la-3");
+        }
+
+        if(transform.position.y < deathDepth)
         {
             deathAudio.clip = deathSound;
             deathAudio.Play();
             transform.parent.gameObject.transform.parent.transform.position = spawnPosition;
         }
+    }
+
+    // Pause menu GUI
+    void OnGUI()
+    {
+        if(isPause)
+            GUI.Window(0, MainMenu, TheMainMenu, "Pause Menu");
+    }
+    void TheMainMenu (int windowID) {
+        if(GUILayout.Button("Reset")){
+            isPause = !isPause;
+            Time.timeScale = 1;
+            SceneManager.LoadScene("la-3");
+         }
     }
 }
