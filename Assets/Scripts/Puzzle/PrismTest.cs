@@ -17,12 +17,25 @@ public class PrismTest : MonoBehaviour {
     [SerializeField]
     private GameObject target;
 
+    //Variant -- focusing / mutli-beam targetting for activation
+    [SerializeField]
+    private List<GameObject> nodesTargettingMe = new List<GameObject>();
+    //Check if list contains object that is trying to trigger activation, 
+    //if not add - when removing remve node that is no longer targetting 
+    //from the array list if it is in the list, if the list length is at 
+    //least activation threshold, trigger the beam for this node 
+    [SerializeField]
+    private int numNodesTargetingMe;
+    public int activationThreshold = 1;
+
 	void Start () {
         beamLine = GetComponent<LineRenderer>();
         beamRange = Vector3.Distance(transform.position, beamTarget.position);
         beamHeading = (beamTarget.position - transform.position);
         //Vector3.OrthoNormalize(ref beamHeading, ref basisY, ref basisZ);
         beamDefaultState = beamActive;
+        activationThreshold = beamActive ? 0 : activationThreshold;
+        numNodesTargetingMe = nodesTargettingMe.Count;
 	}
 
     /// <summary>
@@ -50,6 +63,7 @@ public class PrismTest : MonoBehaviour {
                 target = hit.collider.gameObject;
                 //Activations chain to next node in series
                 target.GetComponent<PrismTest>().ActivateBeam();
+                target.GetComponent<PrismTest>().addNodeTargetingMe(gameObject);
                 if (gameObject.tag.Contains("Interactable"))
                 {
                     beamLine.SetPosition(1, target.transform.position);
@@ -66,6 +80,7 @@ public class PrismTest : MonoBehaviour {
             {
                 //Deactivations chain to next node in series
                 target.GetComponent<PrismTest>().DeactivateBeam();
+                target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
             }
         }
     }
@@ -77,13 +92,16 @@ public class PrismTest : MonoBehaviour {
     {
         if (Physics.Raycast(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1), beamHeading, out hit, beamRange))
         {
-            if (hit.collider.gameObject.tag.Contains("BeamNode"))
+            if (hit.collider.gameObject.tag.Contains("BeamNode") && numNodesTargetingMe >= activationThreshold)
             {
                 beamActive = true;
                 target = hit.collider.gameObject;
                 //target.GetComponent<PrismTest>().ActivateBeam();
                 beamLine.SetPosition(1, target.transform.position);
                 beamLine.enabled = true;
+            } else {
+                beamActive = false;
+                beamLine.enabled = false;
             }
         }
     }
@@ -95,5 +113,25 @@ public class PrismTest : MonoBehaviour {
     {
         beamActive = false;
         beamLine.enabled = false;
+    }
+
+    void addNodeTargetingMe(GameObject node)
+    {
+        //Other stuff
+        if (!nodesTargettingMe.Contains(node))
+        {
+            nodesTargettingMe.Add(node);
+            numNodesTargetingMe += 1;
+        }
+    }
+
+    void removeNodeTargetingMe(GameObject node)
+    {
+        //Other stuff
+        if (nodesTargettingMe.Contains(node))
+        {
+            nodesTargettingMe.Remove(node);
+            numNodesTargetingMe -= 1;
+        }
     }
 }
