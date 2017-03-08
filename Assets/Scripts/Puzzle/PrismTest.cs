@@ -75,6 +75,9 @@ public class PrismTest : MonoBehaviour
                     beamLine.SetPosition(1, beamTarget.position);
                 }
                 beamLine.enabled = true;
+            } else if (hit.collider.gameObject.tag.Contains("Player"))
+            {
+                GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
             }
         }
         else
@@ -110,7 +113,7 @@ public class PrismTest : MonoBehaviour
                     beamLine.SetPosition(1, beamTarget.position);
                 }
                 beamLine.enabled = true;
-            }
+            } 
             else {
                 beamActive = false;
                 beamLine.enabled = false;

@@ -119,4 +119,12 @@ public class SpawnManager : MonoBehaviour {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
+
+    public void killPlayer()
+    {
+        playerCharacter.transform.rotation = Quaternion.Euler(Vector3.zero);
+        playerCharacter.transform.position = spawnPosition;
+        audioSource.clip = deathSound;
+        audioSource.Play();
+    }
 }
