@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrismTest : MonoBehaviour {
+public class PrismTest : MonoBehaviour
+{
     private RaycastHit hit;
     private LineRenderer beamLine;
     [SerializeField]
@@ -28,7 +29,8 @@ public class PrismTest : MonoBehaviour {
     private int numNodesTargetingMe;
     public int activationThreshold = 1;
 
-	void Start () {
+    void Start()
+    {
         beamLine = GetComponent<LineRenderer>();
         beamRange = Vector3.Distance(transform.position, beamTarget.position);
         beamHeading = (beamTarget.position - transform.position);
@@ -36,7 +38,7 @@ public class PrismTest : MonoBehaviour {
         beamDefaultState = beamActive;
         activationThreshold = beamActive ? 0 : activationThreshold;
         numNodesTargetingMe = nodesTargettingMe.Count;
-	}
+    }
 
     /// <summary>
     /// Solution: use beam 'target' anchor (defines direction heading + range limits)
@@ -47,16 +49,16 @@ public class PrismTest : MonoBehaviour {
     {
         if (gameObject.tag.Contains("Interactable"))
         {
-            beamLine.SetPosition(0, new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1.0f));
+            beamLine.SetPosition(0, new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z));
         }
         else
         {
-            beamLine.SetPosition(0, new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1.0f));
+            beamLine.SetPosition(0, new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z));
         }
 
-        Debug.DrawRay(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1), beamHeading * 50f, Color.red, 1.0f);
+        Debug.DrawRay(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading * 50f, Color.red, 1.0f);
         //Debug.Log(beamHeading);
-        if (Physics.Raycast(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1.0f), beamHeading, out hit, beamRange) && beamActive.Equals(true))
+        if (Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading, out hit, beamRange * 5f) && beamActive.Equals(true))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode"))
             {
@@ -67,13 +69,15 @@ public class PrismTest : MonoBehaviour {
                 if (gameObject.tag.Contains("Interactable"))
                 {
                     beamLine.SetPosition(1, target.transform.position);
-                } else
+                }
+                else
                 {
                     beamLine.SetPosition(1, beamTarget.position);
                 }
                 beamLine.enabled = true;
             }
-        } else
+        }
+        else
         {
             beamLine.enabled = false;
             if (target.GetComponent<PrismTest>() != null)
@@ -90,16 +94,24 @@ public class PrismTest : MonoBehaviour {
     /// </summary>
     void ActivateBeam()
     {
-        if (Physics.Raycast(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1), beamHeading, out hit, beamRange))
+        if (Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading * 5f, out hit, beamRange))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode") && numNodesTargetingMe >= activationThreshold)
             {
                 beamActive = true;
                 target = hit.collider.gameObject;
                 //target.GetComponent<PrismTest>().ActivateBeam();
-                beamLine.SetPosition(1, target.transform.position);
+                if (gameObject.tag.Contains("Interactable"))
+                {
+                    beamLine.SetPosition(1, target.transform.position);
+                }
+                else
+                {
+                    beamLine.SetPosition(1, beamTarget.position);
+                }
                 beamLine.enabled = true;
-            } else {
+            }
+            else {
                 beamActive = false;
                 beamLine.enabled = false;
             }
