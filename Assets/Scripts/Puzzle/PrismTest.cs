@@ -29,6 +29,9 @@ public class PrismTest : MonoBehaviour
     private int numNodesTargetingMe;
     public int activationThreshold = 1;
 
+    [SerializeField]
+    private bool debugRay;
+
     void Start()
     {
         beamLine = GetComponent<LineRenderer>();
@@ -56,8 +59,9 @@ public class PrismTest : MonoBehaviour
             beamLine.SetPosition(0, new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z));
         }
 
-        Debug.DrawRay(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading * 50f, Color.red, 1.0f);
+        Debug.DrawRay(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading * 5f, Color.red, 1.0f);
         //Debug.Log(beamHeading);
+        debugRay = Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode");
         if (Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading, out hit, beamRange * 5f) && beamActive.Equals(true))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode"))
@@ -78,16 +82,26 @@ public class PrismTest : MonoBehaviour
             } else if (hit.collider.gameObject.tag.Contains("Player"))
             {
                 GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
+            } else
+            {
+                beamLine.enabled = false;
+                if (target.GetComponent<PrismTest>() != null)
+                {
+                    //Deactivations chain to next node in series
+                    target.GetComponent<PrismTest>().DeactivateBeam();
+                    target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+                }
             }
         }
         else
         {
             beamLine.enabled = false;
-            if (target.GetComponent<PrismTest>() != null)
+            if (target != null && target.GetComponent<PrismTest>() != null)
             {
                 //Deactivations chain to next node in series
                 target.GetComponent<PrismTest>().DeactivateBeam();
                 target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+                target = null;
             }
         }
     }
