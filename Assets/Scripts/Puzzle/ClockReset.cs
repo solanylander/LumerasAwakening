@@ -6,9 +6,10 @@ public class ClockReset : MonoBehaviour {
 
     Vector3 position, markerPosition;
     Quaternion rotation;
-    public GameObject marker, spawn;
+    public GameObject marker, spawn, finishLine;
     float maxScale, minScale;
     int scaleBlock, rescaleBlock;
+    public int direction;
     public float markerSpeed;
     public Material growable;
     public Mesh square;
@@ -30,11 +31,22 @@ public class ClockReset : MonoBehaviour {
             transform.GetComponent<Interactable>().ignore(false);
             scaleBlock--;
         }
-        if (position != transform.position && transform.localPosition.z > -7.35f)
+        if (position != transform.position && (transform.position.z > finishLine.transform.position.z && direction >= 0))
         {
             marker.transform.position = new Vector3(marker.transform.position.x, marker.transform.position.y, marker.transform.position.z - markerSpeed);
         }
-        if(marker.transform.localPosition.z < 0.43f && transform.localPosition.z > -7.35f)
+        else if (position != transform.position && (transform.position.z < finishLine.transform.position.z && direction < 0))
+        {
+            marker.transform.position = new Vector3(marker.transform.position.x, marker.transform.position.y, marker.transform.position.z + markerSpeed);
+        }
+        if (marker.transform.position.z < finishLine.transform.position.z && transform.position.z > finishLine.transform.position.z && direction >= 0)
+        {
+            transform.position = position;
+            marker.transform.position = markerPosition;
+            transform.rotation = rotation;
+            transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        }else if (marker.transform.position.z > finishLine.transform.position.z && transform.position.z < finishLine.transform.position.z && direction < 0)
         {
             transform.position = position;
             marker.transform.position = markerPosition;
@@ -53,6 +65,7 @@ public class ClockReset : MonoBehaviour {
             transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
             transform.position = spawn.transform.position;
             transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
+            transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         }
         if (other.tag == "ColliderSwitch")
         {
