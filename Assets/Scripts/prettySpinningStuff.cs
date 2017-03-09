@@ -19,6 +19,7 @@ public class prettySpinningStuff : MonoBehaviour {
 
         if (RotateX)
         {
+<<<<<<< HEAD
             transform.rotation *= Quaternion.AngleAxis(4 * Time.deltaTime, Vector3.right);
         }
         if (RotateY)
@@ -28,6 +29,17 @@ public class prettySpinningStuff : MonoBehaviour {
         if (RotateZ)
         {
             transform.rotation *= Quaternion.AngleAxis(4 * Time.deltaTime, Vector3.forward);
+=======
+            transform.rotation *= Quaternion.AngleAxis(3 * Time.deltaTime, Vector3.right);
+        }
+        if (RotateY)
+        {
+            transform.rotation *= Quaternion.AngleAxis(3 * Time.deltaTime, Vector3.up);
+        }
+        if (RotateZ)
+        {
+            transform.rotation *= Quaternion.AngleAxis(3 * Time.deltaTime, Vector3.forward);
+>>>>>>> ff62596c7a5b6e2e44ff612af4f1e361ff69cb4f
         }
 
         transform.position -= (transform.rotation * pivot);

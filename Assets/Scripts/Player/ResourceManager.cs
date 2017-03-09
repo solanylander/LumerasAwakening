@@ -57,7 +57,18 @@ public class ResourceManager : MonoBehaviour {
             {
                 currentResource = 5.5f;
                 nextRegenTick = Time.time + regenTickRate * 2; //Punish 
+<<<<<<< HEAD
                 playNope();
+=======
+                if (Time.time > nextNope)
+                {
+                    audioSource.Stop();
+                    audioSource.clip = nopeAudio;
+                    audioSource.Play();
+                    nextNope = Time.time + 10f; //TODO: balance this stuff
+                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
+                }
+>>>>>>> ff62596c7a5b6e2e44ff612af4f1e361ff69cb4f
             }
 
         }
@@ -80,6 +91,7 @@ public class ResourceManager : MonoBehaviour {
     {
         currentResource = amount;
     }
+<<<<<<< HEAD
 
     public void playNope()
     {
@@ -92,4 +104,6 @@ public class ResourceManager : MonoBehaviour {
             GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
         }
     }
+=======
+>>>>>>> ff62596c7a5b6e2e44ff612af4f1e361ff69cb4f
 }
