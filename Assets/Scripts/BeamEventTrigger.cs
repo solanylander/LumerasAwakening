@@ -11,6 +11,8 @@ public class BeamEventTrigger : MonoBehaviour {
     public float displacementSpeed;
     private Vector3 originalPosition;
     private Vector3 endPosition;
+    [Range(0, 1)]
+    public int triggerOnActive;
 
 	void Start () {
         prismTest = GetComponent<PrismTest>();
@@ -19,13 +21,28 @@ public class BeamEventTrigger : MonoBehaviour {
 	}
 	
 	void FixedUpdate () {
-		if (prismTest.beamActive)
+        if (triggerOnActive == 1)
         {
-            //event to happen when activated
-            door.transform.position = Vector3.MoveTowards(door.transform.position, endPosition, displacementSpeed);
+            if (prismTest.beamActive)
+            {
+                //event to happen when activated
+                door.transform.position = Vector3.MoveTowards(door.transform.position, endPosition, displacementSpeed);
+            }
+            else
+            {
+                door.transform.position = Vector3.MoveTowards(door.transform.position, originalPosition, displacementSpeed);
+            }
         } else
         {
-            door.transform.position = Vector3.MoveTowards(door.transform.position, originalPosition, displacementSpeed);
+            if (!prismTest.beamActive)
+            {
+                //event to happen when activated
+                door.transform.position = Vector3.MoveTowards(door.transform.position, endPosition, displacementSpeed);
+            }
+            else
+            {
+                door.transform.position = Vector3.MoveTowards(door.transform.position, originalPosition, displacementSpeed);
+            }
         }
 	}
 }

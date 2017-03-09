@@ -29,6 +29,13 @@ public class PrismTest : MonoBehaviour
     private int numNodesTargetingMe;
     public int activationThreshold = 1;
 
+    public enum BeamBoundOrigin
+    {
+        XMax, XMin, ZMax, ZMin
+    }
+    public BeamBoundOrigin beamBoundOrigin;
+    private Vector3 rayOrigin;
+
     [SerializeField]
     private bool debugRay;
 
@@ -50,19 +57,26 @@ public class PrismTest : MonoBehaviour
     /// </summary>
     void Update()
     {
+        rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // maxX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // minX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // maxZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // minZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+
         if (gameObject.tag.Contains("Interactable"))
         {
-            beamLine.SetPosition(0, new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z));
+            beamLine.SetPosition(0, rayOrigin);
         }
         else
         {
-            beamLine.SetPosition(0, new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z));
+            beamLine.SetPosition(0, rayOrigin);
         }
 
-        Debug.DrawRay(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading * 5f, Color.red, 1.0f);
+        //Debug.DrawRay(rayOrigin, beamHeading * 5f, Color.red, 1.0f);
         //Debug.Log(beamHeading);
-        debugRay = Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode");
-        if (Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading, out hit, beamRange * 5f) && beamActive.Equals(true))
+        debugRay = Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode");
+
+        if (Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && beamActive.Equals(true))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode"))
             {
@@ -111,7 +125,7 @@ public class PrismTest : MonoBehaviour
     /// </summary>
     void ActivateBeam()
     {
-        if (Physics.Raycast(new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z), beamHeading * 5f, out hit, beamRange))
+        if (Physics.Raycast(rayOrigin, beamHeading * 5f, out hit, beamRange))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode") && numNodesTargetingMe >= activationThreshold)
             {
