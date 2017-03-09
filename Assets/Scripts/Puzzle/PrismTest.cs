@@ -72,7 +72,7 @@ public class PrismTest : MonoBehaviour
             beamLine.SetPosition(0, rayOrigin);
         }
 
-        //Debug.DrawRay(rayOrigin, beamHeading * 5f, Color.red, 1.0f);
+        Debug.DrawRay(rayOrigin, beamHeading * 5f, Color.red, 1.0f);
         //Debug.Log(beamHeading);
         debugRay = Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode");
 
@@ -93,7 +93,7 @@ public class PrismTest : MonoBehaviour
                     beamLine.SetPosition(1, beamTarget.position);
                 }
                 beamLine.enabled = true;
-            } else if (hit.collider.gameObject.tag.Contains("Player"))
+            } else if (hit.collider.gameObject.tag.Contains("Player") && beamLine.enabled)
             {
                 GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
             } else
@@ -142,7 +142,7 @@ public class PrismTest : MonoBehaviour
                 }
                 beamLine.enabled = true;
             }
-            else if (hit.collider.gameObject.tag.Contains("Player"))
+            else if (hit.collider.gameObject.tag.Contains("Player") && beamLine.enabled)
             {
                 GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
             } else {
