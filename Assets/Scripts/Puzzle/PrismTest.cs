@@ -99,7 +99,7 @@ public class PrismTest : MonoBehaviour
             } else
             {
                 beamLine.enabled = false;
-                if (target.GetComponent<PrismTest>() != null)
+                if (target !=null && target.GetComponent<PrismTest>() != null)
                 {
                     //Deactivations chain to next node in series
                     target.GetComponent<PrismTest>().DeactivateBeam();
