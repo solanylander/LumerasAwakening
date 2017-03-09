@@ -14,11 +14,7 @@ public class EnergyPickUp : MonoBehaviour {
     }
     void Update ()
     {
-<<<<<<< HEAD
         transform.Rotate(Vector3.right, 90.0f * Time.deltaTime);
-=======
-        transform.Rotate(Vector3.up, 90.0f * Time.deltaTime);
->>>>>>> ff62596c7a5b6e2e44ff612af4f1e361ff69cb4f
     }
 
     void OnTriggerEnter(Collider col)

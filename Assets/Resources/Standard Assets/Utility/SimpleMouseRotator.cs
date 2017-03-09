@@ -45,11 +45,8 @@ namespace UnityStandardAssets.Utility
             float inputV;
             if (relative)
             {
-                inputH = Input.GetAxis("MouseX");
-                inputV = Input.GetAxis("MouseY");
-                Debug.Log(inputH);
-                Debug.Log(inputV);
-                Debug.Log("hkl");
+                inputH = CrossPlatformInputManager.GetAxis("Mouse X");
+                inputV = CrossPlatformInputManager.GetAxis("Mouse Y");
 
                 // wrap values to avoid springing quickly the wrong way from positive to negative
                 if (m_TargetAngles.y > 180)
@@ -102,8 +99,8 @@ namespace UnityStandardAssets.Utility
                 inputV = Input.mousePosition.y;
 
                 // set values to allowed range
-                m_TargetAngles.y = Mathf.Lerp(-rotationRange.y * 0.5f, rotationRange.y * 0.5f, inputH);//Screen.width);
-                m_TargetAngles.x = Mathf.Lerp(-rotationRange.x * 0.5f, rotationRange.x * 0.5f, inputV);//Screen.height);
+                m_TargetAngles.y = Mathf.Lerp(-rotationRange.y*0.5f, rotationRange.y*0.5f, inputH/Screen.width);
+                m_TargetAngles.x = Mathf.Lerp(-rotationRange.x*0.5f, rotationRange.x*0.5f, inputV/Screen.height);
             }
 
             // smoothly interpolate current values to target angles
