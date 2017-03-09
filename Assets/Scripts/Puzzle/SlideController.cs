@@ -16,7 +16,6 @@ public class SlideController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log(stage);
         if (stage == 1)
         {
             transform.GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, -10.0f, 0.0f));

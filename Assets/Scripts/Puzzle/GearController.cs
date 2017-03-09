@@ -63,11 +63,6 @@ public class GearController : MonoBehaviour
             if (door.transform.position.y < doorPosition + 4.0f)
             {
                 door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.1f, door.transform.position.z);
-                if (!achieved)
-                {
-                    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(-150);
-                    achieved = true;
-                }
             }
         }
         if (final && transform.tag == "InteractableXScalableYScalableStGear")
