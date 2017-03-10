@@ -17,10 +17,12 @@ public class PowerController : MonoBehaviour
     public int freezeWhileScaling = 1;
     [RangeAttribute(0, 1)]
     public int globalScaleDecay = 1;
+    [RangeAttribute(0, 1)]
+    public int resources = 0;
 
     private Vector3 rayOrigin;
     private LineRenderer tracerLine;
-    public Camera playerCam;
+    private Camera playerCam;
     private RaycastHit hit;
     private WaitForSeconds shotDuration = new WaitForSeconds(0.05f);
     //private float hitForce = 250f; //for debugging
@@ -28,6 +30,7 @@ public class PowerController : MonoBehaviour
     //public GameObject tracerEffect; - Particles
     private TargetingController targetingController;
     private int layerMask = 0;
+    [SerializeField]
     private bool getNewTarget;
     private bool enableScaleDecay;
 
@@ -40,12 +43,14 @@ public class PowerController : MonoBehaviour
     public float massScalar = 0.025f; //Mass Scaling Rate
     [Range(0.0f, 1f)]
     public float scaleDelay = 0.35f;
+    [Range(0.0f,1.0f)]
+    public float energyDrainPerTick = 1.0f;
     private float scaleStart;
+    private ResourceManager resourceManager;
 
     public AudioClip scaleUpAudio;
     public AudioClip scaleDownAudio;
-    private AudioSource scaleAudio;
-    private bool audioPlaying;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -58,8 +63,8 @@ public class PowerController : MonoBehaviour
         getNewTarget = true;
         //uhhh probably a better way to do this ... :o
         enableScaleDecay = globalScaleDecay == 1 ? true : false;
-        scaleAudio = GetComponent<AudioSource>();
-        audioPlaying = false;
+        audioSource = GetComponent<AudioSource>();
+        resourceManager = GetComponent<ResourceManager>();
     }
 
     void FixedUpdate()
@@ -75,10 +80,9 @@ public class PowerController : MonoBehaviour
                         //Bug when power held down, button up on mouse isn't registering
                     }
                     getNewTarget = true;
-                    if (audioPlaying)
+                    if (audioSource.isPlaying)
                     {
-                        scaleAudio.Stop();
-                        audioPlaying = false;
+                        audioSource.Stop();
                     }
                 }
                 break;
@@ -119,21 +123,26 @@ public class PowerController : MonoBehaviour
                         }
                     } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
-                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                        if (!audioPlaying)
+                        if (targetingController.currentTarget.tag.Contains("Slow"))
                         {
-                            scaleAudio.clip = scaleUpAudio;
-                            scaleAudio.Play();
-                            audioPlaying = true;
+                            ScaleObject(targetingController.currentTarget, 1.03f);
+                        }
+                        else
+                        {
+                            ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                        }
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.clip = scaleUpAudio;
+                            audioSource.Play();
                         }
                     } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
                     {
                         ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                        if (!audioPlaying)
+                        if (!audioSource.isPlaying)
                         {
-                            scaleAudio.clip = scaleDownAudio;
-                            scaleAudio.Play();
-                            audioPlaying = true;
+                            audioSource.clip = scaleDownAudio;
+                            audioSource.Play();
                         }
                     }     
                 }
@@ -145,21 +154,18 @@ public class PowerController : MonoBehaviour
                 if (Input.GetButton("Fire1"))
                 {
                     ScaleObject(targetingController.currentTarget, 1 + powerScalar);
-                    if (!audioPlaying)
+                    if (!audioSource.isPlaying)
                     {
-                        scaleAudio.clip = scaleUpAudio;
-                        scaleAudio.Play();
-                        audioPlaying = true;
+                        audioSource.clip = scaleUpAudio;
+                        audioSource.Play();
                     }
-                }
-                else if (Input.GetButton("Fire2"))
-                {
+                } else if (Input.GetButton("Fire2"))
+                {  
                     ScaleObject(targetingController.currentTarget, 1 - powerScalar);
-                    if (!audioPlaying)
+                    if (!audioSource.isPlaying)
                     {
-                        scaleAudio.clip = scaleDownAudio;
-                        scaleAudio.Play();
-                        audioPlaying = true;
+                        audioSource.clip = scaleDownAudio;
+                        audioSource.Play();
                     }
                 }
             } else
@@ -180,6 +186,7 @@ public class PowerController : MonoBehaviour
     /// Anchored Interactables are children of invisible 'anchor' objects which redefine the pivot point for scaling.
     /// Objects can be tagged with any combination/order of Interactable, Anchored, [X|Y|Z]Scalable concatenated 
     /// TODO: Move decay & scaling into Interactable & specify individual XYZ scale limits & decayRates
+    /// TODO: Implement a log f'n for scaling multiplier based on current X|Y|Z scale val.
     /// </remarks>
     /// <param name="targetInteractable"></param>
     /// <param name="scaleRate"></param>

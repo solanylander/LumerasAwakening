@@ -1,27 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour {
     //Prototyping Stuff
-    private Vector3 spawnPosition;
+    [HideInInspector]
+    public Vector3 spawnPosition;
     private float deathDepth;
     private int spawnSet;
 
     private float duration = 9000.0f;
     //private Color midGray = new Color(0.5f, 0.5f, 0.5f, 1f); //orig HSV 0,0 175, 5
     private Color darkGray = new Color(0.2f, 0.2f, 0.2f, 1f);
-    private AudioSource deathAudio;
+    private AudioSource audioSource;
+    private bool[] audioPlayed = new bool[] { false, false, false };
+
+    public GameObject playerCharacter;
     public AudioClip deathSound;
     public AudioClip otherSound;
+
+    private ResourceManager resourceManager;
 
     void Start () {
         //Note: script should be in a child to the player character's camera object
         //Repsawn for prototyping
-        spawnPosition = transform.parent.gameObject.transform.parent.transform.position;
+        spawnPosition = playerCharacter.transform.position;
         deathDepth = -100;
         spawnSet = 0;
-        deathAudio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+        resourceManager = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<ResourceManager>();
+        //audioSource.clip = deathSound;
+        //audioSource.Play();
     }
 	
 	/// <summary>
@@ -32,13 +42,19 @@ public class SpawnManager : MonoBehaviour {
     /// </remarks>
 	void Update () {
         //Repsawn for prototyping
-        if (transform.position.y > 185 && spawnSet == 0)
+        if (playerCharacter.transform.position.y > 185 && spawnSet == 0)
         {
-            deathAudio.clip = otherSound;
-            deathAudio.Play();
-            spawnPosition = new Vector3(71, 188, -65);
+            Debug.Log(audioPlayed[0]);
+            if (!audioPlayed[0])
+            {
+                audioSource.clip = otherSound;
+                audioSource.Play();
+                audioPlayed[0] = true;
+            }
+            spawnPosition = new Vector3(71, 188, -65); 
             spawnSet = 1;
             deathDepth = 100;
+            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(-200);
         }
 
         if (spawnSet == 1)
@@ -56,9 +72,13 @@ public class SpawnManager : MonoBehaviour {
 
         if (transform.position.y > 315 && spawnSet == 2)
         {
+            if (!audioPlayed[1])
+            {
+                audioSource.clip = otherSound;
+                audioSource.Play();
+                audioPlayed[1] = true;
+            }
             //set spawn position, etc.
-            deathAudio.clip = otherSound;
-            deathAudio.Play();
             Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
             Color bgColor = pCam.backgroundColor;
             float t = Mathf.PingPong(Time.time, duration) / duration;
@@ -69,11 +89,42 @@ public class SpawnManager : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R) | transform.position.y < deathDepth)
+        if (Input.GetKeyDown(KeyCode.R) | playerCharacter.transform.position.y < deathDepth)
         {
-            deathAudio.clip = deathSound;
-            deathAudio.Play();
-            transform.parent.gameObject.transform.parent.transform.position = spawnPosition;
+            if (spawnSet == 0)
+            {
+                //SceneManager.LoadScene("la-3");
+                //if no reloading scene
+                foreach (GameObject pickUp in GameObject.FindGameObjectsWithTag("EnergyPickUp"))
+                {
+                    pickUp.SetActive(true);
+                }
+                playerCharacter.transform.position = spawnPosition;
+            } else
+            {
+                foreach (GameObject pickUp in GameObject.FindGameObjectsWithTag("EnergyPickUp"))
+                {
+                    pickUp.SetActive(true);
+                }
+                playerCharacter.transform.position = spawnPosition;
+            }
+            audioSource.clip = deathSound;
+            audioSource.Play();
+            //resourceManager.currentResource = resourceManager.maxResource;
+            //resourceManager.damaged = true;
+            //GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
         }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+
+    public void killPlayer()
+    {
+        playerCharacter.transform.rotation = Quaternion.Euler(Vector3.zero);
+        playerCharacter.transform.position = spawnPosition;
+        audioSource.clip = deathSound;
+        audioSource.Play();
     }
 }
