@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrismTest : MonoBehaviour {
+public class PrismTest : MonoBehaviour
+{
     private RaycastHit hit;
     private LineRenderer beamLine;
     [SerializeField]
@@ -28,7 +29,18 @@ public class PrismTest : MonoBehaviour {
     private int numNodesTargetingMe;
     public int activationThreshold = 1;
 
-	void Start () {
+    public enum BeamBoundOrigin
+    {
+        XMax, XMin, ZMax, ZMin
+    }
+    public BeamBoundOrigin beamBoundOrigin;
+    private Vector3 rayOrigin;
+
+    [SerializeField]
+    private bool debugRay;
+
+    void Start()
+    {
         beamLine = GetComponent<LineRenderer>();
         beamRange = Vector3.Distance(transform.position, beamTarget.position);
         beamHeading = (beamTarget.position - transform.position);
@@ -36,7 +48,7 @@ public class PrismTest : MonoBehaviour {
         beamDefaultState = beamActive;
         activationThreshold = beamActive ? 0 : activationThreshold;
         numNodesTargetingMe = nodesTargettingMe.Count;
-	}
+    }
 
     /// <summary>
     /// Solution: use beam 'target' anchor (defines direction heading + range limits)
@@ -45,18 +57,26 @@ public class PrismTest : MonoBehaviour {
     /// </summary>
     void Update()
     {
+        rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // maxX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // minX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // maxZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // minZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+
         if (gameObject.tag.Contains("Interactable"))
         {
-            beamLine.SetPosition(0, new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1.0f));
+            beamLine.SetPosition(0, rayOrigin);
         }
         else
         {
-            beamLine.SetPosition(0, new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1.0f));
+            beamLine.SetPosition(0, rayOrigin);
         }
 
-        Debug.DrawRay(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1), beamHeading * 50f, Color.red, 1.0f);
+        Debug.DrawRay(rayOrigin, beamHeading * 5f, Color.red, 1.0f);
         //Debug.Log(beamHeading);
-        if (Physics.Raycast(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1.0f), beamHeading, out hit, beamRange) && beamActive.Equals(true))
+        debugRay = Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode");
+
+        if (Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && beamActive.Equals(true))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode"))
             {
@@ -67,20 +87,35 @@ public class PrismTest : MonoBehaviour {
                 if (gameObject.tag.Contains("Interactable"))
                 {
                     beamLine.SetPosition(1, target.transform.position);
-                } else
+                }
+                else
                 {
                     beamLine.SetPosition(1, beamTarget.position);
                 }
                 beamLine.enabled = true;
+            } else if (hit.collider.gameObject.tag.Contains("Player") && beamLine.enabled)
+            {
+                GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
+            } else
+            {
+                beamLine.enabled = false;
+                if (target !=null && target.GetComponent<PrismTest>() != null)
+                {
+                    //Deactivations chain to next node in series
+                    target.GetComponent<PrismTest>().DeactivateBeam();
+                    target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+                }
             }
-        } else
+        }
+        else
         {
             beamLine.enabled = false;
-            if (target.GetComponent<PrismTest>() != null)
+            if (target != null && target.GetComponent<PrismTest>() != null)
             {
                 //Deactivations chain to next node in series
                 target.GetComponent<PrismTest>().DeactivateBeam();
                 target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+                target = null;
             }
         }
     }
@@ -90,15 +125,26 @@ public class PrismTest : MonoBehaviour {
     /// </summary>
     void ActivateBeam()
     {
-        if (Physics.Raycast(new Vector3(transform.position.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.max.z - 1), beamHeading, out hit, beamRange))
+        if (Physics.Raycast(rayOrigin, beamHeading * 5f, out hit, beamRange))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode") && numNodesTargetingMe >= activationThreshold)
             {
                 beamActive = true;
                 target = hit.collider.gameObject;
                 //target.GetComponent<PrismTest>().ActivateBeam();
-                beamLine.SetPosition(1, target.transform.position);
+                if (gameObject.tag.Contains("Interactable"))
+                {
+                    beamLine.SetPosition(1, target.transform.position);
+                }
+                else
+                {
+                    beamLine.SetPosition(1, beamTarget.position);
+                }
                 beamLine.enabled = true;
+            }
+            else if (hit.collider.gameObject.tag.Contains("Player") && beamLine.enabled)
+            {
+                GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
             } else {
                 beamActive = false;
                 beamLine.enabled = false;

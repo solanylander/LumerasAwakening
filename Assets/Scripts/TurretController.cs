@@ -57,6 +57,8 @@ public class TurretController : MonoBehaviour
                     //targetResources.decrementResource(attackDamage);
                     attackTimer = Time.time + attackTickSpeed;
                     audioSource.Play();
+                    //Insta-Gib if you get shot
+                    GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
                     //GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
                 }
             }

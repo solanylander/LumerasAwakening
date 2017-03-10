@@ -123,7 +123,14 @@ public class PowerController : MonoBehaviour
                         }
                     } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
                     {
-                        ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                        if (targetingController.currentTarget.tag.Contains("Slow"))
+                        {
+                            ScaleObject(targetingController.currentTarget, 1.03f);
+                        }
+                        else
+                        {
+                            ScaleObject(targetingController.currentTarget, 1 + powerScalar);
+                        }
                         if (!audioSource.isPlaying)
                         {
                             audioSource.clip = scaleUpAudio;
