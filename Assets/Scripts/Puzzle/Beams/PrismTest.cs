@@ -142,9 +142,7 @@ public class PrismTest : MonoBehaviour
                 beamLine.enabled = true;
                 target = hit.collider.gameObject;
                 target.GetComponent<ReflectBeam>().addNodeTargetingMe(gameObject);
-                Vector3 reflection = Vector3.Reflect(beamHeading.normalized, hit.normal);
-                beamLine.SetPosition(1, hit.point);
-                beamLine.SetPosition(2, reflection);
+                beamLine.SetPosition(1, target.transform.position);
             } else
             {
                 beamLine.enabled = false;
@@ -181,7 +179,7 @@ public class PrismTest : MonoBehaviour
     /// <summary>
     /// Activate beam nodes - triggers in sequence for chained nodes
     /// </summary>
-    void ActivateBeam()
+    public void ActivateBeam()
     {
         if (Physics.Raycast(rayOrigin, beamHeading * 5f, out hit, beamRange))
         {
@@ -210,9 +208,7 @@ public class PrismTest : MonoBehaviour
                 beamLine.enabled = true;
                 target = hit.collider.gameObject;
                 target.GetComponent<ReflectBeam>().addNodeTargetingMe(gameObject);
-                Vector3 reflection = Vector3.Reflect(beamHeading.normalized, hit.normal);
-                beamLine.SetPosition(1, hit.point);
-                beamLine.SetPosition(2, reflection);
+                beamLine.SetPosition(1, target.transform.position);
             } else if (numNodesTargetingMe < activationThreshold) {
                 beamActive = false;
                 beamLine.enabled = false;
@@ -223,13 +219,13 @@ public class PrismTest : MonoBehaviour
     /// <summary>
     /// Dectivate beam nodes - triggers in sequence for chained nodes 
     /// </summary>
-    void DeactivateBeam()
+    public void DeactivateBeam()
     {
         beamActive = false;
         beamLine.enabled = false;
     }
 
-    void addNodeTargetingMe(GameObject node)
+    public void addNodeTargetingMe(GameObject node)
     {
         //Other stuff
         if (!nodesTargettingMe.Contains(node))
@@ -239,7 +235,7 @@ public class PrismTest : MonoBehaviour
         }
     }
 
-    void removeNodeTargetingMe(GameObject node)
+    public void removeNodeTargetingMe(GameObject node)
     {
         //Other stuff
         if (nodesTargettingMe.Contains(node))

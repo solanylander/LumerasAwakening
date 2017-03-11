@@ -54,6 +54,7 @@ public class PowerController : MonoBehaviour
     private AudioSource audioSource;
     public List<AudioClip> outOfRangeAudio;
     private AudioSource chirpSource;
+    public GameObject spellEffect;
 
     void Start()
     {
@@ -71,6 +72,8 @@ public class PowerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         chirpSource = GetComponents<AudioSource>()[1];
         resourceManager = GetComponent<ResourceManager>();
+        //Todo: more gracefully stop/start spell effect
+        spellEffect = GameObject.FindGameObjectWithTag("SpellEffect");
     }
 
     void FixedUpdate()
@@ -90,6 +93,7 @@ public class PowerController : MonoBehaviour
                     {
                         audioSource.Stop();
                     }
+                    spellEffect.SetActive(false);
                 }
                 break;
         }
@@ -97,6 +101,7 @@ public class PowerController : MonoBehaviour
         //Scaling object when 'shot'
         if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2")) && Time.time > scaleStart )  //TODO: Gamepad mappings 
         {
+            spellEffect.SetActive(true);
             //Renders a line, add in spell effect when/if ready, remove for now b/c Ugly
             //StartCoroutine(ShotEffect());
 
