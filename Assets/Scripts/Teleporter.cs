@@ -12,6 +12,7 @@ public class Teleporter : MonoBehaviour {
         {
             col.gameObject.transform.position = teleporterEnd.position;
             //play teleport sound
+            GetComponent<AudioSource>().Play();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class BeamEventTrigger : MonoBehaviour {
 
@@ -34,7 +35,8 @@ public class BeamEventTrigger : MonoBehaviour {
             if (cameraTakeOver != null)
             {
                 cameraTakeOver.activate = false;
-                GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterController>().enabled = true;
+                GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 11;
+                GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 11;
                 foreach (AudioSource aud in playerAudio)
                 {
                     aud.enabled = true;
@@ -53,7 +55,8 @@ public class BeamEventTrigger : MonoBehaviour {
                 if (cameraTakeOver != null && !firstCompletion && Time.time > 10f)
                 {
                     cameraTakeOver.activate = true;
-                    GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterController>().enabled = false;
+                    GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
+                    GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     foreach (AudioSource aud in playerAudio)
                     {
                         aud.enabled = false;
@@ -77,7 +80,8 @@ public class BeamEventTrigger : MonoBehaviour {
                 if (cameraTakeOver != null && !firstCompletion && Time.time > 10f)
                 {
                     cameraTakeOver.activate = true;
-                    GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterController>().enabled = false;
+                    GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
+                    GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     foreach (AudioSource aud in playerAudio)
                     {
                         aud.enabled = false;
