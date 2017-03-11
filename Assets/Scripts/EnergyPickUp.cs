@@ -25,6 +25,7 @@ public class EnergyPickUp : MonoBehaviour {
             audioSource.Play();
             resourceManager.setResource(resourceManager.maxResource);
             gameObject.SetActive(false);
+            GameObject.FindGameObjectWithTag("ChooChooCounter").GetComponent<ChooChooCounter>().collectedChooChoos += 1;
         }
     }
 }
