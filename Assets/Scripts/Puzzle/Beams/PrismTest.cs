@@ -113,8 +113,11 @@ public class PrismTest : MonoBehaviour
                 if (target != null && target.GetComponent<PrismTest>() != null)
                 {
                     //Deactivations chain to next node in series
-                    target.GetComponent<PrismTest>().DeactivateBeam();
                     target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+                    if (target.GetComponent<PrismTest>().numNodesTargetingMe < target.GetComponent<PrismTest>().activationThreshold)
+                    {
+                        target.GetComponent<PrismTest>().DeactivateBeam();
+                    }
                 } else if (target != null && target.GetComponent<ReflectBeam>() != null)
                 {
                     target.GetComponent<ReflectBeam>().removeNodeTargetingMe(gameObject);
@@ -172,7 +175,7 @@ public class PrismTest : MonoBehaviour
                 Vector3 reflection = Vector3.Reflect(beamHeading.normalized, hit.normal);
                 beamLine.SetPosition(1, hit.point);
                 beamLine.SetPosition(2, reflection);
-            } else {
+            } else if (numNodesTargetingMe < activationThreshold) {
                 beamActive = false;
                 beamLine.enabled = false;
             }
