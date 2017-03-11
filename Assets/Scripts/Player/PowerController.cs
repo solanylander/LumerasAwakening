@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(TargetingController))]
@@ -51,6 +52,8 @@ public class PowerController : MonoBehaviour
     public AudioClip scaleUpAudio;
     public AudioClip scaleDownAudio;
     private AudioSource audioSource;
+    public List<AudioClip> outOfRangeAudio;
+    private AudioSource chirpSource;
 
     void Start()
     {
@@ -59,11 +62,14 @@ public class PowerController : MonoBehaviour
         playerCam = GetComponentInParent<Camera>();
         tracerLine = GetComponentInChildren<LineRenderer>();
         layerMask = (1 << LayerMask.NameToLayer("Interactable")); //Raycast bit mask by shifting index of 'Interactable' layer
+        layerMask = layerMask | (1 << LayerMask.NameToLayer("Wall"));
+        layerMask = layerMask | (1 << LayerMask.NameToLayer("BeamNodes"));
         targetingController = transform.gameObject.GetComponent<TargetingController>();
         getNewTarget = true;
         //uhhh probably a better way to do this ... :o
         enableScaleDecay = globalScaleDecay == 1 ? true : false;
         audioSource = GetComponent<AudioSource>();
+        chirpSource = GetComponents<AudioSource>()[1];
         resourceManager = GetComponent<ResourceManager>();
     }
 
@@ -102,8 +108,23 @@ public class PowerController : MonoBehaviour
             //Set LineRenderer position to public origin transform
             //tracerLine.SetPosition(0, this.lineOrigin.position); b/c Ugly
 
+            //Out of range check
+            if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, Mathf.Infinity, layerMask) && hit.rigidbody != null && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+            {
+                if (Vector3.Distance(transform.position, hit.collider.gameObject.transform.position)  > maxPowerRange)
+                {
+                    if (!chirpSource.isPlaying)
+                    {
+                        chirpSource.clip = outOfRangeAudio[UnityEngine.Random.Range(0, outOfRangeAudio.Count)];
+                        chirpSource.Play();
+                    }
+                }
+            }
+
+
             //Ray registers a hit with an Interactable object
-            if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange, layerMask) && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+            //removed layermask from raycast to prevent scaling through walls since they are no longer transparent
+            if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange, layerMask) && hit.rigidbody != null && hit.rigidbody.gameObject.tag.Contains("Interactable"))
             {
                 //tracerLine.SetPosition(1, hit.point); b/c Ugly
                 if (hit.rigidbody != null)

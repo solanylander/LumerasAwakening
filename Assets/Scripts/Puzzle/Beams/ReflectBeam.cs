@@ -36,8 +36,8 @@ public class ReflectBeam : MonoBehaviour {
 
         reflectedBeam.enabled = false;
         reflection = Vector3.Reflect(beamHeading, hit.normal);
-        Debug.DrawRay(transform.position, reflection * 5f, Color.yellow, 1.0f);
-        reflectedBeam.SetPosition(0, transform.position);
+        Debug.DrawRay(hit.point, reflection * 5f, Color.yellow, 1.0f);
+        reflectedBeam.SetPosition(0, hit.point);
         reflectedBeam.SetPosition(1, reflection * 5f);
     }
 

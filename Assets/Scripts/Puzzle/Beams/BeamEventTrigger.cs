@@ -39,9 +39,9 @@ public class BeamEventTrigger : MonoBehaviour {
                 {
                     aud.enabled = true;
                 }
-                if (GetComponent<AudioSource>() != null)
+                if (GetComponents<AudioSource>()[1] != null)
                 {
-                    GetComponent<AudioSource>().Stop();
+                    GetComponents<AudioSource>()[1].Stop();
                 }
             }
         }
@@ -58,9 +58,9 @@ public class BeamEventTrigger : MonoBehaviour {
                     {
                         aud.enabled = false;
                     }
-                    if (GetComponent<AudioSource>() != null && !GetComponent<AudioSource>().isPlaying)
+                    if (GetComponents<AudioSource>()[1] != null && !GetComponents<AudioSource>()[1].isPlaying)
                     {
-                        GetComponent<AudioSource>().Play();
+                        GetComponents<AudioSource>()[1].Play();
                     }
                 }
                 //event to happen when activated
@@ -82,9 +82,9 @@ public class BeamEventTrigger : MonoBehaviour {
                     {
                         aud.enabled = false;
                     }
-                    if (GetComponent<AudioSource>() != null && !GetComponent<AudioSource>().isPlaying)
+                    if (GetComponents<AudioSource>()[1] != null && !GetComponents<AudioSource>()[1].isPlaying)
                     {
-                        GetComponent<AudioSource>().Play();
+                        GetComponents<AudioSource>()[1].Play();
                     }
                 }
                 //event to happen when activated

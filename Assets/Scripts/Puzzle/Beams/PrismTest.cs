@@ -41,6 +41,8 @@ public class PrismTest : MonoBehaviour
     [SerializeField]
     private bool debugRay;
 
+    private AudioSource beamAudio;
+
     void Start()
     {
         beamLine = GetComponent<LineRenderer>();
@@ -52,6 +54,8 @@ public class PrismTest : MonoBehaviour
         numNodesTargetingMe = nodesTargettingMe.Count;
         //assuming always square
         rayOffset = gameObject.GetComponent<Renderer>().bounds.max.z - gameObject.GetComponent<Renderer>().bounds.min.z;
+        beamAudio = GetComponent<AudioSource>();
+        beamAudio.mute = true;
     }
 
     /// <summary>
@@ -59,6 +63,10 @@ public class PrismTest : MonoBehaviour
     /// Activate node beam if node is in contact with beam, deactivate if not
     /// This is is completely modular, you can have as many nodes of any object in series as you want in any configuration
     /// </summary>
+    /// <remarks>
+    /// Need to optimize this, can't really mask the raycasts with a bitmask since they interact with pretty much everything, range is as close to low as possible
+    /// Frequency of updates needs to be evaluated, since they are in an update, it's pretty overkill given the number of nodes we may be dealing with
+    /// </remarks>
     void Update()
     {
         switch(beamBoundOrigin)
@@ -84,6 +92,14 @@ public class PrismTest : MonoBehaviour
         // minX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.min.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
         // maxZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.max.z);
         // minZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.min.z);
+        if (beamLine.enabled)
+        {
+            beamAudio.mute = false;
+        }
+        else
+        {
+            beamAudio.mute = true;
+        }
 
         if (gameObject.tag.Contains("Interactable"))
         {
