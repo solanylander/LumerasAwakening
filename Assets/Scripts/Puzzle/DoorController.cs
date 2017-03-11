@@ -1,0 +1,33 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DoorController : MonoBehaviour {
+
+    bool open;
+    public float minSize;
+    public GameObject door;
+
+	// Use this for initialization
+	void Start () {
+        open = false;
+	}
+	
+	// Update is called once per frame
+	void FixedUpdate () {
+        Debug.Log(door.transform.localScale.y + " " + minSize);
+		if(open && door.transform.localScale.y > minSize)
+        {
+            door.transform.localScale = new Vector3(door.transform.localScale.x, door.transform.localScale.y - 0.05f, door.transform.localScale.z);
+        }
+	}
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Teleporter")
+        {
+            open = true;
+        }
+    }
+}
