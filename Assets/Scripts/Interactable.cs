@@ -66,7 +66,7 @@ public class Interactable: MonoBehaviour
                     float duration = (beginDecay - Time.time) * 5000;
                     //float duration = (float)Math.Pow((beginDecay - Time.time), (beginDecay - Time.time)) * 100;
                     float t = Mathf.PingPong(Time.time, duration) / duration;
-                    happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
+                    //happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
                 }
             }
             else if (Time.time > beginDecay && !transform.localScale.Equals(originalScale) && decayable)
@@ -90,7 +90,7 @@ public class Interactable: MonoBehaviour
     public void updateScale(Vector3 newScale, bool triggerDecay){
         if (changeable)
         {
-            happyRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
+            //happyRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
             transform.localScale = newScale;
             if (triggerDecay)
             {
@@ -111,7 +111,7 @@ public class Interactable: MonoBehaviour
     /// </remarks>
     private void lerpScaleDecay()
     {
-        happyRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
+        //happyRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
         float t = Mathf.PingPong(Time.time, decayRate) / decayRate;
         transform.localScale = Vector3.Lerp(transform.localScale, originalScale, t);
     }
