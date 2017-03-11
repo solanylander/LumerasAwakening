@@ -31,10 +31,12 @@ public class PrismTest : MonoBehaviour
 
     public enum BeamBoundOrigin
     {
-        XMax, XMin, ZMax, ZMin
+        Default, XMax, XMin, ZMax, ZMin
     }
     public BeamBoundOrigin beamBoundOrigin;
     private Vector3 rayOrigin;
+    [SerializeField]
+    private float rayOffset;
 
     [SerializeField]
     private bool debugRay;
@@ -48,6 +50,8 @@ public class PrismTest : MonoBehaviour
         beamDefaultState = beamActive;
         activationThreshold = beamActive ? 0 : activationThreshold;
         numNodesTargetingMe = nodesTargettingMe.Count;
+        //assuming always square
+        rayOffset = gameObject.GetComponent<Renderer>().bounds.max.z - gameObject.GetComponent<Renderer>().bounds.min.z;
     }
 
     /// <summary>
@@ -57,11 +61,29 @@ public class PrismTest : MonoBehaviour
     /// </summary>
     void Update()
     {
-        rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
-        // maxX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
-        // minX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
-        // maxZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
-        // minZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        switch(beamBoundOrigin)
+        {
+            //TODO implement this, ray origin based on renderer bounds 
+            case BeamBoundOrigin.Default:
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+                break;
+            case BeamBoundOrigin.XMax:
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.max.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+                break;
+            case BeamBoundOrigin.XMin:
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.min.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+                break;
+            case BeamBoundOrigin.ZMax:
+                new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.max.z);
+                break;
+            case BeamBoundOrigin.ZMin:
+                new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.min.z);
+                break;
+        }
+        // maxX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.max.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // minX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.min.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+        // maxZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.max.z);
+        // minZ rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.min.z);
 
         if (gameObject.tag.Contains("Interactable"))
         {
