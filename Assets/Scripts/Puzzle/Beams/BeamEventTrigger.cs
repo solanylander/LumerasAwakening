@@ -29,7 +29,7 @@ public class BeamEventTrigger : MonoBehaviour {
 	}
 	
 	void FixedUpdate () {
-        if (triggerObject.transform.position.Equals(endPosition) && !firstCompletion)
+        if (triggerObject.transform.position.Equals(endPosition) && !firstCompletion && Time.timeSinceLevelLoad > 10f)
         {
             firstCompletion = true;
             if (cameraTakeOver != null)
@@ -52,7 +52,7 @@ public class BeamEventTrigger : MonoBehaviour {
         {
             if (prismTest.beamActive)
             {
-                if (cameraTakeOver != null && !firstCompletion && Time.time > 10f)
+                if (cameraTakeOver != null && !firstCompletion && Time.timeSinceLevelLoad > 10f)
                 {
                     cameraTakeOver.activate = true;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
@@ -77,7 +77,7 @@ public class BeamEventTrigger : MonoBehaviour {
         {
             if (!prismTest.beamActive)
             {
-                if (cameraTakeOver != null && !firstCompletion && Time.time > 10f)
+                if (cameraTakeOver != null && !firstCompletion && Time.timeSinceLevelLoad > 10f)
                 {
                     cameraTakeOver.activate = true;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;

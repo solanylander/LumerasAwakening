@@ -114,7 +114,7 @@ public class PrismTest : MonoBehaviour
         //Debug.Log(beamHeading);
         debugRay = Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode");
 
-        if (Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f) && beamActive.Equals(true))
+        if (beamActive.Equals(true) && Physics.Raycast(rayOrigin, beamHeading, out hit, beamRange * 5f))
         {
             if (hit.collider.gameObject.tag.Contains("BeamNode"))
             {

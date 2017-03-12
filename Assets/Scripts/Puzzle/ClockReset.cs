@@ -33,11 +33,11 @@ public class ClockReset : MonoBehaviour {
         }
         if (position != transform.position && (transform.position.z > finishLine.transform.position.z && direction >= 0))
         {
-            marker.transform.position = new Vector3(marker.transform.position.x, marker.transform.position.y, marker.transform.position.z - markerSpeed);
+            marker.transform.localPosition = new Vector3(marker.transform.localPosition.x, marker.transform.localPosition.y, marker.transform.localPosition.z + markerSpeed);
         }
         else if (position != transform.position && (transform.position.z < finishLine.transform.position.z && direction < 0))
         {
-            marker.transform.position = new Vector3(marker.transform.position.x, marker.transform.position.y, marker.transform.position.z + markerSpeed);
+            marker.transform.localPosition = new Vector3(marker.transform.localPosition.x, marker.transform.localPosition.y, marker.transform.localPosition.z - markerSpeed);
         }
         if (marker.transform.position.z < finishLine.transform.position.z && transform.position.z > finishLine.transform.position.z && direction >= 0)
         {

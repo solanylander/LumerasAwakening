@@ -42,52 +42,52 @@ public class SpawnManager : MonoBehaviour {
     /// </remarks>
 	void Update () {
         //Repsawn for prototyping
-        if (playerCharacter.transform.position.y > 185 && spawnSet == 0)
-        {
-            Debug.Log(audioPlayed[0]);
-            if (!audioPlayed[0])
-            {
-                audioSource.clip = otherSound;
-                audioSource.Play();
-                audioPlayed[0] = true;
-            }
-            spawnPosition = new Vector3(71, 188, -65); 
-            spawnSet = 1;
-            deathDepth = 100;
-            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(-200);
-        }
+        //if (playerCharacter.transform.position.y > 185 && spawnSet == 0)
+        //{
+        //    Debug.Log(audioPlayed[0]);
+        //    if (!audioPlayed[0])
+        //    {
+        //        audioSource.clip = otherSound;
+        //        audioSource.Play();
+        //        audioPlayed[0] = true;
+        //    }
+        //    spawnPosition = new Vector3(71, 188, -65); 
+        //    spawnSet = 1;
+        //    deathDepth = 100;
+        //    GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(-200);
+        //}
 
-        if (spawnSet == 1)
-        {
-            //tmp testing level triggers
-            Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
-            Color bgColor = pCam.backgroundColor;
-            float t = Mathf.PingPong(Time.time, duration) / duration;
-            pCam.backgroundColor = Color.Lerp(bgColor, darkGray, t);
-            if (pCam.backgroundColor.Equals(darkGray))
-            {
-                spawnSet = 2;
-            }
-        }
+        //if (spawnSet == 1)
+        //{
+        //    //tmp testing level triggers
+        //    Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
+        //    Color bgColor = pCam.backgroundColor;
+        //    float t = Mathf.PingPong(Time.time, duration) / duration;
+        //    pCam.backgroundColor = Color.Lerp(bgColor, darkGray, t);
+        //    if (pCam.backgroundColor.Equals(darkGray))
+        //    {
+        //        spawnSet = 2;
+        //    }
+        //}
 
-        if (transform.position.y > 315 && spawnSet == 2)
-        {
-            if (!audioPlayed[1])
-            {
-                audioSource.clip = otherSound;
-                audioSource.Play();
-                audioPlayed[1] = true;
-            }
-            //set spawn position, etc.
-            Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
-            Color bgColor = pCam.backgroundColor;
-            float t = Mathf.PingPong(Time.time, duration) / duration;
-            pCam.backgroundColor = Color.Lerp(bgColor, Color.black, t);
-            if (pCam.backgroundColor.Equals(Color.black))
-            {
-                spawnSet = 3;
-            }
-        }
+        //if (transform.position.y > 315 && spawnSet == 2)
+        //{
+        //    if (!audioPlayed[1])
+        //    {
+        //        audioSource.clip = otherSound;
+        //        audioSource.Play();
+        //        audioPlayed[1] = true;
+        //    }
+        //    //set spawn position, etc.
+        //    Camera pCam = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
+        //    Color bgColor = pCam.backgroundColor;
+        //    float t = Mathf.PingPong(Time.time, duration) / duration;
+        //    pCam.backgroundColor = Color.Lerp(bgColor, Color.black, t);
+        //    if (pCam.backgroundColor.Equals(Color.black))
+        //    {
+        //        spawnSet = 3;
+        //    }
+        //}
 
         if (Input.GetKeyDown(KeyCode.R) | playerCharacter.transform.position.y < deathDepth)
         {
