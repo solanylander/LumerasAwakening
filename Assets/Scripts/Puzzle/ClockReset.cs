@@ -8,11 +8,12 @@ public class ClockReset : MonoBehaviour {
     Quaternion rotation;
     public GameObject marker, spawn, finishLine;
     float maxScale, minScale;
-    int scaleBlock, rescaleBlock;
+    int scaleBlock, rescaleBlock, counter;
     public int direction;
     public float markerSpeed;
     public Material growable;
     public Mesh square;
+   
 
     // Use this for initialization
     void Start () {
@@ -21,6 +22,7 @@ public class ClockReset : MonoBehaviour {
         rotation = new Quaternion(transform.rotation.w,  transform.rotation.x, transform.rotation.y, transform.rotation.z);
         scaleBlock = 5;
         rescaleBlock = 5;
+        counter = -1;
     }
 	
 	// Update is called once per frame
@@ -54,6 +56,22 @@ public class ClockReset : MonoBehaviour {
             transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
+        if (transform.position.z < finishLine.transform.position.z && transform.GetComponent<Rigidbody>().velocity.z < 0 && direction == -1)
+        {
+            counter = 15;
+        }
+        if(counter >= 0)
+        {
+            if (counter == 0)
+            {
+                transform.position = position;
+                marker.transform.position = markerPosition;
+                transform.rotation = rotation;
+                transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            }
+            counter--;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -67,20 +85,15 @@ public class ClockReset : MonoBehaviour {
             transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
             transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         }
-        if (other.tag == "Reset")
-        {
-            transform.position = position;
-            marker.transform.position = markerPosition;
-            transform.rotation = rotation;
-            transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        }
+
         if (other.tag == "ColliderSwitch")
         {
             Destroy(other);
             transform.GetComponent<Interactable>().ignore(true);
             Destroy(transform.GetComponent<SphereCollider>());
+            Destroy(transform.GetComponent<SphereCollider>());
             transform.gameObject.AddComponent<BoxCollider>();
+            transform.GetComponent<BoxCollider>().isTrigger = true;
         }
     }
 }
