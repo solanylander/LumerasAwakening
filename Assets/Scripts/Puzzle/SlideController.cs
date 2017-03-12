@@ -39,7 +39,7 @@ public class SlideController : MonoBehaviour
         }
         else if (other.tag == "Slide3")
         {
-            transform.GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 8.0f, 5.0f);
+            transform.GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 7.0f, 4.9f);
             stage = 0;
         }
     }

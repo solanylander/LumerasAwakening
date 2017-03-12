@@ -57,7 +57,7 @@ public class ClockReset : MonoBehaviour {
     }
 
     void OnTriggerEnter(Collider other)
-    { 
+    {
         if (other.tag == "Teleporter")
         {
             gameObject.GetComponent<Renderer>().material = growable;
@@ -66,6 +66,14 @@ public class ClockReset : MonoBehaviour {
             transform.position = spawn.transform.position;
             transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
             transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        }
+        if (other.tag == "Reset")
+        {
+            transform.position = position;
+            marker.transform.position = markerPosition;
+            transform.rotation = rotation;
+            transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
         if (other.tag == "ColliderSwitch")
         {
