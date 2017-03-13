@@ -10,7 +10,7 @@ public class Teleporter : MonoBehaviour {
 
     void Start()
     {
-        useDelay = 0.5f;
+        useDelay = 2.5f;
         nextUse = Time.time;
     }
 
