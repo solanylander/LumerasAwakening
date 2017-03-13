@@ -39,6 +39,7 @@ public class BeamEventTrigger : MonoBehaviour {
             if (cameraTakeOver != null)
             {
                 cameraTakeOver.activate = false;
+                //GameObject.FindGameObjectWithTag("UI").SetActive(true);
                 GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 11;
                 GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 11;
                 foreach (AudioSource aud in playerAudio)
@@ -59,6 +60,7 @@ public class BeamEventTrigger : MonoBehaviour {
                 if (cameraTakeOver != null && !firstCompletion && Time.timeSinceLevelLoad > 10f)
                 {
                     cameraTakeOver.activate = true;
+                    //GameObject.FindGameObjectWithTag("UI").SetActive(false);
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     foreach (AudioSource aud in playerAudio)
@@ -84,6 +86,7 @@ public class BeamEventTrigger : MonoBehaviour {
                 if (cameraTakeOver != null && !firstCompletion && Time.timeSinceLevelLoad > 10f)
                 {
                     cameraTakeOver.activate = true;
+                    //GameObject.FindGameObjectWithTag("UI").SetActive(false);
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     foreach (AudioSource aud in playerAudio)
