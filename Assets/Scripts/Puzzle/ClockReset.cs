@@ -56,7 +56,7 @@ public class ClockReset : MonoBehaviour {
             transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
-        if (transform.position.z < finishLine.transform.position.z && transform.GetComponent<Rigidbody>().velocity.z < 0 && direction == -1)
+        if (transform.position.z < finishLine.transform.position.z && transform.GetComponent<Rigidbody>().velocity.z < 0 && direction == -1 && counter == -1)
         {
             counter = 15;
         }
