@@ -43,17 +43,20 @@ public class ReflectBeam : MonoBehaviour {
             //reflectedBeam.SetPosition(0, transform.position);
             //reflectedBeam.SetPosition(1, reflection);
             Debug.DrawRay(hit.point, reflection * 5f, Color.yellow, 1.0f);
-            if (Physics.Raycast(hit.point, reflection, out hit, beamRange * 5f) && hit.collider.gameObject.tag.Contains("BeamNode"))
+            if (Physics.Raycast(hit.point, reflection, out hit, beamRange * 5f))
             {
-                reflectedBeam.enabled = true;
-                reflectedBeam.SetPosition(0, transform.position);
-                target = hit.collider.gameObject;
-                //cheat don't use hit.point
-                reflectedBeam.SetPosition(1, hit.collider.gameObject.transform.position);
-                if (target.tag.Contains("BeamNode"))
+                if (hit.collider.gameObject.tag.Contains("BeamNode"))
                 {
+                    reflectedBeam.enabled = true;
+                    reflectedBeam.SetPosition(0, transform.position);
+                    target = hit.collider.gameObject;
+                    //cheat don't use hit.point
+                    reflectedBeam.SetPosition(1, hit.collider.gameObject.transform.position);
                     target.GetComponent<PrismTest>().ActivateBeam();
                     target.GetComponent<PrismTest>().addNodeTargetingMe(gameObject);
+                } else if (hit.collider.gameObject.tag.Contains("Player"))
+                {
+                    GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
                 }
             }
             else

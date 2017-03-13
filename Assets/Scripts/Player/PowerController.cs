@@ -53,6 +53,7 @@ public class PowerController : MonoBehaviour
     public AudioClip scaleDownAudio;
     private AudioSource audioSource;
     public List<AudioClip> outOfRangeAudio;
+    public AudioClip teleporterChirp;
     private AudioSource chirpSource;
     public GameObject spellEffect;
 
