@@ -32,6 +32,7 @@ public class BeamEventTrigger : MonoBehaviour {
 	
 	void FixedUpdate () {
         currentPosition = triggerObject.transform.position;
+        //TODO: this is a TEMP workaround for the floating point rounding bug, figure out a more elegant and modular solution
         if (triggerObject.transform.position.y <= endPosition.y + 1f && !firstCompletion && Time.timeSinceLevelLoad > 10f)
         {
             firstCompletion = true;

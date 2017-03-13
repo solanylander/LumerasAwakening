@@ -5,11 +5,20 @@ using UnityEngine;
 public class Teleporter : MonoBehaviour {
 
 	public Transform teleporterEnd;
+    private static float useDelay;
+    private static float nextUse;
+
+    void Start()
+    {
+        useDelay = 0.5f;
+        nextUse = Time.time;
+    }
 
     void OnTriggerEnter(Collider col)
     {
-        if (col.gameObject.tag.Contains("Player") && teleporterEnd != null)
+        if (Time.time >= nextUse && col.gameObject.tag.Contains("Player") && teleporterEnd != null)
         {
+            nextUse = Time.time + useDelay;
             col.gameObject.transform.position = teleporterEnd.position;
             //play teleport sound
             GetComponent<AudioSource>().Play();
