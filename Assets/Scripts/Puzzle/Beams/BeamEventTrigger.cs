@@ -19,6 +19,8 @@ public class BeamEventTrigger : MonoBehaviour {
     private CameraTakeOver cameraTakeOver;
     private AudioSource[] playerAudio;
 
+    private Vector3 currentPosition;
+
 	void Start () {
         prismTest = GetComponent<PrismTest>();
         originalPosition = triggerObject.transform.position;
@@ -29,7 +31,8 @@ public class BeamEventTrigger : MonoBehaviour {
 	}
 	
 	void FixedUpdate () {
-        if (triggerObject.transform.position.Equals(endPosition) && !firstCompletion && Time.timeSinceLevelLoad > 10f)
+        currentPosition = triggerObject.transform.position;
+        if (triggerObject.transform.position.y <= endPosition.y + 1f && !firstCompletion && Time.timeSinceLevelLoad > 10f)
         {
             firstCompletion = true;
             if (cameraTakeOver != null)
