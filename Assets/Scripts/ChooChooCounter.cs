@@ -18,10 +18,10 @@ public class ChooChooCounter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        chooChooText.text = collectedChooChoos + "/" + maxChooChoos + " ChooChoos";
+        chooChooText.text = collectedChooChoos + "/" + maxChooChoos + " Ben's Soul";
         if (collectedChooChoos.Equals(maxChooChoos))
         {
-            chooChooText.text = "WOOHOO CHOOCHOO!!! :)";
+            chooChooText.text = "Winnerrrrr";
         }
     }
 }

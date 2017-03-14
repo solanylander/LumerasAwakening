@@ -128,7 +128,7 @@ public class PrismTest : MonoBehaviour
                 }
                 else
                 {
-                    beamLine.SetPosition(1, beamTarget.position);
+                    beamLine.SetPosition(1, hit.point); //beamtar
                 }
                 beamLine.enabled = true;
             }
@@ -138,7 +138,7 @@ public class PrismTest : MonoBehaviour
             } else if (hit.collider.gameObject.tag.Contains("BeamReflector"))
             {
                 beamActive = true;
-                beamLine.SetPosition(1, beamTarget.position);
+                beamLine.SetPosition(1, hit.point); //beamtar
                 beamLine.enabled = true;
                 target = hit.collider.gameObject;
                 target.GetComponent<ReflectBeam>().addNodeTargetingMe(gameObject);
@@ -194,7 +194,7 @@ public class PrismTest : MonoBehaviour
                 }
                 else
                 {
-                    beamLine.SetPosition(1, beamTarget.position);
+                    beamLine.SetPosition(1, hit.point); //beamtar
                 }
                 beamLine.enabled = true;
             }
@@ -204,7 +204,7 @@ public class PrismTest : MonoBehaviour
             } else if (hit.collider.gameObject.tag.Contains("BeamReflector"))
             {
                 beamActive = true;
-                beamLine.SetPosition(1, beamTarget.position);
+                beamLine.SetPosition(1, hit.point); //beamtar
                 beamLine.enabled = true;
                 target = hit.collider.gameObject;
                 target.GetComponent<ReflectBeam>().addNodeTargetingMe(gameObject);
