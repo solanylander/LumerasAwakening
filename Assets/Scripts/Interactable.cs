@@ -7,7 +7,7 @@ using UnityEngine;
 public class Interactable: MonoBehaviour
 {	
     //Param Script gameObject.getComponent<Interactable>.maxScale, etc.
-    [Range(0.01f, 150.0f)]
+    [Range(0.01f, 10000.0f)]
     public float maxScale;
 	[Range(0.01f, 50.0f)]
     public float minScale;
@@ -43,7 +43,7 @@ public class Interactable: MonoBehaviour
         originalScale = transform.localScale;
         beginDecay = float.PositiveInfinity;
         decayable = enableDecay == 0 ? false : true;
-        colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
+        //colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
         changeable = true;
     }
 

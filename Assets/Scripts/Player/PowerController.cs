@@ -36,7 +36,7 @@ public class PowerController : MonoBehaviour
     private bool enableScaleDecay;
 
     //Scaling Variables
-    [Range(5.0f, 100f)]
+    [Range(5.0f, 10000f)]
     public float maxPowerRange = 40f;
     [Range(0.01f, 0.1f)]
     public float powerScalar = 0.015f; //Scaling Rate

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TargetingController : MonoBehaviour
 {
-	[Range(10.0f, 100f)]
+	[Range(10.0f, 10000f)]
     public float maxTargetRange = 40f;
     public Material outlineMaterial; //TODO: Write up a nicer outline shader
     #if UNITY_STANDALONE_WIN
@@ -19,7 +19,7 @@ public class TargetingController : MonoBehaviour
     
     void Start()
     {
-        colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
+        //colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
     }
 
 
