@@ -8,7 +8,7 @@ public class GearController : MonoBehaviour
     //Variables
     public float rotate, height;
     float doorPosition;
-    public bool spinning, final;
+    public bool spinning, final, sideways;
     public GameObject door;
     bool colliding, free, stay, wasSpinning, achieved;
     Vector3 scale, connection, blankConnection;
@@ -60,12 +60,22 @@ public class GearController : MonoBehaviour
         if (final && transform.tag == "InteractableXScalableYScalableSpGear")
         {
             doorCounter = -1;
-            if (door.transform.position.y < doorPosition + height && height > 0)
+            if (sideways == false)
             {
-                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.1f, door.transform.position.z);
-            }else if(door.transform.position.y > doorPosition + height && height < 0)
+                if (door.transform.position.y < doorPosition + height && height > 0)
+                {
+                    door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.1f, door.transform.position.z);
+                }
+                else if (door.transform.position.y > doorPosition + height && height < 0)
+                {
+                    door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y - 0.1f, door.transform.position.z);
+                }
+            }else
             {
-                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y - 0.1f, door.transform.position.z);
+                if (door.transform.localScale.z >= 0.18f)
+                {
+                    door.transform.localScale = new Vector3(door.transform.localScale.x, door.transform.localScale.y, door.transform.localScale.z - 0.02f);
+                }
             }
         }
         if (final && transform.tag == "InteractableXScalableYScalableStGear")
@@ -78,13 +88,22 @@ public class GearController : MonoBehaviour
             {
                 doorCounter--;
             }
-            if (doorCounter == 0 && door.transform.position.y > doorPosition && height > 0)
+            if (sideways == false)
             {
-                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y - 0.1f, door.transform.position.z);
-            }
-            else if (doorCounter == 0 && door.transform.position.y < doorPosition && height < 0)
+                if (doorCounter == 0 && door.transform.position.y > doorPosition && height > 0)
+                {
+                    door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y - 0.1f, door.transform.position.z);
+                }
+                else if (doorCounter == 0 && door.transform.position.y < doorPosition && height < 0)
+                {
+                    door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.1f, door.transform.position.z);
+                }
+            }else
             {
-                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.1f, door.transform.position.z);
+                if (door.transform.localScale.z <= 2.8f)
+                {
+                    door.transform.localScale = new Vector3(door.transform.localScale.x, door.transform.localScale.y, door.transform.localScale.z + 0.02f);
+                }
             }
         }
         if (spinning == false && wasSpinning == true)

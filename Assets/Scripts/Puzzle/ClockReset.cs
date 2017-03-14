@@ -6,13 +6,15 @@ public class ClockReset : MonoBehaviour {
 
     Vector3 position, markerPosition;
     Quaternion rotation;
-    public GameObject marker, spawn, finishLine;
+    public GameObject marker, spawn, finishLine,  blocker;
     float maxScale, minScale;
     int scaleBlock, rescaleBlock, counter;
     public int direction;
     public float markerSpeed;
     public Material growable;
     public Mesh square;
+    bool grow, shrink;
+    public bool thrown;
    
 
     // Use this for initialization
@@ -20,6 +22,8 @@ public class ClockReset : MonoBehaviour {
         position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         markerPosition = new Vector3(marker.transform.position.x, marker.transform.position.y, marker.transform.position.z);
         rotation = new Quaternion(transform.rotation.w,  transform.rotation.x, transform.rotation.y, transform.rotation.z);
+        grow = false;
+        shrink = false;
         scaleBlock = 5;
         rescaleBlock = 5;
         counter = -1;
@@ -28,10 +32,13 @@ public class ClockReset : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate ()
     {
-        if (scaleBlock > 0)
+        if (grow && transform.localScale.x < 7.0f)
         {
-            transform.GetComponent<Interactable>().ignore(false);
-            scaleBlock--;
+            transform.localScale = new Vector3(transform.localScale.x + 0.07f, transform.localScale.y + 0.07f, transform.localScale.z + 0.07f);
+        }
+        if (shrink && blocker.transform.localScale.z > 0.1f)
+        {
+            blocker.transform.localScale = new Vector3(blocker.transform.localScale.x, blocker.transform.localScale.y, blocker.transform.localScale.z - 0.07f);
         }
         if (position != transform.position && (transform.position.z > finishLine.transform.position.z && direction >= 0))
         {
@@ -79,21 +86,27 @@ public class ClockReset : MonoBehaviour {
         if (other.tag == "Teleporter")
         {
             gameObject.GetComponent<Renderer>().material = growable;
-            transform.GetComponent<MeshFilter>().mesh = square;
+            if (thrown)
+            {
+                transform.GetComponent<MeshFilter>().mesh = square;
+            }else
+            {
+                Destroy(transform.GetComponent<MeshFilter>().mesh);
+            }
             transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
             transform.position = spawn.transform.position;
             transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, 0, transform.rotation.z);
             transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            shrink = true;
         }
 
         if (other.tag == "ColliderSwitch")
         {
             Destroy(other);
-            transform.GetComponent<Interactable>().ignore(true);
             Destroy(transform.GetComponent<SphereCollider>());
             Destroy(transform.GetComponent<SphereCollider>());
             transform.gameObject.AddComponent<BoxCollider>();
-            transform.GetComponent<BoxCollider>().isTrigger = true;
+            grow = true;
         }
     }
 }
