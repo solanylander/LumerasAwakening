@@ -18,6 +18,7 @@ public class BeamEventTrigger : MonoBehaviour {
     [SerializeField]
     private CameraTakeOver cameraTakeOver;
     private AudioSource[] playerAudio;
+    private AudioSource[] powerAudio;
 
     private Vector3 currentPosition;
 
@@ -28,7 +29,8 @@ public class BeamEventTrigger : MonoBehaviour {
         firstCompletion = false;
         cameraTakeOver = gameObject.GetComponent<CameraTakeOver>();
         playerAudio = GameObject.FindGameObjectWithTag("Player").GetComponents<AudioSource>();
-	}
+        powerAudio = GameObject.FindGameObjectWithTag("MainCamera").GetComponents<AudioSource>();
+    }
 	
 	void FixedUpdate () {
         currentPosition = triggerObject.transform.position;
@@ -42,7 +44,12 @@ public class BeamEventTrigger : MonoBehaviour {
                 //GameObject.FindGameObjectWithTag("UI").SetActive(true);
                 GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 11;
                 GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 11;
+                GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = true;
                 foreach (AudioSource aud in playerAudio)
+                {
+                    aud.enabled = true;
+                }
+                foreach (AudioSource aud in powerAudio)
                 {
                     aud.enabled = true;
                 }
@@ -63,7 +70,12 @@ public class BeamEventTrigger : MonoBehaviour {
                     //GameObject.FindGameObjectWithTag("UI").SetActive(false);
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
+                    GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = false;
                     foreach (AudioSource aud in playerAudio)
+                    {
+                        aud.enabled = false;
+                    }
+                    foreach (AudioSource aud in powerAudio)
                     {
                         aud.enabled = false;
                     }
@@ -89,7 +101,12 @@ public class BeamEventTrigger : MonoBehaviour {
                     //GameObject.FindGameObjectWithTag("UI").SetActive(false);
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
+                    GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = false;
                     foreach (AudioSource aud in playerAudio)
+                    {
+                        aud.enabled = false;
+                    }
+                    foreach (AudioSource aud in powerAudio)
                     {
                         aud.enabled = false;
                     }
