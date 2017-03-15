@@ -54,7 +54,7 @@ public class PrismTest : MonoBehaviour
         activationThreshold = beamActive ? 0 : activationThreshold;
         numNodesTargetingMe = nodesTargettingMe.Count;
         //assuming always square so x,y,z min/max normalized should be equal
-        rayOffset = Math.Abs(gameObject.GetComponent<Renderer>().bounds.max.z - gameObject.GetComponent<Renderer>().bounds.min.z)/2.0f;
+        rayOffset = Math.Abs(gameObject.GetComponent<Renderer>().bounds.max.y - gameObject.GetComponent<Renderer>().bounds.min.y)/2.0f;
         beamAudio = GetComponent<AudioSource>();
         beamAudio.mute = true;
     }
