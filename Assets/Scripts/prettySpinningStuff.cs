@@ -7,6 +7,7 @@ public class prettySpinningStuff : MonoBehaviour {
     public bool RotateX = true;
     public bool RotateY = true;
     public bool RotateZ = true;
+    public int rotationSpeed = 2;
 
     private Vector3 pivot;
 
@@ -19,15 +20,15 @@ public class prettySpinningStuff : MonoBehaviour {
 
         if (RotateX)
         {
-            transform.rotation *= Quaternion.AngleAxis(2 * Time.deltaTime, Vector3.right);
+            transform.rotation *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.right);
         }
         if (RotateY)
         {
-            transform.rotation *= Quaternion.AngleAxis(2 * Time.deltaTime, Vector3.up);
+            transform.rotation *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.up);
         }
         if (RotateZ)
         {
-            transform.rotation *= Quaternion.AngleAxis(2 * Time.deltaTime, Vector3.forward);
+            transform.rotation *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.forward);
         }
 
         transform.position -= (transform.rotation * pivot);

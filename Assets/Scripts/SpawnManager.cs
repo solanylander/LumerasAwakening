@@ -21,6 +21,7 @@ public class SpawnManager : MonoBehaviour {
     public AudioClip otherSound;
 
     private ResourceManager resourceManager;
+    private static Scene mainLevel;
 
     void Start () {
         //Note: script should be in a child to the player character's camera object
@@ -30,6 +31,7 @@ public class SpawnManager : MonoBehaviour {
         spawnSet = 0;
         audioSource = GetComponent<AudioSource>();
         resourceManager = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<ResourceManager>();
+        mainLevel = SceneManager.GetActiveScene();
         //audioSource.clip = deathSound;
         //audioSource.Play();
     }
@@ -116,7 +118,14 @@ public class SpawnManager : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.T) || Input.GetButtonDown("Triangle"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene(mainLevel.buildIndex);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene("Scenes/beams-ubi");
         }
     }
 
