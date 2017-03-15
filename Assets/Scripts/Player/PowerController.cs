@@ -58,6 +58,7 @@ public class PowerController : MonoBehaviour
     public GameObject spellEffect;
 
     private GameObject lastMouseover;
+    private float startPowerVolume;
 
     void Start()
     {
@@ -77,6 +78,7 @@ public class PowerController : MonoBehaviour
         resourceManager = GetComponent<ResourceManager>();
         //Todo: more gracefully stop/start spell effect
         spellEffect = GameObject.FindGameObjectWithTag("SpellEffect");
+        startPowerVolume = audioSource.volume;
     }
 
     void FixedUpdate()
@@ -94,7 +96,9 @@ public class PowerController : MonoBehaviour
                     getNewTarget = true;
                     if (audioSource.isPlaying)
                     {
-                        audioSource.Stop();
+                        //audioSource.Stop();
+                        StartCoroutine(AudioFadeOut.FadeOut (audioSource, 0.15f));
+                        audioSource.volume = startPowerVolume;
                     }
                     spellEffect.SetActive(false);
                 }
@@ -112,7 +116,7 @@ public class PowerController : MonoBehaviour
                 lastMouseover = hit.collider.gameObject;
             }
         } else {
-            if (lastMouseover != null) {
+            if (lastMouseover != null && targetingController.currentTarget == null) {
                 lastMouseover.GetComponent<Interactable>().setOutline = false;
             }
         }
