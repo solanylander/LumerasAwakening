@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ public class PrismTest : MonoBehaviour
         Default, XMax, XMin, ZMax, ZMin
     }
     public BeamBoundOrigin beamBoundOrigin;
-    private Vector3 rayOrigin;
+    public Vector3 rayOrigin;
     [SerializeField]
     private float rayOffset;
 
@@ -52,8 +53,8 @@ public class PrismTest : MonoBehaviour
         beamDefaultState = beamActive;
         activationThreshold = beamActive ? 0 : activationThreshold;
         numNodesTargetingMe = nodesTargettingMe.Count;
-        //assuming always square
-        rayOffset = gameObject.GetComponent<Renderer>().bounds.max.z - gameObject.GetComponent<Renderer>().bounds.min.z;
+        //assuming always square so x,y,z min/max normalized should be equal
+        rayOffset = Math.Abs(gameObject.GetComponent<Renderer>().bounds.max.z - gameObject.GetComponent<Renderer>().bounds.min.z)/2.0f;
         beamAudio = GetComponent<AudioSource>();
         beamAudio.mute = true;
     }
@@ -71,21 +72,21 @@ public class PrismTest : MonoBehaviour
     {
         switch(beamBoundOrigin)
         {
-            //TODO implement this, ray origin based on renderer bounds 
+            //Remark: This is working, looks and makes a lot more sense but requires each special node to have it set else, it defaults to the default behaviour
             case BeamBoundOrigin.Default:
                 rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.center.y, gameObject.GetComponent<Renderer>().bounds.center.z);
                 break;
             case BeamBoundOrigin.XMax:
-                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.max.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.max.x  - rayOffset, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
                 break;
             case BeamBoundOrigin.XMin:
-                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.min.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.min.x + rayOffset, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);
                 break;
             case BeamBoundOrigin.ZMax:
-                new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.max.z);
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.max.z - rayOffset);
                 break;
             case BeamBoundOrigin.ZMin:
-                new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.min.z);
+                rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.center.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.min.z + rayOffset);
                 break;
         }
         // maxX rayOrigin = new Vector3(gameObject.GetComponent<Renderer>().bounds.max.x, gameObject.GetComponent<Renderer>().bounds.max.y, gameObject.GetComponent<Renderer>().bounds.center.z);

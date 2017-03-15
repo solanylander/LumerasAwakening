@@ -11,6 +11,6 @@ public class beamCircleTracking : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position = new Vector3(targetObject.GetComponent<Renderer>().bounds.center.x, targetObject.GetComponent<Renderer>().bounds.max.y, targetObject.GetComponent<Renderer>().bounds.center.z);
+		transform.position = targetObject.GetComponent<PrismTest>().rayOrigin;
     }
 }
