@@ -57,6 +57,8 @@ public class PowerController : MonoBehaviour
     private AudioSource chirpSource;
     public GameObject spellEffect;
 
+    private GameObject lastMouseover;
+
     void Start()
     {
         //Note: script should be in a child to the player character's camera object
@@ -98,6 +100,22 @@ public class PowerController : MonoBehaviour
                 }
                 break;
         }
+
+        Vector3 rayOrigin = playerCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
+
+        //In range color on mouse over -- offset range by -3 units because *Reasons*
+        if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange - 3.0f, layerMask) && hit.rigidbody != null && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+        {       
+            //In Range, change outline color  
+            if (hit.collider.gameObject.GetComponent<Interactable>() != null) {
+                hit.collider.gameObject.GetComponent<Interactable>().setOutline = true;
+                lastMouseover = hit.collider.gameObject;
+            }
+        } else {
+            if (lastMouseover != null) {
+                lastMouseover.GetComponent<Interactable>().setOutline = false;
+            }
+        }
         
         //Scaling object when 'shot'
         if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2")) && Time.time > scaleStart )  //TODO: Gamepad mappings 
@@ -109,7 +127,7 @@ public class PowerController : MonoBehaviour
             /* translates where the point is in the viewport to the world coordinate system
             top left = 0, top right = 1, bot left = 1
             translate middle of viewport in x and y to point in world coordinates */
-            Vector3 rayOrigin = playerCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
+            //Vector3 rayOrigin = playerCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
 
             //Set LineRenderer position to public origin transform
             //tracerLine.SetPosition(0, this.lineOrigin.position); b/c Ugly
@@ -125,7 +143,7 @@ public class PowerController : MonoBehaviour
                         chirpSource.Play();
                     }
                 }
-            }
+            } 
 
 
             //Ray registers a hit with an Interactable object
