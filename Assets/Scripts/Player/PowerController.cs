@@ -86,7 +86,7 @@ public class PowerController : MonoBehaviour
         switch (targetLockOn)
         {
             case 0:
-                if(!(Input.GetButton("Fire1") | Input.GetButton("Fire2"))) 
+                if(!(Input.GetButton("Fire1") | Input.GetButton("Fire2") | Input.GetAxis("LTrig") == -1f | Input.GetAxis("RTrig") == -1f)) 
                 {
                     if (targetingController.currentTarget != null)
                     {
@@ -107,7 +107,6 @@ public class PowerController : MonoBehaviour
 
         Vector3 rayOrigin = playerCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
 
-
         //THIS IS BUGGED, REMOVING FOR THE UBISOFT PLAYTEST
         //In range color on mouse over -- offset range by -3 units because *Reasons*
         //if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange - 3.0f, layerMask) && hit.rigidbody != null && hit.rigidbody.gameObject.tag.Contains("Interactable"))
@@ -122,9 +121,9 @@ public class PowerController : MonoBehaviour
         //        lastMouseover.GetComponent<Interactable>().setOutline = false;
         //    }
         //}
-        
+
         //Scaling object when 'shot'
-        if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2")) && Time.time > scaleStart )  //TODO: Gamepad mappings 
+        if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2") | Input.GetAxis("LTrig") == -1f | Input.GetAxis("RTrig") == -1f) && Time.time > scaleStart )  //TODO: Gamepad mappings 
         {
             spellEffect.SetActive(true);
             //Renders a line, add in spell effect when/if ready, remove for now b/c Ugly
@@ -172,7 +171,7 @@ public class PowerController : MonoBehaviour
                             //require a separate button press for interaction with a different object
                             getNewTarget = false;
                         }
-                    } else if (Input.GetButton("Fire1") && targetingController.currentTarget != null)
+                    } else if (Input.GetButton("Fire1") | Input.GetAxis("RTrig") == -1f && targetingController.currentTarget != null)
                     {
                         if (targetingController.currentTarget.tag.Contains("Slow"))
                         {
@@ -187,7 +186,7 @@ public class PowerController : MonoBehaviour
                             audioSource.clip = scaleUpAudio;
                             audioSource.Play();
                         }
-                    } else if (Input.GetButton("Fire2") && targetingController.currentTarget != null)
+                    } else if (Input.GetButton("Fire2") | Input.GetAxis("LTrig") == -1f && targetingController.currentTarget != null)
                     {
                         ScaleObject(targetingController.currentTarget, 1 - powerScalar);
                         if (!audioSource.isPlaying)
@@ -202,7 +201,7 @@ public class PowerController : MonoBehaviour
             {
                 //Just render the line of length maxPowerRange
                 //tracerLine.SetPosition(1, lineOrigin + (playerCam.transform.forward * maxPowerRange)); b/c Ugly
-                if (Input.GetButton("Fire1"))
+                if (Input.GetButton("Fire1") | Input.GetAxis("RTrig") == -1f)
                 {
                     ScaleObject(targetingController.currentTarget, 1 + powerScalar);
                     if (!audioSource.isPlaying)
@@ -210,7 +209,7 @@ public class PowerController : MonoBehaviour
                         audioSource.clip = scaleUpAudio;
                         audioSource.Play();
                     }
-                } else if (Input.GetButton("Fire2"))
+                } else if (Input.GetButton("Fire2") | Input.GetAxis("LTrig") == -1f)
                 {  
                     ScaleObject(targetingController.currentTarget, 1 - powerScalar);
                     if (!audioSource.isPlaying)
