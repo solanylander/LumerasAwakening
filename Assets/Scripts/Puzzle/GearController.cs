@@ -46,7 +46,7 @@ public class GearController : MonoBehaviour
             {
                 if (door.transform.localPosition.y > doorHeight - 9.9f)
                 {
-                    door.transform.localPosition = new Vector3(door.transform.localPosition.x, door.transform.localPosition.y - 0.04f, door.transform.localPosition.z);
+                    door.transform.localPosition = new Vector3(door.transform.localPosition.x, door.transform.localPosition.y - 0.07f, door.transform.localPosition.z);
                 }
             }
             else if (sideways)
