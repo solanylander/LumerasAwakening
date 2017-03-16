@@ -125,7 +125,9 @@ public class SpawnManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Y))
         {
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            SceneManager.LoadScene("Scenes/beams-ubi");
+            //Temp for PT
+            //TODO: DO NOT HARDCODE THIS LIKE THIS
+            SceneManager.LoadScene("Scenes/UBI_PT");
         }
     }
 
