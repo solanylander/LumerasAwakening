@@ -43,12 +43,12 @@ public class ReflectBeam : MonoBehaviour {
             //reflectedBeam.SetPosition(0, transform.position);
             //reflectedBeam.SetPosition(1, reflection);
             Debug.DrawRay(hit.point, reflection * 5f, Color.yellow, 1.0f);
-            if (Physics.Raycast(hit.point, reflection, out hit, beamRange * 5f))
+            if (Physics.Raycast(hit.point, reflection, out hit, beamRange * 5f)) //will activate any objects it hits atm, bug
             {
                 if (hit.collider.gameObject.tag.Contains("BeamNode"))
                 {
                     reflectedBeam.enabled = true;
-                    reflectedBeam.SetPosition(0, transform.position);
+                    reflectedBeam.SetPosition(0, transform.position); // hit.point
                     target = hit.collider.gameObject;
                     //cheat don't use hit.point
                     reflectedBeam.SetPosition(1, hit.collider.gameObject.transform.position);
@@ -57,16 +57,55 @@ public class ReflectBeam : MonoBehaviour {
                 } else if (hit.collider.gameObject.tag.Contains("Player"))
                 {
                     GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>().killPlayer();
+                } else if (hit.collider.gameObject.tag.Contains("BeamReflector"))
+                {
+                    reflectedBeam.enabled = true;
+                    reflectedBeam.SetPosition(0, transform.position); // hit.point
+                    target = hit.collider.gameObject;
+                    target.GetComponent<ReflectBeam>().addNodeTargetingMe(gameObject);
+                    reflectedBeam.SetPosition(1, hit.collider.gameObject.transform.position);
+                }
+                else
+                {
+                    reflectedBeam.enabled = false;
+                    if (target != null && target.GetComponent<PrismTest>() != null)
+                    {
+                        target.GetComponent<PrismTest>().DeactivateBeam();
+                        target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+                    }
+                    else if (target != null && target.GetComponent<ReflectBeam>() != null)
+                    {
+                        target.GetComponent<ReflectBeam>().removeNodeTargetingMe(gameObject);
+                    }
                 }
             }
-            else
+            else 
             {
+                //BUG: On source nodes reflecting into it and out will deactivate, breaking puzzles, need to tag source separately or something
                 reflectedBeam.enabled = false;
-                if (target != null)
+                if (target != null && target.GetComponent<PrismTest>() != null)
                 {
                     target.GetComponent<PrismTest>().DeactivateBeam();
                     target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
                 }
+                else if (target != null && target.GetComponent<ReflectBeam>() != null)
+                {
+                    target.GetComponent<ReflectBeam>().removeNodeTargetingMe(gameObject);
+                }
+            }
+        }
+        else //lmao this is so bad, fix later
+        {
+            //BUG: On source nodes reflecting into it and out will deactivate, breaking puzzles, need to tag source separately or something
+            reflectedBeam.enabled = false;
+            if (target != null && target.GetComponent<PrismTest>() != null)
+            {
+                target.GetComponent<PrismTest>().DeactivateBeam();
+                target.GetComponent<PrismTest>().removeNodeTargetingMe(gameObject);
+            }
+            else if (target != null && target.GetComponent<ReflectBeam>() != null)
+            {
+                target.GetComponent<ReflectBeam>().removeNodeTargetingMe(gameObject);
             }
         }
     }
