@@ -7,21 +7,26 @@ public class ChooChooCounter : MonoBehaviour {
 
     private int maxChooChoos;
     public int collectedChooChoos;
-    private Text chooChooText;
+    //private Text chooChooText;
+
+    public Sprite[] rockSprites;
+    public Image rockImage;
 
     // Use this for initialization
     void Start () {
-        chooChooText = GetComponent<Text>();
+        //chooChooText = GetComponent<Text>();
+        rockImage = GetComponent<Image>();
         maxChooChoos = GameObject.FindGameObjectsWithTag("Choochoo").Length;
         collectedChooChoos = 0;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        chooChooText.text = collectedChooChoos + "/" + maxChooChoos + " Relics";
-        if (collectedChooChoos.Equals(maxChooChoos))
-        {
-            chooChooText.text = "Woohoo!";
-        }
+        //chooChooText.text = collectedChooChoos + "/" + maxChooChoos + " Relics";
+        //if (collectedChooChoos.Equals(maxChooChoos))
+        //{
+        //    chooChooText.text = "Woohoo!";
+        //}
+        rockImage.sprite = rockSprites[collectedChooChoos];
     }
 }

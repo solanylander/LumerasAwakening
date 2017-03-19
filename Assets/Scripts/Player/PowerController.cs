@@ -156,8 +156,11 @@ public class PowerController : MonoBehaviour
                 {
                     if (!chirpSource.isPlaying)
                     {
-                        chirpSource.clip = outOfRangeAudio[UnityEngine.Random.Range(0, outOfRangeAudio.Count)];
-                        chirpSource.Play();
+                        if (outOfRangeAudio.Count > 0)
+                        {
+                            chirpSource.clip = outOfRangeAudio[UnityEngine.Random.Range(0, outOfRangeAudio.Count)];
+                            chirpSource.Play();
+                        }
                     }
                 }
             } 
