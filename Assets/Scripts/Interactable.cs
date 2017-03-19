@@ -32,7 +32,7 @@ public class Interactable: MonoBehaviour
     [SerializeField]
     private Renderer happyRenderer;
 
-    //public bool setOutline;
+    public bool setOutline;
 
     //TODO: may be some bugs with update scale with anchored objects -- need to check
     void Start()
@@ -47,26 +47,30 @@ public class Interactable: MonoBehaviour
         decayable = enableDecay == 0 ? false : true;
         //colorGenerator = GameObject.FindGameObjectWithTag("ColorGenerator").GetComponent<ColorGenerator>();
         changeable = true;
-        //setOutline = false;
+        setOutline = false;
     }
 
     void Update()
     {
-            //BUGGED DISABLING FOR THE UBISOFT PLAYTEST
-            //TODO FIX THIS
-            //Outline on mouseover stuff
-            //if (setOutline) {
-            //    if (gameObject.GetComponent<Renderer>() != null ) {
-            //        gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.yellow);
-            //    }
-            //} else {
-            //    if (gameObject.GetComponent<Renderer>() != null ) {
-            //        gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.black);
-            //    }
-            //}
+        //BUGGED DISABLING FOR THE UBISOFT PLAYTEST
+        //TODO FIX THIS
+        //Outline on mouseover stuff
+        if (setOutline)
+        {
+            if (gameObject.GetComponent<Renderer>() != null)
+            {
+                gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.yellow);
+            }
+        }
+        else {
+            if (gameObject.GetComponent<Renderer>() != null)
+            {
+                gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.black);
+            }
+        }
 
-            //Temp testing triggers
-            if (this.tag.Contains("LevelFloor"))
+        //Temp testing triggers
+        if (this.tag.Contains("LevelFloor"))
             {
                 if (Math.Max(transform.localScale.x, Math.Max(transform.localScale.y, transform.localScale.z)) >= maxScale && disableScale)
                 {

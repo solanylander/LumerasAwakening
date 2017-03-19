@@ -109,18 +109,30 @@ public class PowerController : MonoBehaviour
 
         //THIS IS BUGGED, REMOVING FOR THE UBISOFT PLAYTEST
         //In range color on mouse over -- offset range by -3 units because *Reasons*
-        //if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange - 3.0f, layerMask) && hit.rigidbody != null && hit.rigidbody.gameObject.tag.Contains("Interactable"))
-        //{       
-        //    //In Range, change outline color  
-        //    if (hit.collider.gameObject.GetComponent<Interactable>() != null) {
-        //        hit.collider.gameObject.GetComponent<Interactable>().setOutline = true;
-        //        lastMouseover = hit.collider.gameObject;
-        //    }
-        //} else {
-        //    if (lastMouseover != null && targetingController.currentTarget == null) {
-        //        lastMouseover.GetComponent<Interactable>().setOutline = false;
-        //    }
-        //}
+        if (Physics.Raycast(rayOrigin, playerCam.transform.forward, out hit, maxPowerRange, layerMask) && hit.rigidbody != null && hit.rigidbody.gameObject.tag.Contains("Interactable"))
+        {
+            //In Range, change outline color  
+            if (hit.collider.gameObject.GetComponent<Interactable>() != null)
+            {   
+                if (lastMouseover != null && lastMouseover != hit.collider.gameObject)
+                {
+                    lastMouseover.GetComponent<Interactable>().setOutline = false;
+                    hit.collider.gameObject.GetComponent<Interactable>().setOutline = true;
+                    lastMouseover = hit.collider.gameObject;
+                }
+                else
+                {
+                    hit.collider.gameObject.GetComponent<Interactable>().setOutline = true;
+                    lastMouseover = hit.collider.gameObject;
+                }
+            }
+        }
+        else {
+            if (lastMouseover != null && targetingController.currentTarget == null)
+            {
+                lastMouseover.GetComponent<Interactable>().setOutline = false;
+            }
+        }
 
         //Scaling object when 'shot'
         if ( (Input.GetButton("Fire1") | Input.GetButton("Fire2") | Input.GetAxis("LTrig") == -1f | Input.GetAxis("RTrig") == -1f) && Time.time > scaleStart )  //TODO: Gamepad mappings 
