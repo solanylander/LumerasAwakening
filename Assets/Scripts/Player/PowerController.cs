@@ -57,7 +57,8 @@ public class PowerController : MonoBehaviour
     private AudioSource chirpSource;
     public GameObject spellEffect;
 
-    private GameObject lastMouseover;
+    public GameObject lastMouseover;
+    public GameObject currentMouseover;
     private float startPowerVolume;
 
     void Start()
@@ -119,11 +120,13 @@ public class PowerController : MonoBehaviour
                     lastMouseover.GetComponent<Interactable>().setOutline = false;
                     hit.collider.gameObject.GetComponent<Interactable>().setOutline = true;
                     lastMouseover = hit.collider.gameObject;
+                    currentMouseover = hit.collider.gameObject;
                 }
                 else
                 {
                     hit.collider.gameObject.GetComponent<Interactable>().setOutline = true;
                     lastMouseover = hit.collider.gameObject;
+                    currentMouseover = hit.collider.gameObject;
                 }
             }
         }
@@ -131,6 +134,7 @@ public class PowerController : MonoBehaviour
             if (lastMouseover != null && targetingController.currentTarget == null)
             {
                 lastMouseover.GetComponent<Interactable>().setOutline = false;
+                currentMouseover = null;
             }
         }
 

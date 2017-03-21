@@ -10,7 +10,7 @@ public class ChooChooCounter : MonoBehaviour {
     //private Text chooChooText;
 
     public Sprite[] rockSprites;
-    public Image rockImage;
+    private Image rockImage;
 
     // Use this for initialization
     void Start () {
