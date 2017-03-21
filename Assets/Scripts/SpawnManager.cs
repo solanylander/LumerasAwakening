@@ -91,7 +91,7 @@ public class SpawnManager : MonoBehaviour {
         //    }
         //}
 
-        if (Input.GetKeyDown(KeyCode.R) | playerCharacter.transform.position.y < deathDepth || Input.GetButtonDown("Square"))
+        if (Input.GetKeyDown(KeyCode.R) | playerCharacter.transform.position.y < deathDepth)
         {
             if (spawnSet == 0)
             {
@@ -116,7 +116,7 @@ public class SpawnManager : MonoBehaviour {
             //resourceManager.damaged = true;
             //GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().decrementScore(25);
         }
-        if (Input.GetKeyDown(KeyCode.T) || Input.GetButtonDown("Triangle"))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             SceneManager.LoadScene(mainLevel.buildIndex);
@@ -127,7 +127,7 @@ public class SpawnManager : MonoBehaviour {
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             //Temp for PT
             //TODO: DO NOT HARDCODE THIS LIKE THIS
-            SceneManager.LoadScene("Scenes/UBI_PT");
+            SceneManager.LoadScene("Scenes/BETA_PRESENTATION");
         }
     }
 
