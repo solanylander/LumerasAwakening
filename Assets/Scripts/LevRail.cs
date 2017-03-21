@@ -18,7 +18,6 @@ public class LevRail : MonoBehaviour {
 		activeMaterial = (Material)Resources.Load("Materials/Prototyping/LevRailActive", typeof(Material));
 		deactiveMaterial = (Material)Resources.Load("Materials/Prototyping/LevRailDeactive", typeof(Material));
 		beamNode = triggerNode.GetComponent<PrismTest>();
-		reverseNodeLogic = false;
 	}
 	
 	void Update () {
