@@ -32,6 +32,7 @@ public class SpawnManager : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         resourceManager = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<ResourceManager>();
         mainLevel = SceneManager.GetActiveScene();
+        playerCharacter = GameObject.FindGameObjectWithTag("Player");
         //audioSource.clip = deathSound;
         //audioSource.Play();
     }
