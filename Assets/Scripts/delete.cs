@@ -6,12 +6,13 @@ public class delete : MonoBehaviour {
 
     public GameObject player;
     public int deleteTime;
-    int count;
-    float walkSpeed, runSpeed, SensX, SensY;
+    private int count;
+    private float walkSpeed, runSpeed, SensX, SensY;
 
 	// Use this for initialization
 	void Start ()
     {
+        player = GameObject.FindGameObjectWithTag("Player"); 
         walkSpeed = player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_WalkSpeed;
         runSpeed = player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_RunSpeed;
         SensX = player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.XSensitivity;
