@@ -105,7 +105,7 @@ public class BeamEventTrigger : MonoBehaviour {
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 0;
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = false;
-                    GameObject.FindGameObjectWithTag("UI").GetComponent<Canvas>().enabled = false;
+                    GameObject.FindGameObjectWithTag("UITAG").GetComponent<Canvas>().enabled = false;
                     foreach (AudioSource aud in playerAudio)
                     {
                         aud.enabled = false;

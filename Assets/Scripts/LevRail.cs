@@ -38,7 +38,7 @@ public class LevRail : MonoBehaviour {
 
 	public void Deactivate() {
 		//float duration = (100 - Time.time) * 5000;
-		float duration = 600;
+		float duration = 250;
 		//float duration = (float)Math.Pow((beginDecay - Time.time), (beginDecay - Time.time)) * 100;
     	float t = Mathf.PingPong(Time.time, duration) / duration;
     	//happyRenderer.material.SetColor("_Color", Color.Lerp(happyRenderer.material.color, colorGenerator.interactableColor, t));
