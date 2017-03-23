@@ -48,13 +48,13 @@ public class TargetingController : MonoBehaviour
         //defaultMaterial = currentRenderer.material;
         //currentRenderer.material = outlineMaterial;
         //currentTarget = targetInteractable;
-        if (currentRenderer != null)
-        {
-            //currentRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
-        }
+        //currentRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
+
         currentRenderer = targetInteractable.GetComponent<Renderer>();
+        Material[] newMats = new Material[] {currentRenderer.materials[0],outlineMaterial};
+        currentRenderer.materials = newMats;
         //currentRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
-        currentRenderer.material.SetColor("_OutlineColor", Color.yellow);
+        //currentRenderer.material.SetColor("_OutlineColor", Color.yellow);
         currentTarget = targetInteractable;
     }
 
@@ -72,7 +72,9 @@ public class TargetingController : MonoBehaviour
         //currentRenderer.material = defaultMaterial;
         //currentTarget = null;
         currentRenderer = targetInteractable.GetComponent<Renderer>();
-        currentRenderer.material.SetColor("_OutlineColor", Color.black);
+        Material[] newMats = new Material[] {currentRenderer.materials[0]};
+        currentRenderer.materials = newMats;
+        //currentRenderer.material.SetColor("_OutlineColor", Color.black);
         if (targetInteractable.tag.Equals("LevelFloor"))
         {
             currentRenderer.material = (Material)Resources.Load("Materials/Prototyping/Glass", typeof(Material));

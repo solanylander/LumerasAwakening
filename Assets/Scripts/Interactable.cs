@@ -59,13 +59,17 @@ public class Interactable: MonoBehaviour
         {
             if (gameObject.GetComponent<Renderer>() != null)
             {
-                gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.yellow);
+                Material[] newMats = new Material[] {gameObject.GetComponent<Renderer>().materials[0], GameObject.FindGameObjectWithTag("MainCamera").GetComponent<TargetingController>().outlineMaterial};
+                gameObject.GetComponent<Renderer>().materials = newMats;
+                //gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.yellow);
             }
         }
         else {
             if (gameObject.GetComponent<Renderer>() != null)
             {
-                gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.black);
+                Material[] newMats = new Material[] {gameObject.GetComponent<Renderer>().materials[0]};
+                gameObject.GetComponent<Renderer>().materials = newMats;
+                //gameObject.GetComponent<Renderer>().material.SetColor("_OutlineColor", Color.black);
             }
         }
 
