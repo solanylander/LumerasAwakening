@@ -28,6 +28,7 @@ inline half4 LightingToonRamp (SurfaceOutput s, half3 lightDir, half atten)
 	
 	half4 c;
 	c.rgb = s.Albedo * _LightColor0.rgb * ramp * (atten * 2);
+	//c.rgb = s.Albedo * _LightColor0.rgb * ramp * (atten * 2);
 	c.a = 0;
 	return c;
 }
