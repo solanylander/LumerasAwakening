@@ -128,7 +128,7 @@ public class SpawnManager : MonoBehaviour {
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             //Temp for PT
             //TODO: DO NOT HARDCODE THIS LIKE THIS
-            SceneManager.LoadScene("Scenes/BETA_PRESENTATION");
+            SceneManager.LoadScene("Scenes/the-end");
         }
     }
 
