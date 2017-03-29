@@ -6,15 +6,21 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    //TODO: Loading Bar or something to indicate something is happening
+    private Text screenText;
 
+    // Use this for initialization
+    void Start () {
+        screenText = GetComponent<Text>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if(Input.GetKeyDown(KeyCode.Space)) {
-            SceneManager.LoadScene(1);
+        if(Input.anyKey) {
+            screenText.text = "Loading";
+            SceneManager.LoadScene("Scenes/the-end");
         }
     }
+
+
 }
