@@ -74,6 +74,7 @@ public class BeamEventTrigger : MonoBehaviour {
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = false;
                     GameObject.FindGameObjectWithTag("UI").GetComponent<Canvas>().enabled = false;
+                    GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().spellEffect.SetActive(false);
                     foreach (AudioSource aud in playerAudio)
                     {
                         aud.enabled = false;
@@ -106,6 +107,7 @@ public class BeamEventTrigger : MonoBehaviour {
                     GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 0;
                     GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = false;
                     GameObject.FindGameObjectWithTag("UI").GetComponent<Canvas>().enabled = false;
+                    GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().spellEffect.SetActive(false);
                     foreach (AudioSource aud in playerAudio)
                     {
                         aud.enabled = false;
