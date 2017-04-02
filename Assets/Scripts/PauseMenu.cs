@@ -2,50 +2,69 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class PauseMenu : MonoBehaviour {
     public Transform menu;
-    public bool isPaused;
+    private bool isPaused;
+    private FirstPersonController playerController;
 
-	// Use this for initialization
 	void Start () {
         isPaused = false;
         menu.gameObject.SetActive(false);
+        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>();
 	}
 	
-	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.P)) {
-            Pause();
+        //Reload from menu
+        if (isPaused && Input.GetKeyDown(KeyCode.Z)) {
+            UnPause();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+
+
+        //TODO: update this to use the start button on the controller also
+        if (Input.GetKeyDown(KeyCode.P) && !isPaused) {
+            Pause();
+        } else if (Input.GetKeyDown(KeyCode.P) && isPaused)
+        {
+            UnPause();
+        }
+
+
+        //These are just to make sure nothing breaks when we keyboard override respawns / restarts
         else if(Input.GetKeyDown(KeyCode.R)) {
             if(isPaused) {
-                isPaused = false;
-                Time.timeScale = 1;
-                menu.gameObject.SetActive(false);
+                UnPause();
             }
         }
         else if(Input.GetKeyDown(KeyCode.T)) {
             if(isPaused) {
-                isPaused = false;
-                Time.timeScale = 1;
-                menu.gameObject.SetActive(false);
+                UnPause();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.Y))
+        {
+            if (isPaused)
+            {
+                UnPause();
             }
         }
 
-	}
+    }
 
     void Pause() {
-        if(isPaused) {
-            menu.gameObject.SetActive(false);
-            Time.timeScale = 1;
-            isPaused = false;
-        }
+        menu.gameObject.SetActive(true);
+        Time.timeScale = 0;
+        isPaused = true;
+        playerController.enabled = false;
+    }
 
-        else {
-            menu.gameObject.SetActive(true);
-            Time.timeScale = 0;
-            isPaused = true;
-        }
+    void UnPause()
+    {
+        menu.gameObject.SetActive(false);
+        Time.timeScale = 1;
+        isPaused = false;
+        playerController.enabled = true;
     }
 }
