@@ -16,8 +16,8 @@ public class MenuController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(Input.anyKey) {
-            screenText.text = "Loading";
+        if (Input.GetButtonDown("ABut") || Input.GetKeyDown(KeyCode.A)) {
+            //screenText.text = "Loading!";
             SceneManager.LoadScene("Scenes/the-end");
         }
     }
