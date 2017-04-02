@@ -8,16 +8,21 @@ public class PauseMenu : MonoBehaviour {
     public Transform menu;
     private bool isPaused;
     private FirstPersonController playerController;
+    private AudioSource[] playerAudio;
+    private AudioSource[] powerAudio;
 
-	void Start () {
+
+    void Start () {
         isPaused = false;
         menu.gameObject.SetActive(false);
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>();
-	}
+        playerAudio = GameObject.FindGameObjectWithTag("Player").GetComponents<AudioSource>();
+        powerAudio = GameObject.FindGameObjectWithTag("MainCamera").GetComponents<AudioSource>();
+    }
 	
 	void Update () {
         //Reload from menu
-        if (isPaused && Input.GetKeyDown(KeyCode.Y)) {
+        if (isPaused && (Input.GetKeyDown(KeyCode.Y) | Input.GetButtonDown("YBut"))) {
             UnPause();
             //TODO: Update with final main scene
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -25,9 +30,9 @@ public class PauseMenu : MonoBehaviour {
 
 
         //TODO: update this to use the start button on the controller also
-        if (Input.GetKeyDown(KeyCode.P) && !isPaused) {
+        if ((Input.GetKeyDown(KeyCode.P) | Input.GetButtonDown("StartBut")) && !isPaused) {
             Pause();
-        } else if (Input.GetKeyDown(KeyCode.P) && isPaused)
+        } else if ((Input.GetKeyDown(KeyCode.P) | Input.GetButtonDown("StartBut")) && isPaused)
         {
             UnPause();
         }
@@ -59,6 +64,17 @@ public class PauseMenu : MonoBehaviour {
         Time.timeScale = 0;
         isPaused = true;
         playerController.enabled = false;
+
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = false;
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().spellEffect.SetActive(false);
+        foreach (AudioSource aud in playerAudio)
+        {
+            aud.enabled = false;
+        }
+        foreach (AudioSource aud in powerAudio)
+        {
+            aud.enabled = false;
+        }
     }
 
     void UnPause()
@@ -67,5 +83,15 @@ public class PauseMenu : MonoBehaviour {
         Time.timeScale = 1;
         isPaused = false;
         playerController.enabled = true;
+
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = true;
+        foreach (AudioSource aud in playerAudio)
+        {
+            aud.enabled = true;
+        }
+        foreach (AudioSource aud in powerAudio)
+        {
+            aud.enabled = true;
+        }
     }
 }
