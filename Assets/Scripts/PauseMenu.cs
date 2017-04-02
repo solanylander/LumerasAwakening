@@ -19,6 +19,7 @@ public class PauseMenu : MonoBehaviour {
         //Reload from menu
         if (isPaused && Input.GetKeyDown(KeyCode.Y)) {
             UnPause();
+            //TODO: Update with final main scene
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
