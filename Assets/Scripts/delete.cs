@@ -21,10 +21,12 @@ public class delete : MonoBehaviour {
         player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.XSensitivity = 0;
         player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_RunSpeed = 0;
         player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_WalkSpeed = 0;
+        //TODO disable power controller
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+       //TODO map to controller Y lol
         if (Input.GetKeyDown(KeyCode.Y))
         {
             player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = SensY;
