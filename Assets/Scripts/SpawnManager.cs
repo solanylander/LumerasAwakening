@@ -123,7 +123,7 @@ public class SpawnManager : MonoBehaviour {
             SceneManager.LoadScene(mainLevel.buildIndex);
         }
 
-        if (Input.GetKeyDown(KeyCode.Y))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             //Temp for PT

@@ -17,7 +17,7 @@ public class PauseMenu : MonoBehaviour {
 	
 	void Update () {
         //Reload from menu
-        if (isPaused && Input.GetKeyDown(KeyCode.Z)) {
+        if (isPaused && Input.GetKeyDown(KeyCode.Y)) {
             UnPause();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
@@ -43,7 +43,7 @@ public class PauseMenu : MonoBehaviour {
                 UnPause();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.Y))
+        else if (Input.GetKeyDown(KeyCode.G))
         {
             if (isPaused)
             {

@@ -25,7 +25,7 @@ public class delete : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (Input.anyKey)
+        if (Input.GetKeyDown(KeyCode.Y))
         {
             player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = SensY;
             player.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.XSensitivity = SensX;
