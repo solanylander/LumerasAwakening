@@ -1,17 +1,33 @@
 fileFormatVersion: 2
-guid: 8283e177e6f96ab468eec6910732f033
-timeCreated: 1491058140
+guid: 36f513ddd709d064f88ae1089e147496
+timeCreated: 1491072153
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: default
-    100002: //RootNode
-    400000: default
-    400002: //RootNode
-    2300000: default
-    3300000: default
-    4300000: default
+    100000: //RootNode
+    100002: ID11
+    100004: ID17
+    100006: ID23
+    100008: skp_camera_Last_Saved_SketchUp_View
+    400000: //RootNode
+    400002: ID11
+    400004: ID17
+    400006: ID23
+    400008: skp_camera_Last_Saved_SketchUp_View
+    2300000: //RootNode
+    2300002: ID11
+    2300004: ID17
+    2300006: ID23
+    3300000: //RootNode
+    3300002: ID11
+    3300004: ID17
+    3300006: ID23
+    4300000: SketchUp
+    4300002: ID11
+    4300004: ID17
+    4300006: ID23
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -74,7 +90,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

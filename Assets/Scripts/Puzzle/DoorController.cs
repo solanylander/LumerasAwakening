@@ -6,7 +6,7 @@ public class DoorController : MonoBehaviour {
 
     bool open;
     public float Size;
-    public bool grow;
+    public bool grow, locked;
     public GameObject door;
 
 	// Use this for initialization
@@ -17,6 +17,10 @@ public class DoorController : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate ()
     {
+        if (locked)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0);
+        }
         if (open && door.transform.localScale.y > Size && !grow)
         {
             door.transform.localScale = new Vector3(door.transform.localScale.x, door.transform.localScale.y - 0.05f, door.transform.localScale.z);
