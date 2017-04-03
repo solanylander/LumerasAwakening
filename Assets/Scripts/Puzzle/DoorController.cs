@@ -6,17 +6,25 @@ public class DoorController : MonoBehaviour {
 
     bool open;
     public float Size;
-    public bool grow, locked;
+    public bool grow, locked, extra;
     public GameObject door;
+    public Vector3 start;
 
 	// Use this for initialization
 	void Start () {
         open = false;
+        start = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate ()
     {
+        if(transform.localPosition.z > -5 && transform.localPosition.y < 2.44 && extra)
+        {
+            transform.position = start;
+            transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        }
         if (locked)
         {
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0);
