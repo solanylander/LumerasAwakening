@@ -26,4 +26,10 @@ public class LavaController : MonoBehaviour {
         player.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
         player.transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
     }
+    void OnTriggerStay(Collider other)
+    {
+        player.transform.position = position;
+        player.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        player.transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+    }
 }
