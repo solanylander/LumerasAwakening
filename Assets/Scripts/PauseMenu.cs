@@ -24,7 +24,7 @@ public class PauseMenu : MonoBehaviour {
         //Reload from menu
         if (isPaused && (Input.GetKeyDown(KeyCode.Y) | Input.GetButtonDown("YBut"))) {
             UnPause();
-            //TODO: Update with final main scene
+            //TODO: Update with final main scene -- or main menu?
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
