@@ -40,7 +40,6 @@ public class CutsceneTrigger : MonoBehaviour
             cine.SetActive(true);
             //cutsceneCam.GetComponent<Animation>().Play("LaserEntrance");
             StartCoroutine(wait());
-
         }
     }
 
