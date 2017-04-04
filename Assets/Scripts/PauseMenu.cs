@@ -26,6 +26,7 @@ public class PauseMenu : MonoBehaviour {
             UnPause();
             //TODO: Update with final main scene -- or main menu?
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene("Scenes/title");
         }
 
 
