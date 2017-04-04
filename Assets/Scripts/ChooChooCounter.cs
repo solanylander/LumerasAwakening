@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ChooChooCounter : MonoBehaviour {
 
-    private int maxChooChoos;
+    public int maxChooChoos;
     public int collectedChooChoos;
     //private Text chooChooText;
 
