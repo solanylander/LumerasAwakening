@@ -15,7 +15,7 @@ public class Teleporter : MonoBehaviour
     private GameObject fadeOut;
     private Color targetColor;
     private Color originalColor;
-    private float duration = 0.2f; 
+    private float duration = 0.25f; 
     private float fakeUpdate = 0.01f;
     private AudioSource[] playerAudio;
     private AudioSource[] powerAudio;
