@@ -16,6 +16,7 @@ public class CutsceneTrigger : MonoBehaviour
     private bool played;
     private AudioSource[] playerAudio;
     private AudioSource[] powerAudio;
+    private IEnumerator coroutine;
 
     void Start()
     {
@@ -29,7 +30,30 @@ public class CutsceneTrigger : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.C) || Input.GetButtonDown("YBut"))
+        {
+            if (coroutine != null)
+            {
+                //Debug.Log("canceling cinematic");
+                StopCoroutine(coroutine);
+                playerCam.enabled = true;
+                cutsceneCam.enabled = false;
+                player.GetComponent<CharacterController>().enabled = true;
 
+                GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_WalkSpeed = 11;
+                GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>().m_RunSpeed = 11;
+                GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PowerController>().enabled = true;
+                GameObject.FindGameObjectWithTag("UI").GetComponent<Canvas>().enabled = true;
+                foreach (AudioSource aud in playerAudio)
+                {
+                    aud.enabled = true;
+                }
+                foreach (AudioSource aud in powerAudio)
+                {
+                    aud.enabled = true;
+                }
+            }
+        }
     }
 
     void OnTriggerEnter(Collider collision)
@@ -39,7 +63,8 @@ public class CutsceneTrigger : MonoBehaviour
             played = true;
             cine.SetActive(true);
             //cutsceneCam.GetComponent<Animation>().Play("LaserEntrance");
-            StartCoroutine(wait());
+            coroutine = wait();
+            StartCoroutine(coroutine);
         }
     }
 
