@@ -189,7 +189,15 @@ public class GearController : MonoBehaviour
         if (other.tag != "Untagged")
         {
             SphereCollider myCollider = transform.GetComponent<SphereCollider>();
-            myCollider.radius = 0.52f;
+            if (final)
+            {
+
+                myCollider.radius = 0.54f;
+            }
+            else
+            {
+                myCollider.radius = 0.52f;
+            }
             colliding = true;
             if ((other.tag == "InteractableXScalableYScalableSpGear" || other.tag == "InteractableXScalableYScalableIGear") && (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear"))
             {
