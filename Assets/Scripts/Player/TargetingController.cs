@@ -25,6 +25,7 @@ public class TargetingController : MonoBehaviour
 
     void FixedUpdate()
     {
+
         //Clear Target if out of range -- Removing when it leaves FoV doesn't feel fun/gud
         if (currentTarget != null && (currentTarget.transform.position - transform.position).magnitude > maxTargetRange)
         {
@@ -38,24 +39,29 @@ public class TargetingController : MonoBehaviour
     /// <param name="targetInteractable"></param>
     public void SelectTarget(GameObject targetInteractable)
     {
-        //if (currentRenderer != null)
-        //{
-        //    currentRenderer.material = defaultMaterial;
-        //}
-        //currentRenderer = targetInteractable.GetComponent<Renderer>();
+        if (targetInteractable.tag.Contains("Fun"))
+        {
+        }
+        else
+        {
+            //if (currentRenderer != null)
+            //{
+            //    currentRenderer.material = defaultMaterial;
+            //}
+            //currentRenderer = targetInteractable.GetComponent<Renderer>();
 
-        ////Better/Smoother to Lerp between selected / unselected colors with same material maybe
-        //defaultMaterial = currentRenderer.material;
-        //currentRenderer.material = outlineMaterial;
-        //currentTarget = targetInteractable;
-        //currentRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
-
-        currentRenderer = targetInteractable.GetComponent<Renderer>();
-        Material[] newMats = new Material[] {currentRenderer.materials[0],outlineMaterial};
-        currentRenderer.materials = newMats;
-        //currentRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
-        //currentRenderer.material.SetColor("_OutlineColor", Color.yellow);
-        currentTarget = targetInteractable;
+            ////Better/Smoother to Lerp between selected / unselected colors with same material maybe
+            //defaultMaterial = currentRenderer.material;
+            //currentRenderer.material = outlineMaterial;
+            //currentTarget = targetInteractable;
+            //currentRenderer.material.SetColor("_Color", colorGenerator.interactableColor);
+            currentRenderer = targetInteractable.GetComponent<Renderer>();
+            Material[] newMats = new Material[] { currentRenderer.materials[0], outlineMaterial };
+            currentRenderer.materials = newMats;
+            //currentRenderer.material.SetColor("_Color", colorGenerator.selectedColor);
+            //currentRenderer.material.SetColor("_OutlineColor", Color.yellow);
+            currentTarget = targetInteractable;
+        }
     }
 
     /// <summary>
