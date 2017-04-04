@@ -114,7 +114,15 @@ public class GearController : MonoBehaviour
                 spin.tag = "InteractableXScalableYScalableStGear";
             }
         }
-        if(transform.tag == "InteractableXScalableYScalableIGear" || transform.tag == "InteractableXScalableYScalableSpGear" || stillSpin > 0)
+        if (transform.tag == "InteractableXScalableYScalableIGear" && lockedCounter != 0)
+        {
+            GetComponent<AudioSource>().mute = true;
+        }
+        else if (transform.tag == "InteractableXScalableYScalableIGear" && lockedCounter == 0)
+        {
+            GetComponent<AudioSource>().mute = false;
+        }
+            if (transform.tag == "InteractableXScalableYScalableIGear" || transform.tag == "InteractableXScalableYScalableSpGear" || stillSpin > 0)
         {
             if(lockedCounter == 0)
             {
@@ -206,6 +214,10 @@ public class GearController : MonoBehaviour
                 lockedState = 5;
                 if (wallCounter == 0)
                 {
+                    if (final)
+                    {
+                        transform.localScale = new Vector3(transform.localScale.x + 0.02f, transform.localScale.y + 0.02f, transform.localScale.z + 0.02f);
+                    }
                     flipCheck = 5;
                     transform.tag = "InteractableXScalableYScalableSpGear";
                     stillSpin = 12;
