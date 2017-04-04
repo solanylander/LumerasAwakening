@@ -101,7 +101,10 @@ public class GearController : MonoBehaviour
             aligned = 1.0f;
         }
 
-
+        if(final && tag == "InteractableXScalableYScalableStGear")
+        {
+            GetComponent<AudioSource>().mute = true;
+        }
         counter--;
         if(counter == 0)
         {
@@ -121,6 +124,7 @@ public class GearController : MonoBehaviour
         }
         if(final && transform.tag == "InteractableXScalableYScalableSpGear" && lockedCounter == 0)
         {
+            GetComponent<AudioSource>().mute = false;
             if (sideways && down)
             {
                 if (door.transform.localScale.y > 0.1f)
@@ -181,6 +185,7 @@ public class GearController : MonoBehaviour
         }
         if (other.tag == "Wall" && transform.tag == "InteractableXScalableYScalableUGear")
         {
+            GetComponent<AudioSource>().mute = false;
             transform.tag = "InteractableXScalableYScalableIGear";
         }
     }
@@ -189,15 +194,7 @@ public class GearController : MonoBehaviour
         if (other.tag != "Untagged")
         {
             SphereCollider myCollider = transform.GetComponent<SphereCollider>();
-            if (final)
-            {
-
-                myCollider.radius = 0.56f;
-            }
-            else
-            {
-                myCollider.radius = 0.52f;
-            }
+            myCollider.radius = 0.52f;
             colliding = true;
             if ((other.tag == "InteractableXScalableYScalableSpGear" || other.tag == "InteractableXScalableYScalableIGear") && (transform.tag != "InteractableXScalableYScalableIGear" && transform.tag != "InteractableXScalableYScalableUGear"))
             {
@@ -239,6 +236,7 @@ public class GearController : MonoBehaviour
                 }
                 else
                 {
+                    GetComponent<AudioSource>().mute = true;
                     transform.tag = "InteractableXScalableYScalableUGear";
                 }
             }
