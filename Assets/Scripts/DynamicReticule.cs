@@ -33,19 +33,30 @@ public class DynamicReticule : MonoBehaviour {
 			//Debug.Log(powerController.lastMouseover.tag);
 			//Debug.Log(powerController.currentMouseover.GetComponent<Renderer>().material.ToString());
 			objectType = powerController.currentMouseover.GetComponent<Renderer>().material.ToString();
-			//change reticule to correct sprite
-			if (objectType.Contains("X")){
-				//Debug.Log("X");
-				reticuleImage.sprite = reticuleSprites[1];
-			} else if (objectType.Contains("Y")) {
-				//Debug.Log("Y");
-				reticuleImage.sprite = reticuleSprites[2];
-			} else if (objectType.Contains("Z")) {
-				//Debug.Log("Z");
-				reticuleImage.sprite = reticuleSprites[3];
-			} else {
-				reticuleImage.sprite = reticuleSprites[0];
-			}
+            //change reticule to correct sprite
+            if (objectType.Contains("X"))
+            {
+                //Debug.Log("X");
+                reticuleImage.sprite = reticuleSprites[1];
+            }
+            else if (objectType.Contains("Y"))
+            {
+                //Debug.Log("Y");
+                reticuleImage.sprite = reticuleSprites[2];
+            }
+            else if (objectType.Contains("Z"))
+            {
+                //Debug.Log("Z");
+                reticuleImage.sprite = reticuleSprites[3];
+            }
+            else if (powerController.currentMouseover.tag.Contains("Gear"))
+            {
+                reticuleImage.sprite = reticuleSprites[4];
+            }
+            else
+            {
+                reticuleImage.sprite = reticuleSprites[0];
+            }
 		} else {
 			//null target, empty reticule
 			reticuleImage.sprite = reticuleSprites[0];
