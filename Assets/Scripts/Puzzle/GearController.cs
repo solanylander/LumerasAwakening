@@ -192,7 +192,7 @@ public class GearController : MonoBehaviour
             if (final)
             {
 
-                myCollider.radius = 0.54f;
+                myCollider.radius = 0.56f;
             }
             else
             {
